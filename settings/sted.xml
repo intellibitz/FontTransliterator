@@ -39,7 +39,7 @@
  */
 -->
 
-<settings name="sted.xml" version="0.73">
+<settings name="sted.xml" version="0.80">
     <option
             name="icon.sted"
             value="../images/sted.gif"

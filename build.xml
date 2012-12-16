@@ -46,12 +46,12 @@
     <target name="init">
         <tstamp/>
         <!-- Create the build directory structure used by compile -->
-        <mkdir dir="${BUILD_PATH}"/>
-        <mkdir dir="${CLASSES_PATH}"/>
+        <mkdir dir="${OUT_PATH}"/>
+        <mkdir dir="${OUT_PROD_PATH}"/>
         <echo message="Project Path:    ${PROJECT_PATH}"/>
         <echo message="Source Path:     ${SOURCE_PATH}"/>
-        <echo message="Classes Path:    ${CLASSES_PATH}"/>
-        <echo message="Deploy Path:     ${DEPLOY_PATH}"/>
+        <echo message="Classes Path:    ${OUT_PROD_PATH}"/>
+        <echo message="Deploy Path:     ${OUT_BIN_PATH}"/>
         <echo message="Jar Path:        ${STED.JAR}"/>
     </target>
 
@@ -60,23 +60,24 @@
     </path>
 
     <path id="CLASS_PATH">
-        <pathelement location="${CLASSES_PATH}"/>
+        <pathelement location="${OUT_PROD_PATH}"/>
     </path>
 
     <target name="copy.resource" depends="init">
-        <copy todir="${BUILD_PATH}" verbose="true">
+        <copy todir="${OUT_PATH}" verbose="true">
             <fileset
                     dir="${PROJECT_PATH}"
-                    excludes="**/build/**, **/dist/**, **/test/**"
+                    excludes="**/${OUT}/**, **/${DIST}/**, **/${TEST}/**, **/.idea/**"
                     defaultexcludes="true"
                     />
         </copy>
+        <chmod file="${OUT_BIN_PATH}/sted.sh" perm="ugo+rx"/>
     </target>
 
     <target name="compile" depends="init" description="compiles source">
         <javac
                 srcdir="${SOURCE_PATH}"
-                destdir="${CLASSES_PATH}"
+                destdir="${OUT_PROD_PATH}"
                 deprecation="on"
                 verbose="true"
                 >
@@ -84,7 +85,7 @@
         <!--HACK for development builds only-->
         <!--copy 'config' folder in classess.. since ResourceBundle would fail-->
         <!--Deployment does not require this hack, because STED_HOME is set in classpath-->
-        <copy todir="${CLASSES_PATH}" verbose="true">
+        <copy todir="${OUT_PROD_PATH}" verbose="true">
             <fileset
                     dir="${PROJECT_PATH}"
                     includes="config/**"
@@ -96,7 +97,7 @@
     <target name="deploy.widgets" depends="compile"
             description="creates sted-widgets.jar">
         <jar
-                basedir="${CLASSES_PATH}"
+                basedir="${OUT_PROD_PATH}"
                 destfile="${STED-WIDGETS.JAR}"
                 includes="**/intellibitz/sted/widgets/**"
                 >
@@ -121,7 +122,7 @@
     <target name="deploy.sted" depends="copy.resource, compile, deploy.widgets"
             description="creates sted.jar">
         <jar
-                basedir="${CLASSES_PATH}"
+                basedir="${OUT_PROD_PATH}"
                 destfile="${STED.JAR}"
                 includes="**/intellibitz/**"
                 excludes="**/config/**, **/intellibitz/sted/widgets/**"
@@ -151,7 +152,7 @@
     <target name="undeploy" description="removes sted.jar">
         <delete verbose="true">
             <fileset
-                    dir="${DEPLOY_PATH}"
+                    dir="${OUT_BIN_PATH}"
                     includes="${STED.JAR_NAME}"
                     />
         </delete>
@@ -160,7 +161,7 @@
     <target name="clean.classes" description="deletes classes">
         <delete includeemptydirs="true" verbose="true">
             <fileset
-                    dir="${CLASSES_PATH}"
+                    dir="${OUT_PROD_PATH}"
                     excludes="**/.dependency-info/**"
                     defaultexcludes="false"
                     />
@@ -170,7 +171,7 @@
     <target name="clean.build" description="deletes build directory">
         <delete includeemptydirs="true" verbose="true">
             <fileset
-                    dir="${BUILD_PATH}"
+                    dir="${OUT_PATH}"
                     excludes="**/.dependency-info/**"
                     defaultexcludes="false"
                     />
@@ -181,9 +182,9 @@
             depends="clean.deploy"
             description="Creates STED Production Deliverable">
         <jar
-                basedir="${BUILD_PATH}"
+                basedir="${OUT_PATH}"
                 destfile="${STED.ZIP}"
-                excludes="**/classes/**, **/src/**, **/temp/**, ${STED.ZIP}, ${STED-FULL.ZIP}"
+                excludes="**/${CLASSES}/**, **/${SRC}/**, **/temp/**, ${STED.ZIP}, ${STED-FULL.ZIP}"
                 >
         </jar>
     </target>
@@ -191,18 +192,18 @@
     <target name="release.sted-full"
             description="Creates STED Production Deliverable">
         <jar
-                basedir="${BUILD_PATH}"
+                basedir="${OUT_PATH}"
                 destfile="${STED-FULL.ZIP}"
-                excludes="**/classes/**, **/temp/**, ${STED.ZIP}, ${STED-FULL.ZIP}"
+                excludes="**/${CLASSES}/**, **/temp/**, ${STED.ZIP}, ${STED-FULL.ZIP}"
                 >
         </jar>
     </target>
 
     <target name="run" depends="deploy.sted" description="runs sted">
         <!-- WINDOWS -->
-        <!--<exec dir="${DEPLOY_PATH}" executable="sted.bat"/>-->
+        <!--<exec dir="${OUT_BIN_PATH}" executable="sted.bat"/>-->
         <!-- LINUX -->
-        <exec dir="${DEPLOY_PATH}" executable="./sted.sh"/>
+        <exec dir="${OUT_BIN_PATH}" executable="./sted.sh"/>
     </target>
 
 </project>

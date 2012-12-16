@@ -45,7 +45,7 @@
 :: ---------------------------------------------------------------------
 :: Set the JAVA Installation Directory
 :: ---------------------------------------------------------------------
-SET JAVA_HOME=C:\Program Files\Java\jdk1.6.0
+SET JAVA_HOME=C:\Program Files\Java\jdk1.7.0_09
 
 :: ---------------------------------------------------------------------
 :: JAVA executable.. set from JAVA_HOME
@@ -64,7 +64,8 @@ SET JAVA_EXE=java.exe
 :: ---------------------------------------------------------------------
 :: You may specify your own JVM arguments in STED_JVM_ARGS variable.
 :: ---------------------------------------------------------------------
-set STED_JVM_ARGS=-Xms16m -Xmx64m -Dsun.java2d.nodraw=true
+::set STED_JVM_ARGS=-Xms16m -Xmx64m -Dsun.java2d.nodraw=true
+set STED_JVM_ARGS=
 
 :: ---------------------------------------------------------------------
 :: Before you run STED specify the location of the

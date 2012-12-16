@@ -36,6 +36,10 @@
  # /
 #-->
 
+<!-- build 0.80 -->
+Upgrade: JDK 1.7 upgrade release.
+Bugfix: Save Fontmap fixed.
+
 <!-- build 0.73 -->
 Bugfix: Sample fontmaps - fontmap location fixed to relative path.
 Bugfix: Refactoring.

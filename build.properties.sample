@@ -47,27 +47,30 @@
 # ----------------------------------------------------------------------------------------------------
 # The JAVA Home directory.
 # ----------------------------------------------------------------------------------------------------
-JAVA_HOME=/usr/java/jdk1.6.0
+JAVA_HOME=/opt/tools/jdk1.7.0_09
 
 # ----------------------------------------------------------------------------------------------------
 # APPLICATION RELATED
 # ----------------------------------------------------------------------------------------------------
 
+PROJECT_NAME=FontTransliterator
 PROJECT_PATH=.
-VERSION=0.73
+VERSION=0.8
 
 SOURCE_PATH=${PROJECT_PATH}/src
-BUILD_PATH=${PROJECT_PATH}/build
+OUT_PATH=${PROJECT_PATH}/build
 DIST_PATH=${PROJECT_PATH}/dist
-CLASSES_PATH=${BUILD_PATH}/classes/production/sted
-TEST_CLASSES_PATH=${BUILD_PATH}/classes/test/sted
-DEPLOY_PATH=${BUILD_PATH}/bin
+OUT_PROD_PATH=${OUT_PATH}/out/production/${PROJECT_NAME}
+OUT_TEST_PATH=${OUT_PATH}/out/test/${PROJECT_NAME}
+OUT_BIN_PATH=${OUT_PATH}/bin
 STED.JAR_NAME=sted.jar
 STED-WIDGETS.JAR_NAME=sted-widgets.jar
+STED.JAR=${OUT_BIN_PATH}/${STED.JAR_NAME}
+STED-WIDGETS.JAR=${OUT_BIN_PATH}/${STED-WIDGETS.JAR_NAME}
 STED.ZIP_NAME=sted-${VERSION}.zip
-STED.JAR=${DEPLOY_PATH}/${STED.JAR_NAME}
-STED-WIDGETS.JAR=${DEPLOY_PATH}/${STED-WIDGETS.JAR_NAME}
 STED.ZIP=${DIST_PATH}/${STED.ZIP_NAME}
+STED-FULL.ZIP_NAME=sted-with-src-${VERSION}.zip
+STED-FULL.ZIP=${DIST_PATH}/${STED-FULL.ZIP_NAME}
 
 # ----------------------------------------------------------------------------------------------------
 # END END END END END END END END END END END END END END END END END END END END END END END END END

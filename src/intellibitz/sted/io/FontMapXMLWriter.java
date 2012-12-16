@@ -49,31 +49,28 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.StringReader;
 
-public class FontMapXMLWriter
-{
-    private FontMapXMLWriter()
-    {
+public class FontMapXMLWriter {
+    private FontMapXMLWriter() {
     }
 
     public static void write(FontMap fontMap)
-            throws TransformerException
-    {
+            throws TransformerException {
         final File selectedFile = fontMap.getFontMapFile();
 // Use a Transformer for output
         final Transformer transformer =
                 TransformerFactory.newInstance().newTransformer();
 // Use the parser as a SAX source for input
-        final StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append(selectedFile.getName());
-        stringBuffer.append(Resources.NEWLINE_DELIMITER);
-        stringBuffer.append(Resources.getVersion());
-        stringBuffer.append(Resources.NEWLINE_DELIMITER);
-        stringBuffer.append(fontMap.toString());
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(selectedFile.getName());
+        stringBuilder.append(Resources.NEWLINE_DELIMITER);
+        stringBuilder.append(Resources.getVersion());
+        stringBuilder.append(Resources.NEWLINE_DELIMITER);
+        stringBuilder.append(fontMap.toString());
         final SAXSource source = new SAXSource(new FontMapXMLReader(),
                 new InputSource(
                         new BufferedReader(
                                 new StringReader(
-                                        stringBuffer.toString()))));
+                                        stringBuilder.toString()))));
         transformer.transform(source, new StreamResult(selectedFile));
 
     }

@@ -38,18 +38,7 @@ package intellibitz.sted.ui;
 
 import intellibitz.sted.actions.RedoAction;
 import intellibitz.sted.actions.UndoAction;
-import intellibitz.sted.event.FontMapChangeEvent;
-import intellibitz.sted.event.FontMapChangeListener;
-import intellibitz.sted.event.FontMapReadEvent;
-import intellibitz.sted.event.IMessageEventSource;
-import intellibitz.sted.event.IMessageListener;
-import intellibitz.sted.event.IStatusEventSource;
-import intellibitz.sted.event.IStatusListener;
-import intellibitz.sted.event.IThreadListener;
-import intellibitz.sted.event.MessageEvent;
-import intellibitz.sted.event.StatusEvent;
-import intellibitz.sted.event.ThreadEvent;
-import intellibitz.sted.event.TransliterateEvent;
+import intellibitz.sted.event.*;
 import intellibitz.sted.fontmap.FontMap;
 import intellibitz.sted.io.FileFilterHelper;
 import intellibitz.sted.io.FontMapReader;
@@ -59,28 +48,19 @@ import intellibitz.sted.util.MenuHandler;
 import intellibitz.sted.util.Resources;
 import intellibitz.sted.widgets.ButtonTabComponent;
 
-import javax.swing.JDesktopPane;
-import javax.swing.JFileChooser;
-import javax.swing.JMenu;
-import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import javax.xml.transform.TransformerException;
-import java.awt.HeadlessException;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.logging.Logger;
 
 
@@ -95,19 +75,16 @@ public class TabDesktop
         ChangeListener,
         ActionListener,
         IStatusEventSource,
-        IMessageEventSource
-{
+        IMessageEventSource {
 
 
     /**
      * FrameNumberIndex <br> Generates Unique Id for New fontmap frames
      */
-    private static class FrameNumberIndex
-    {
+    private static class FrameNumberIndex {
         private Set<Integer> indices = new TreeSet<Integer>();
 
-        public FrameNumberIndex()
-        {
+        public FrameNumberIndex() {
             super();
         }
 
@@ -118,20 +95,14 @@ public class TabDesktop
          * @param indx
          * @return
          */
-        public int addNewIndex(int indx)
-        {
+        public int addNewIndex(int indx) {
             int sz = indices.size();
-            if (!containsIndex(indx) && indx >= sz)
-            {
+            if (!containsIndex(indx) && indx >= sz) {
                 indices.add(indx);
                 return indx;
-            }
-            else
-            {
-                for (int i = 1; i <= sz; i++)
-                {
-                    if (!containsIndex(i))
-                    {
+            } else {
+                for (int i = 1; i <= sz; i++) {
+                    if (!containsIndex(i)) {
                         indices.add(i);
                         return i;
                     }
@@ -140,17 +111,13 @@ public class TabDesktop
             return indx;
         }
 
-        public boolean removeIndex(int indx)
-        {
+        public boolean removeIndex(int indx) {
             return indices.remove(indx);
         }
 
-        public boolean containsIndex(int indx)
-        {
-            for (Integer indice : indices)
-            {
-                if (indice == indx)
-                {
+        public boolean containsIndex(int indx) {
+            for (Integer indice : indices) {
+                if (indice == indx) {
                     return true;
                 }
             }
@@ -180,13 +147,11 @@ public class TabDesktop
     private MessageEvent messageEvent;
 
 
-    public TabDesktop()
-    {
+    public TabDesktop() {
         super();
     }
 
-    public void init()
-    {
+    public void init() {
         desktopPane = new JDesktopPane();
         // we need to listen to our own events here
         // to update the desktop
@@ -196,34 +161,28 @@ public class TabDesktop
         setVisible(true);
     }
 
-    public void load()
-    {
+    public void load() {
     }
 
-    public void fireStatusPosted(String message)
-    {
+    public void fireStatusPosted(String message) {
         statusEvent.setStatus(message);
         statusListener.statusPosted(statusEvent);
     }
 
-    public void fireStatusPosted()
-    {
+    public void fireStatusPosted() {
         statusListener.statusPosted(statusEvent);
     }
 
-    public void addStatusListener(IStatusListener statusListener)
-    {
+    public void addStatusListener(IStatusListener statusListener) {
         this.statusListener = statusListener;
     }
 
-    public void addTab(DesktopFrame desktopFrame)
-    {
+    public void addTab(DesktopFrame desktopFrame) {
         addTab(desktopFrame.getTitle(), desktopFrame);
     }
 
     public void addTab(String title,
-            DesktopFrame desktopFrame)
-    {
+                       DesktopFrame desktopFrame) {
         desktopFrame.setTitle(title);
 
         desktopFrame.removeInternalFrameListener(this);
@@ -240,12 +199,9 @@ public class TabDesktop
         setSelectedIndex(getTabCount() - 1);
 //        setSelectedComponent(desktopFrame);
 //        desktopPane.setSelectedFrame(desktopFrame);
-        try
-        {
+        try {
             desktopFrame.setSelected(true);
-        }
-        catch (PropertyVetoException e)
-        {
+        } catch (PropertyVetoException e) {
             e.printStackTrace();
         }
 //        stedWindow.selectTab();
@@ -254,8 +210,7 @@ public class TabDesktop
 //        this.updateUI();
     }
 
-    private void initTabComponent(int i, String title)
-    {
+    private void initTabComponent(int i, String title) {
         ButtonTabComponent buttonTabComponent =
                 new ButtonTabComponent("TabComponent " + i, this);
         buttonTabComponent.getTabTitle().setIcon(Resources.getCleanIcon());
@@ -265,20 +220,16 @@ public class TabDesktop
                 buttonTabComponent);
     }
 
-    public int closeFontMap()
-    {
+    public int closeFontMap() {
         return closeFontMap(getFontMapperDesktopFrame());
     }
 
-    public int closeFontMap(DesktopFrame desktopFrame)
-    {
+    public int closeFontMap(DesktopFrame desktopFrame) {
         int i = saveDirty(desktopFrame);
-        if (JOptionPane.CANCEL_OPTION != i)
-        {
+        if (JOptionPane.CANCEL_OPTION != i) {
             int index = getSelectedIndex();
             // todo: hacking because the first frame not getting selected by default
-            if (index == -1)
-            {
+            if (index == -1) {
                 index = getTabCount() - 1;
             }
             removeTabFrameAt(index);
@@ -291,11 +242,9 @@ public class TabDesktop
         return i;
     }
 
-    public int closeFontMap(DesktopFrame desktopFrame, int i)
-    {
+    public int closeFontMap(DesktopFrame desktopFrame, int i) {
         int result = saveDirty(desktopFrame);
-        if (JOptionPane.CANCEL_OPTION != result)
-        {
+        if (JOptionPane.CANCEL_OPTION != result) {
             removeTabFrameAt(i);
             desktopFrame.close();
         }
@@ -306,15 +255,12 @@ public class TabDesktop
         return i;
     }
 
-    private boolean removeTabFrameAt(int index)
-    {
-        if (index > -1)
-        {
+    private boolean removeTabFrameAt(int index) {
+        if (index > -1) {
             DesktopFrame desktopFrame =
                     (DesktopFrame) getComponentAt(index);
             String title = desktopFrame.getTitle();
-            if (title.startsWith(Resources.ACTION_FILE_NEW_COMMAND))
-            {
+            if (title.startsWith(Resources.ACTION_FILE_NEW_COMMAND)) {
                 int indx = getNewIndexNumber(title);
                 // removes the tab index as generated by the newframeindex
                 frameNumberIndex.removeIndex(indx);
@@ -326,40 +272,32 @@ public class TabDesktop
         return false;
     }
 
-    private int getNewIndexNumber(String title)
-    {
+    private int getNewIndexNumber(String title) {
         return Integer.valueOf(title.substring(
                 Resources.ACTION_FILE_NEW_COMMAND.length()).trim());
     }
 
-    private String createNewFrameTitle(int num)
-    {
+    private String createNewFrameTitle(int num) {
         return Resources.ACTION_FILE_NEW_COMMAND + " " +
                 frameNumberIndex.addNewIndex(num);
     }
 
-    public void stateChanged(FontMapChangeEvent e)
-    {
+    public void stateChanged(FontMapChangeEvent e) {
 
         // select a new tab, if the fontmap is new
         DesktopFrame desktopFrame =
                 getSelectedFrame();
         String title = desktopFrame.getTitle();
-        if (null != title)
-        {
+        if (null != title) {
             int indx = indexOfTab(title);
-            if (-1 == indx)
-            {
+            if (-1 == indx) {
                 addTab(desktopFrame);
-            }
-            else
-            {
+            } else {
                 setEnabledAt(indx, true);
             }
         }
         // if title null, new frame
-        else
-        {
+        else {
             addTab(desktopFrame);
         }
         // existing fontmaps, with existing tabs
@@ -368,17 +306,13 @@ public class TabDesktop
         buttonTabComponent.getTabTitle().setIcon(Resources.getDirtyIcon());
 
         FontMap fontMap = desktopFrame.getModel().getFontMap();
-        if (fontMap.getFontMapFile() != null)
-        {
+        if (fontMap.getFontMapFile() != null) {
             buttonTabComponent.getTabTitle()
                     .setText(fontMap.getFontMapFile().getName());
         }
-        if (fontMap.isDirty())
-        {
+        if (fontMap.isDirty()) {
             buttonTabComponent.getTabTitle().setIcon(Resources.getDirtyIcon());
-        }
-        else
-        {
+        } else {
             buttonTabComponent.getTabTitle().setIcon(Resources.getCleanIcon());
         }
         fireStatusPosted(
@@ -394,12 +328,10 @@ public class TabDesktop
      *
      * @param e The change event of this tabbed pane
      */
-    public void stateChanged(ChangeEvent e)
-    {
+    public void stateChanged(ChangeEvent e) {
         TabDesktop me = (TabDesktop) e.getSource();
         int i = me.getSelectedIndex();
-        if (i != -1)
-        {
+        if (i != -1) {
             DesktopFrame myframe =
                     (DesktopFrame) getComponentAt(i);
             desktopPane.setSelectedFrame(myframe);
@@ -407,8 +339,7 @@ public class TabDesktop
             ButtonTabComponent buttonTab =
                     (ButtonTabComponent) getTabComponentAt(i);
             String title = myframe.getTitle();
-            if (buttonTab != null)
-            {
+            if (buttonTab != null) {
                 title = buttonTab.getTabTitle().getText();
             }
             fireStatusPosted(title + " Active");
@@ -416,21 +347,16 @@ public class TabDesktop
         enableCloseAction();
     }
 
-    private void enableCloseAction(boolean flag)
-    {
+    private void enableCloseAction(boolean flag) {
         MenuHandler.getInstance()
                 .getMenuItem(Resources.ACTION_FILE_CLOSE_COMMAND)
                 .setEnabled(flag);
     }
 
-    private void enableCloseAction()
-    {
-        if (getTabCount() > 0)
-        {
+    private void enableCloseAction() {
+        if (getTabCount() > 0) {
             enableCloseAction(true);
-        }
-        else
-        {
+        } else {
             enableCloseAction(false);
         }
     }
@@ -441,14 +367,12 @@ public class TabDesktop
      *
      * @param e
      */
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         ButtonTabComponent buttonTabComponent =
                 (ButtonTabComponent) e.getSource();
 
         int i = indexOfTabComponent(buttonTabComponent);
-        if (i != -1)
-        {
+        if (i != -1) {
             DesktopFrame desktopFrame =
                     (DesktopFrame) getComponentAt(i);
 //            closeFrameTab(desktopFrame, i-1);
@@ -470,8 +394,7 @@ public class TabDesktop
 */
 
 
-    private DesktopFrame getSelectedFrame()
-    {
+    private DesktopFrame getSelectedFrame() {
         DesktopFrame desktopFrame =
                 (DesktopFrame) desktopPane.getSelectedFrame();
         //hack!!
@@ -486,8 +409,7 @@ public class TabDesktop
      * @param desktopFrame
      */
     public void addListenersToDesktopFrame(
-            DesktopFrame desktopFrame)
-    {
+            DesktopFrame desktopFrame) {
         MapperPanel mapperPanel = desktopFrame.getMapperPanel();
         DesktopModel desktopModel = desktopFrame.getModel();
         FontMap fontMap = desktopModel.getFontMap();
@@ -585,8 +507,7 @@ public class TabDesktop
     }
 
     public DesktopModel createDesktopModel(
-            DesktopFrame desktopFrame, FontMap fontMap)
-    {
+            DesktopFrame desktopFrame, FontMap fontMap) {
         DesktopModel desktopModel = new DesktopModel();
         desktopModel.setFontMap(fontMap);
         desktopFrame.setModel(desktopModel);
@@ -597,14 +518,12 @@ public class TabDesktop
         return desktopModel;
     }
 
-    public void loadFontMap(File file)
-    {
+    public void loadFontMap(File file) {
         loadFontMap(getSelectedFrame(), file);
     }
 
     public void loadFontMap(DesktopFrame desktopFrame,
-            File file)
-    {
+                            File file) {
         DesktopModel desktopModel = createDesktopModel(
                 desktopFrame, new FontMap(file));
         desktopModel.addFontMapChangeListener(this);
@@ -618,8 +537,7 @@ public class TabDesktop
      *
      * @param desktopModel
      */
-    public void readFontMap(DesktopModel desktopModel)
-    {
+    public void readFontMap(DesktopModel desktopModel) {
         //TODO: move this somewhere applicable
 //        clear();
 //        final String path1 = fontMap.getFont1Path();
@@ -632,14 +550,11 @@ public class TabDesktop
 //        fontMap.setFont1Path(path1);
 //        fontMap.setFont2Path(path2);
         FontMap fontMap = desktopModel.getFontMap();
-        try
-        {
+        try {
             final FontMapReader fontMapReader = new FontMapReader(fontMap);
             fontMapReader.addThreadListener(this);
             SwingUtilities.invokeLater(fontMapReader);
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             fireMessagePosted(
                     "Cannot Read FontMap.. Failed: " + e.getMessage());
             logger.severe("Cannot Read FontMap - Illegal Argument " +
@@ -652,20 +567,17 @@ public class TabDesktop
     /**
      *
      */
-    public void openFontMap()
-    {
+    public void openFontMap() {
         final File selectedFile = FileHelper
                 .openFile("Please select FontMap location:", Resources.XML,
                         "STED FontMap files", this);
-        if (selectedFile != null)
-        {
+        if (selectedFile != null) {
             openFontMap(selectedFile);
         }
     }
 
 
-    public void newFontMap()
-    {
+    public void newFontMap() {
         DesktopFrame desktopFrame =
                 loadNewFontMap();
         int num = getTabCount() + 1;
@@ -682,8 +594,7 @@ public class TabDesktop
      *
      * @return DesktopFrame the newly added fontmap component
      */
-    public DesktopFrame loadNewFontMap()
-    {
+    public DesktopFrame loadNewFontMap() {
         DesktopFrame desktopFrame =
                 createFontMapperDesktopFrame();
         FontMap fontMap = new FontMap();
@@ -695,8 +606,7 @@ public class TabDesktop
     }
 
 
-    public void reopenFontMap(String fileName)
-    {
+    public void reopenFontMap(String fileName) {
         openFontMap(new File(fileName));
 /*
         FontMap fontMap = getFontMap();
@@ -733,8 +643,7 @@ public class TabDesktop
 */
     }
 
-    public void reloadFontMap()
-    {
+    public void reloadFontMap() {
 //        readFontMap(getSelectedFrame().getModel());
         DesktopFrame selectedFrame = getSelectedFrame();
         File selectedFile =
@@ -747,14 +656,11 @@ public class TabDesktop
         openFontMap(selectedFile);
     }
 
-    public void openFontMap(File selectedFile)
-    {
-        try
-        {
+    public void openFontMap(File selectedFile) {
+        try {
             DesktopFrame desktopFrame =
                     frameCache.get(selectedFile.getAbsolutePath());
-            if (desktopFrame == null)
-            {
+            if (desktopFrame == null) {
                 desktopFrame = createFontMapperDesktopFrame();
                 //todo: repeat the logic of the frame creation, init and load
                 loadFontMap(desktopFrame, selectedFile);
@@ -782,16 +688,12 @@ public class TabDesktop
                     showDesktopFrame();
                 }
 */
-        }
-        catch (HeadlessException ex)
-        {
+        } catch (HeadlessException ex) {
             logger.throwing("intellibitz.sted.util.FontMapHelper",
                     "readFontMap", ex);
             JOptionPane.showMessageDialog(this,
                     "Invalid FontMap " + selectedFile.getAbsolutePath());
-        }
-        catch (IllegalArgumentException ex)
-        {
+        } catch (IllegalArgumentException ex) {
             logger.throwing("intellibitz.sted.util.FontMapHelper",
                     "readFontMap", ex);
             JOptionPane.showMessageDialog(this,
@@ -800,8 +702,7 @@ public class TabDesktop
     }
 
 
-    private void saveFontMap()
-    {
+    private void saveFontMap() {
         DesktopFrame desktopFrame =
                 getSelectedFrame();
         FontMap fontMap = desktopFrame.getModel().getFontMap();
@@ -809,15 +710,12 @@ public class TabDesktop
                 .getFontKeypad1().getSelectedFont());
         fontMap.setFont2(desktopFrame.getMapperPanel()
                 .getFontKeypad2().getSelectedFont());
-        try
-        {
+        try {
             fontMap = desktopFrame.getModel().saveFontMap();
             //add it to cache
 //            fontMapCache.put(fontMap.getFileName(), fontMap);
 //            get
-        }
-        catch (TransformerException exception)
-        {
+        } catch (TransformerException exception) {
             exception
                     .printStackTrace();  //To change body of catch statement use Options | File Templates.
             JOptionPane.showMessageDialog(this,
@@ -828,38 +726,28 @@ public class TabDesktop
 //        JOptionPane.showMessageDialog(stedWindow, "saved FontMap in " + selectedFile.getAbsolutePath());
     }
 
-    public void saveAction()
-    {
+    public void saveAction() {
         FontMap fontMap = getFontMap();
         final File selectedFile = fontMap.getFontMapFile();
-        if (selectedFile == null)
-        {
+        if (selectedFile == null) {
             // try the save as functionality
             saveAsAction();
-        }
-        else if (!selectedFile.canWrite())
-        {
-            try
-            {
+        } else if (!selectedFile.canWrite()) {
+            try {
                 selectedFile.createNewFile();
                 fontMap.setFontMapFile(selectedFile);
-            }
-            catch (IOException exception)
-            {
+            } catch (IOException exception) {
                 JOptionPane.showMessageDialog(this,
                         selectedFile +
                                 " cannot create for writing " +
                                 exception.getMessage());
             }
-        }
-        else
-        {
+        } else {
             saveFontMap();
         }
     }
 
-    public int saveAsAction()
-    {
+    public int saveAsAction() {
         FontMap fontMap = getFontMap();
         final JFileChooser jFileChooser =
                 new JFileChooser(System.getProperty("user.dir"));
@@ -867,62 +755,57 @@ public class TabDesktop
                 new FileFilterHelper("xml", "STED FontMap files");
         jFileChooser.setFileFilter(fileFilterHelper);
         final int result = jFileChooser.showSaveDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION)
-        {
+        if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = jFileChooser.getSelectedFile();
-            if (selectedFile.canWrite())
-            {
+            boolean ok = false;
+            if (!selectedFile.canWrite()) {
+                try {
+                    ok = selectedFile.createNewFile();
+                } catch (IOException exception) {
+                    JOptionPane.showMessageDialog(this,
+                            selectedFile +
+                                    " cannot create for writing " +
+                                    exception.getMessage());
+                }
+            }
+            if (ok) {
                 fontMap.setFontMapFile(selectedFile);
                 saveFontMap();
-            }
-            else
-            {
+            } else {
                 JOptionPane.showMessageDialog(this,
                         selectedFile +
                                 " is NOT Writable");
-
             }
         }
         return result;
     }
 
-    public int saveDirty()
-    {
+    public int saveDirty() {
         return saveDirty(getSelectedFrame());
     }
 
 
-    public int saveDirty(DesktopFrame desktopFrame)
-    {
+    public int saveDirty(DesktopFrame desktopFrame) {
         int result = JOptionPane.CLOSED_OPTION;
-        if (null != desktopFrame)
-        {
+        if (null != desktopFrame) {
             FontMap fontMap = desktopFrame.getModel().getFontMap();
-            if (fontMap != null && fontMap.isDirty())
-            {
+            if (fontMap != null && fontMap.isDirty()) {
                 result = JOptionPane.showConfirmDialog(this,
                         "FontMap Changed.. Do you want to save changes?",
                         "Save Changes",
                         JOptionPane.YES_NO_CANCEL_OPTION);
                 // if yes, save the fontmap
-                if (JOptionPane.YES_OPTION == result)
-                {
-                    if (fontMap.isNew())
-                    {
+                if (JOptionPane.YES_OPTION == result) {
+                    if (fontMap.isNew()) {
                         result = saveAsAction();
                         // can be cancelled.. clear the fontmap
-                        if (JFileChooser.CANCEL_OPTION == result)
-                        {
+                        if (JFileChooser.CANCEL_OPTION == result) {
                             fontMap.clear();
                         }
-                    }
-                    else
-                    {
+                    } else {
                         saveAction();
                     }
-                }
-                else if (JOptionPane.NO_OPTION == result)
-                {
+                } else if (JOptionPane.NO_OPTION == result) {
                     //TODO: need to do something sensible for NO_OPTION
                     // if no, discard the fontmap
                     // setDirty will fire events..so DONT use!
@@ -936,19 +819,16 @@ public class TabDesktop
     }
 
 
-    public void clear()
-    {
+    public void clear() {
         getSelectedFrame().clear();
     }
 
-    public FontMap getFontMap()
-    {
+    public FontMap getFontMap() {
         return getSelectedFrame().getModel()
                 .getFontMap();
     }
 
-    public void addItemToReOpenMenu(String item)
-    {
+    public void addItemToReOpenMenu(String item) {
         final MenuHandler menuHandler = MenuHandler.getInstance();
         final JMenu menu =
                 menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND);
@@ -958,8 +838,7 @@ public class TabDesktop
     }
 
 
-    public DesktopFrame createFontMapperDesktopFrame()
-    {
+    public DesktopFrame createFontMapperDesktopFrame() {
         DesktopFrame desktopFrame =
                 new DesktopFrame();
         desktopFrame.addInternalFrameListener(this);
@@ -1020,83 +899,67 @@ public class TabDesktop
     /**
      * @return
      */
-    public Map<String, Collection> getClipboard()
-    {
+    public Map<String, Collection> getClipboard() {
         return clipboard;
     }
 
-    public void addToClipboard(String entry, Collection value)
-    {
+    public void addToClipboard(String entry, Collection value) {
         clipboard.put(entry, value);
         fireStatusPosted("Copied Fontmap Entries");
     }
 
-    public DesktopFrame getFontMapperDesktopFrame()
-    {
+    public DesktopFrame getFontMapperDesktopFrame() {
         return getSelectedFrame();
     }
 
-    public DesktopModel getDesktopModel()
-    {
+    public DesktopModel getDesktopModel() {
         return getFontMapperDesktopFrame().getModel();
     }
 
-    public String getFrameTitle()
-    {
+    public String getFrameTitle() {
         DesktopFrame desktopFrame =
                 getSelectedFrame();
-        if (null == desktopFrame)
-        {
+        if (null == desktopFrame) {
             return null;
-        }
-        else
-        {
+        } else {
             return desktopFrame.getTitle();
         }
     }
 
 
-    public void fireMessagePosted(String message)
-    {
+    public void fireMessagePosted(String message) {
         messageEvent.setMessage(message);
         messageListener.messagePosted(messageEvent);
     }
 
-    public void fireMessagePosted()
-    {
+    public void fireMessagePosted() {
         messageListener.messagePosted(messageEvent);
     }
 
-    public void addMessageListener(IMessageListener messageListener)
-    {
+    public void addMessageListener(IMessageListener messageListener) {
         this.messageListener = messageListener;
     }
 
 
-    public void threadRunStarted(ThreadEvent e)
-    {
+    public void threadRunStarted(ThreadEvent e) {
         STEDGUI.busy();
     }
 
-    public void threadRunning(ThreadEvent e)
-    {
+    public void threadRunning(ThreadEvent e) {
 
     }
 
-    public void threadRunFailed(ThreadEvent e)
-    {
+    public void threadRunFailed(ThreadEvent e) {
         STEDGUI.busy();
         String message = e.getEventSource().getMessage().toString();
         JOptionPane.showMessageDialog(this, message, "Error",
                 JOptionPane.ERROR_MESSAGE);
         // if FontMapReader..
-        if (FontMapReadEvent.class.isInstance(e))
-        {
+        if (FontMapReadEvent.class.isInstance(e)) {
             closeFontMap();
         }
         // if Transliterator..
-        if (TransliterateEvent.class.isInstance(e))
-        {
+        if (TransliterateEvent.class.isInstance(e)) {
             // enable the convert action
             MenuHandler.getInstance()
                     .getAction(Resources.ACTION_CONVERT_NAME)
@@ -1109,11 +972,9 @@ public class TabDesktop
         STEDGUI.relax();
     }
 
-    public void threadRunFinished(ThreadEvent e)
-    {
+    public void threadRunFinished(ThreadEvent e) {
         // if FontMapReader..
-        if (FontMapReadEvent.class.isInstance(e))
-        {
+        if (FontMapReadEvent.class.isInstance(e)) {
             DesktopModel desktopModel =
                     getSelectedFrame().getModel();
             final FontMap fontMap = desktopModel.getFontMap();
@@ -1122,8 +983,7 @@ public class TabDesktop
             fireStatusPosted("FontMap Loaded");
         }
         // if Transliterator..
-        else if (TransliterateEvent.class.isInstance(e))
-        {
+        else if (TransliterateEvent.class.isInstance(e)) {
             // readFontMap the converted file
             getSelectedFrame().readOutputFile();
             // enable the convert action
@@ -1139,12 +999,10 @@ public class TabDesktop
     }
 
 
-    public void internalFrameClosing(InternalFrameEvent e)
-    {
+    public void internalFrameClosing(InternalFrameEvent e) {
         DesktopFrame desktopFrame =
                 (DesktopFrame) e.getInternalFrame();
-        if (JOptionPane.CANCEL_OPTION != saveDirty(desktopFrame))
-        {
+        if (JOptionPane.CANCEL_OPTION != saveDirty(desktopFrame)) {
             // when the frame closes, close the tab
             int index = getSelectedIndex();
             removeTabFrameAt(index);
@@ -1156,8 +1014,7 @@ public class TabDesktop
         enableCloseAction();
     }
 
-    public void internalFrameActivated(InternalFrameEvent e)
-    {
+    public void internalFrameActivated(InternalFrameEvent e) {
         // enable the view mapping and sample when the internal frame is shown
         MenuHandler.getInstance()
                 .getMenuItem(Resources.ACTION_VIEW_MAPPING)
@@ -1171,34 +1028,29 @@ public class TabDesktop
         enableCloseAction();
     }
 
-    public void internalFrameOpened(InternalFrameEvent e)
-    {
+    public void internalFrameOpened(InternalFrameEvent e) {
         // todo: this must be in activated
         // hacking it for now since the first frame we load by default is not
         // getting activated
         enableCloseAction();
     }
 
-    public void internalFrameClosed(InternalFrameEvent e)
-    {
+    public void internalFrameClosed(InternalFrameEvent e) {
         // todo: this must be in activated
         // hacking it for now since the first frame we load by default is not
         // getting activated
         enableCloseAction();
     }
 
-    public void internalFrameIconified(InternalFrameEvent e)
-    {
+    public void internalFrameIconified(InternalFrameEvent e) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void internalFrameDeiconified(InternalFrameEvent e)
-    {
+    public void internalFrameDeiconified(InternalFrameEvent e) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void internalFrameDeactivated(InternalFrameEvent e)
-    {
+    public void internalFrameDeactivated(InternalFrameEvent e) {
     }
 
 

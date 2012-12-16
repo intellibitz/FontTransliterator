@@ -35,6 +35,8 @@
  * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/KnownIssues.txt $
  */
 -->
+<!-- build 0.80 -->
+1. Performance is slow.
 
 <!-- build 0.73 -->
 1. Fontmap Tab shows the absolute path of Fontmap instead of name only.

@@ -10,9 +10,9 @@ Thank you for downloading STED!
 
 STED PLATFORM
 ========================
-Developed and Tested on JDK 1.6.0 on Fedora Core 6 Linux.
+Developed and Tested on JDK 1.7.0 on Ubuntu Linux.
     ** IMPORTANT: **
-JDK 1.6.0 or later is required for running STED 0.70 or later.
+JDK 1.7.0 or later is required for running STED 0.80 or later.
 
 Installing STED
 ========================
