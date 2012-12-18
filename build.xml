@@ -129,6 +129,7 @@
                 >
             <manifest>
                 <attribute name="Main-Class" value="intellibitz.sted.Main"/>
+                <attribute name="Class-Path" value="${STED-WIDGETS.JAR_NAME} ."/>
                 <attribute name="Built-By"
                            value="IntelliBitz Technologies., Muthu Ramadoss."/>
                 <section name="STED - Free OpenSource Transliterator/Editor.">

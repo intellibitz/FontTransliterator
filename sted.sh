@@ -7,92 +7,64 @@
 #-->
 ############################################################
 
+#
+# Normally, editing this script should not be required.
+# Only case is to set up JAVA_HOME if it's not already defined.
+#
+# To specify an alternative JVM, edit and uncomment the following
+# line and change the path accordingly.
 # ---------------------------------------------------------------------
 # Set the JAVA Installation Directory
 # Uncomment and set JAVA_HOME below to point to jdk if script fails to locate jdk
 # ---------------------------------------------------------------------
-#JAVA_HOME=/opt/tools/jdk1.7.0_10
+JAVA_HOME=/opt/tools/jdk1.7.0_10
 
-# ---------------------------------------------------------------------
+JAVA_EXE="java"
+if [ -n $JAVA_HOME ] ; then
+    _TMP="$JAVA_HOME/bin/java"
+    if [ -f "$_TMP" ] ; then
+        if [ -x "$_TMP" ] ; then
+            JAVA_EXE="$_TMP"
+        else
+            echo "Warning: $_TMP is not executable"
+        fi
+    else
+        echo "Warning: $_TMP does not exist"
+    fi
+fi
+if ! which "$JAVA_EXE" >/dev/null ; then
+    echo "Error: No Java Runtime Environment found"
+    echo "Please set the environment variable JAVA_HOME to the root directory of your SUN Java installation, e.g. by editing the 7th line in this launcher script."
+    exit 1
+fi
+
+#
+# Resolve the location of the JStock installation.
+# This includes resolving any symlinks.
+PRG=$0
+while [ -h "$PRG" ]; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '^.*-> \(.*\)$' 2>/dev/null`
+    if expr "$link" : '^/' 2> /dev/null >/dev/null; then
+        PRG="$link"
+    else
+        PRG="`dirname "$PRG"`/$link"
+    fi
+done
+
 # Before you run STED specify the location of the directory where STED is installed
 # In most cases you do not need to change the settings below.
 # ---------------------------------------------------------------------
 # ---------------------------------------------------------------------
 # Ensure STED_HOME points to the directory where the STED is installed.
 # ---------------------------------------------------------------------
-SCRIPT_LOCATION=$0
-READLINK=`which readlink`
-if [ -x "$READLINK" ]; then
-  while [ -L "$SCRIPT_LOCATION" ]; do
-    SCRIPT_LOCATION=`"$READLINK" -e "$SCRIPT_LOCATION"`
-  done
-fi
-
-STED_HOME=`dirname "$SCRIPT_LOCATION"`/..
-STED_BIN_HOME=`dirname "$SCRIPT_LOCATION"`
-
-# ---------------------------------------------------------------------
-# Locate a JDK installation directory which will be used to run the IDE.
-# Try (in order): IDEA_JDK, JDK_HOME, JAVA_HOME, "java" in PATH.
-# ---------------------------------------------------------------------
-if [ -n "$IDEA_JDK" -a -x "$IDEA_JDK/bin/java" ]; then
-  JDK="$IDEA_JDK"
-elif [ -n "$JDK_HOME" -a -x "$JDK_HOME/bin/java" ]; then
-  JDK="$JDK_HOME"
-elif [ -n "$JAVA_HOME" -a -x "$JAVA_HOME/bin/java" ]; then
-  JDK="$JAVA_HOME"
-else
-  JAVA_BIN_PATH=`which java`
-  if [ -n "$JAVA_BIN_PATH" ]; then
-    if [ -z "$JDK" -a -x "$READLINK" ]; then
-      JAVA_LOCATION=`"$READLINK" -f "$JAVA_BIN_PATH"`
-      case "$JAVA_LOCATION" in
-        */jre/bin/java)
-          JAVA_LOCATION=`echo "$JAVA_LOCATION" | xargs dirname | xargs dirname | xargs dirname` ;;
-        *)
-          JAVA_LOCATION=`echo "$JAVA_LOCATION" | xargs dirname | xargs dirname` ;;
-      esac
-      if [ -x "$JAVA_LOCATION/bin/java" ]; then
-        JDK="$JAVA_LOCATION"
-      fi
-    fi
-  fi
-fi
-
-if [ -z "$JDK" ]; then
-  echo
-  echo "No JDK found. Setting java executable to java"
-  echo
-	echo ---------------------------------------------------------------------
-	echo ERROR: JAVA_HOME invalid. Will use 'java' instead of the full path
-	echo NOTE:  Please set JAVA_HOME in 'sted.sh' if 'java' not in path.
-	echo ---------------------------------------------------------------------
-	JAVA_EXE=`which java`
-else
-    # ---------------------------------------------------------------------
-    # JAVA executable.. set from JDK
-    # ---------------------------------------------------------------------
-    JAVA_EXE=$JDK/bin/java
-fi
-
-#echo $JAVA_EXE
-eval $JAVA_EXE &> /dev/null
-#echo $?
-if [ $? -eq 0 ] ; then
-    echo "$JAVA_EXE is valid"
-else
-  echo "ERROR: cannot start STED."
-  echo "No JDK found. Please validate either IDEA_JDK, JDK_HOME or JAVA_HOME environment variable points to valid JDK installation."
-  echo
-  echo "Press Enter to continue."
-  read IGNORE
-  exit 1
-fi
+STED_HOME=`dirname "$PRG"`
+STED_BIN_HOME=$PRG
 
 #echo ---------------------------------------------------------------------
 #echo Please make sure 'sted.jar' & 'sted-widgets.jar' is in the 'bin' folder.
 #echo ---------------------------------------------------------------------
-CLASS_PATH="$STED_HOME/bin/sted.jar:$STED_HOME/bin/sted-widgets.jar:$STED_HOME"
+#CLASS_PATH="$STED_HOME/sted.jar:$STED_HOME/sted-widgets.jar:$STED_HOME"
 
 # ---------------------------------------------------------------------
 # Set STED path to customize
@@ -114,21 +86,22 @@ STED_CONSOLE_JVM_ARGS="-Dfontmap.file=fontmap.xml -Dinput.file=input.txt -Doutpu
 # ---------------------------------------------------------------------
 # You may specify your own JVM arguments in STED_JVM_ARGS variable.
 # ---------------------------------------------------------------------
-#STED_JVM_ARGS="-Xms128m"
+#STED_JVM_ARGS="-Xms128m -Xmx512m -XX:MaxPermSize=250m"
 STED_JVM_ARGS=
 
 # ---------------------------------------------------------------------
 # NO NEED TO CHANGE ANYTHING BELOW
 # ---------------------------------------------------------------------
-ALL_JVM_ARGS="$STED_JVM_ARGS -Dsted.home.path=$STED_HOME -Dsted.settings.path=$STED_SETTINGS_PATH -Dsted.icon.path=$STED_ICON_PATH -Dsted.resource.path=$STED_RESOURCE_PATH -Dsted.log.path=$STED_LOG_PATH"
+#ALL_JVM_ARGS="$STED_JVM_ARGS -Dsted.home.path=$STED_HOME -Dsted.settings.path=$STED_SETTINGS_PATH -Dsted.icon.path=$STED_ICON_PATH -Dsted.resource.path=$STED_RESOURCE_PATH -Dsted.log.path=$STED_LOG_PATH"
+ALL_JVM_ARGS=
 
 OLD_PATH=$PATH
-PATH=$STED_HOME/bin:$PATH
+PATH=$STED_HOME:$PATH
 
 # ---------------------------------------------------------------------
 # STED Main Class
 # ---------------------------------------------------------------------
-MAIN_CLASS_NAME=intellibitz.sted.Main
+#MAIN_CLASS_NAME=intellibitz.sted.Main
 
 # ---------------------------------------------------------------------
 # Launch STED Console
@@ -136,23 +109,17 @@ MAIN_CLASS_NAME=intellibitz.sted.Main
 #ALL_JVM_ARGS="$STED_CONSOLE_JVM_ARGS $ALL_JVM_ARGS"
 #"$JAVA_EXE" $JVM_ARGS -cp "$CLASS_PATH" $MAIN_CLASS_NAME -c $*
 
+OLD_DIR=`pwd`
+cd $STED_HOME
 # ---------------------------------------------------------------------
 # Launch STED GUI
 # ---------------------------------------------------------------------
 #"$JAVA_EXE" $ALL_JVM_ARGS -cp "$CLASS_PATH" $MAIN_CLASS_NAME $*
-  echo "$JAVA_EXE" "$ALL_JVM_ARGS" -cp "$CLASS_PATH" $MAIN_CLASS_NAME $*
-  eval "$JAVA_EXE" "$ALL_JVM_ARGS" -cp "$CLASS_PATH" $MAIN_CLASS_NAME $*
-# ---------------------------------------------------------------------
-# Run STED.
-# ---------------------------------------------------------------------
-#while true ; do
-#  echo "$JAVA_EXE" "$ALL_JVM_ARGS" -cp "$CLASS_PATH" -Djb.restart.code=88 $MAIN_CLASS_NAME $*
-#  eval "$JAVA_EXE" "$ALL_JVM_ARGS" -Djb.restart.code=88 -cp "$CLASS_PATH" $MAIN_CLASS_NAME $*
-# "$JAVA_EXE" "$ALL_JVM_ARGS" -Djb.restart.code=88 -cp "$CLASS_PATH" $MAIN_CLASS_NAME $*
-#  test $? -ne 88 && break
-#done
+echo $JAVA_EXE $ALL_JVM_ARGS -jar sted.jar $*
+$JAVA_EXE $ALL_JVM_ARGS -jar sted.jar $*
 
 PATH=$OLD_PATH
+cd $OLD_DIR
 ############################################################
 # <!--
 # /# #

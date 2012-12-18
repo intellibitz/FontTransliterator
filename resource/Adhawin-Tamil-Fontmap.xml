@@ -2,8 +2,8 @@
 <fontmap name="Adhawin-Tamil-fontmap.xml" version="0.73">
     <font>
         <font_from value="Adhawin-Tamil Regular"
-                   path="../resource/ADHAWIN.TTF"/>
-        <font_to value="Adhawin-Tamil Regular" path="../resource/ADHAWIN.TTF"/>
+                   path="./resource/ADHAWIN.TTF"/>
+        <font_to value="Adhawin-Tamil Regular" path="./resource/ADHAWIN.TTF"/>
     </font>
     <font_entry>
         <entry_from value="Nu"/>

@@ -45,37 +45,28 @@ import java.io.IOException;
 import java.util.logging.LogManager;
 
 
-public class STEDLogManager
-{
+public class STEDLogManager {
 
     private static LogManager logManager;
 
-    private STEDLogManager()
-    {
+    private STEDLogManager() {
     }
 
-    public static LogManager getLogmanager()
-    {
-        if (logManager == null)
-        {
+    public static LogManager getLogmanager() {
+        if (logManager == null) {
             logManager = LogManager.getLogManager();
-            try
-            {
+            try {
                 logManager.readConfiguration(
                         new BufferedInputStream(FileHelper.getInputStream
                                 (new File(FileHelper.suffixFileSeparator(
                                         System.getProperty(Resources.LOG_PATH,
-                                                "../log/")) +
+                                                "./log/")) +
                                         Resources
                                                 .getResource(
                                                         Resources.LOG_CONFIG_NAME)))));
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-            }
-            catch (SecurityException e)
-            {
+            } catch (SecurityException e) {
                 e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             }
         }

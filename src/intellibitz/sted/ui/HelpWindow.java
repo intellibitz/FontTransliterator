@@ -42,11 +42,7 @@ import intellibitz.sted.event.MessageEvent;
 import intellibitz.sted.util.FileHelper;
 import intellibitz.sted.util.Resources;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.JToolBar;
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
@@ -63,8 +59,7 @@ import java.util.logging.Logger;
 public class HelpWindow
         extends JFrame
         implements HyperlinkListener,
-        IMessageEventSource
-{
+        IMessageEventSource {
     private final JTextPane textPane;
     private final Stack<URL> currentPages;
     private final Stack<URL> backPages;
@@ -75,7 +70,7 @@ public class HelpWindow
     private URL homepage;
 
     private static final String HELP_INDEX = FileHelper.suffixFileSeparator
-            (System.getProperty(Resources.STED_HOME_PATH, "../")) + Resources
+            (System.getProperty(Resources.STED_HOME_PATH, "./")) + Resources
             .getResource(Resources.HELP_INDEX);
     private static final Logger logger =
             Logger.getLogger(HelpWindow.class.getName());
@@ -84,10 +79,8 @@ public class HelpWindow
     private MessageEvent messageEvent;
     private IMessageListener messageListener;
 
-    public static synchronized HelpWindow getInstance()
-    {
-        if (helpWindow == null)
-        {
+    public static synchronized HelpWindow getInstance() {
+        if (helpWindow == null) {
             helpWindow = new HelpWindow();
             helpWindow.setSize(600, 800);
         }
@@ -95,8 +88,7 @@ public class HelpWindow
     }
 
 
-    private HelpWindow()
-    {
+    private HelpWindow() {
         super(Resources.getResource(Resources.TITLE_HELP));
         setIconImage(Resources.getSystemResourceIcon(
                 Resources.getResource(Resources.ICON_HELP)).getImage());
@@ -107,10 +99,8 @@ public class HelpWindow
         jToolBar.setFloatable(false);
         homeButton = new JButton(Resources.getSystemResourceIcon(
                 Resources.getResource(Resources.ICON_HELP_HOME)));
-        homeButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        homeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 goHome();
             }
         });
@@ -119,10 +109,8 @@ public class HelpWindow
         jToolBar.add(homeButton);
         backButton = new JButton(Resources.getSystemResourceIcon(
                 Resources.getResource(Resources.ICON_HELP_BACK)));
-        backButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        backButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 goBack();
             }
         });
@@ -132,10 +120,8 @@ public class HelpWindow
         forwardButton = new JButton(
                 Resources.getSystemResourceIcon(
                         Resources.getResource(Resources.ICON_HELP_FORWARD)));
-        forwardButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        forwardButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 goForward();
             }
         });
@@ -160,10 +146,8 @@ public class HelpWindow
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
         });
@@ -172,107 +156,82 @@ public class HelpWindow
         pack();
     }
 
-    public void fireMessagePosted(String message)
-    {
+    public void fireMessagePosted(String message) {
         messageEvent.setMessage(message);
         messageListener.messagePosted(messageEvent);
     }
 
-    public void fireMessagePosted()
-    {
+    public void fireMessagePosted() {
         messageListener.messagePosted(messageEvent);
     }
 
-    public void addMessageListener(IMessageListener messageListener)
-    {
+    public void addMessageListener(IMessageListener messageListener) {
         this.messageListener = messageListener;
     }
 
-    private void goHome()
-    {
+    private void goHome() {
         // if first time, then should be the startup
-        if (homepage == null)
-        {
+        if (homepage == null) {
             go(HELP_INDEX);
             homepage = textPane.getPage();
-        }
-        else
-        {
+        } else {
             setURL(homepage);
         }
     }
 
-    private void goBack()
-    {
+    private void goBack() {
         final URL url = backPages.pop();
         // push the current page into the forward stack
-        if (currentPages.isEmpty())
-        {
+        if (currentPages.isEmpty()) {
             forwardPages.push(url);
-        }
-        else
-        {
+        } else {
             forwardPages.push(currentPages.pop());
         }
         setPage(url);
     }
 
-    private void goForward()
-    {
+    private void goForward() {
         final URL url = forwardPages.pop();
         // push the current page into the forward stack
-        if (currentPages.isEmpty())
-        {
+        if (currentPages.isEmpty()) {
             backPages.push(url);
-        }
-        else
-        {
+        } else {
             backPages.push(currentPages.pop());
         }
         setPage(url);
     }
 
-    private void setPage(URL url)
-    {
-        try
-        {
+    private void setPage(URL url) {
+        try {
             textPane.setPage(url);
             // push the current page
             currentPages.push(url);
             setButtonState();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.severe(e.getMessage());
             fireMessagePosted("Cannot set page " + e.getMessage());
         }
     }
 
-    private void setURL(URL url)
-    {
-        try
-        {
+    private void setURL(URL url) {
+        try {
             textPane.setPage(url);
             // pop the previous page and push it into back
-            if (!currentPages.isEmpty())
-            {
+            if (!currentPages.isEmpty()) {
                 backPages.push(currentPages.pop());
             }
             // clear the forward currentPages
             forwardPages.clear();
             // push the current page
             currentPages.push(url);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.severe("Cannot set page " + url);
             fireMessagePosted("Cannot set page " + url);
         }
         setButtonState();
     }
 
-    private void setButtonState()
-    {
+    private void setButtonState() {
         backButton.setEnabled(!backPages.isEmpty());
         forwardButton.setEnabled(!forwardPages.isEmpty());
         final URL index = textPane.getPage();
@@ -281,53 +240,37 @@ public class HelpWindow
     }
 
 
-    private void go(String path)
-    {
-        try
-        {
-            if (path != null)
-            {
+    private void go(String path) {
+        try {
+            if (path != null) {
                 // check if the path is relative or absolute
                 // if relative, then get the absolute path.. this happens the first time showing Help
-                if (path.indexOf(":") == -1)
-                {
+                if (path.indexOf(":") == -1) {
                     final File file = new File(path);
                     setURL(new URL("file:///" + file.getAbsolutePath()));
-                }
-                else
-                {
+                } else {
                     setURL(new URL("file:///" + path));
                 }
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.throwing(getClass().getName(), "actionPerformed", e);
             fireMessagePosted("Cannot go to page - IOException occured: " +
                     e.getMessage());
         }
     }
 
-    private void go(URL url)
-    {
-        if (url.getProtocol().startsWith("file"))
-        {
+    private void go(URL url) {
+        if (url.getProtocol().startsWith("file")) {
             go(url.getPath());
-        }
-        else if (url.getProtocol().startsWith("http"))
-        {
+        } else if (url.getProtocol().startsWith("http")) {
             // TODO: NEED TO IMPLEMENT
-        }
-        else
-        {
+        } else {
             setURL(url);
         }
     }
 
-    public void hyperlinkUpdate(HyperlinkEvent e)
-    {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
-        {
+    public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             go(e.getURL());
         }
     }

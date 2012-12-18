@@ -45,6 +45,19 @@ Contact STED
   http://groups.google.com/group/etoe
   http://sted.sourceforge.net
   sted@intellibitz.com
+
+
+./bin folder contains the startup-scripts to run STED.
+
+sted.bat - for windows.
+sted.sh - for unix flavours.
+
+The Sted executables are also placed in this folder during build time and would be available at distribution.
+
+Currently the following 2 files are delivered:
+
+sted.jar
+sted-widgets.jar
 <!--
 /**
  * Copyright (C) IntelliBitz Technologies.,  Muthu Ramadoss

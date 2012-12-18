@@ -42,56 +42,56 @@
 <settings name="sted.xml" version="0.80">
     <option
             name="icon.sted"
-            value="../images/sted.gif"
+            value="./images/sted.gif"
             />
     <option
             name="icon.file.normal.state"
-            value="../images/gflag.gif"
+            value="./images/gflag.gif"
             />
     <option
             name="icon.file.edit.state"
-            value="../images/rflag.gif"
+            value="./images/rflag.gif"
             />
     <option
             name="icon.help"
-            value="../images/help.gif"
+            value="./images/help.gif"
             />
     <option
             name="icon.help.home"
-            value="../images/home.gif"
+            value="./images/home.gif"
             />
     <option
             name="icon.help.back"
-            value="../images/back.gif"
+            value="./images/back.gif"
             />
     <option
             name="icon.help.forward"
-            value="../images/forward.gif"
+            value="./images/forward.gif"
             />
     <option
             name="icon.status.lock"
-            value="../images/lock.gif"
+            value="./images/lock.gif"
             />
     <option
             name="icon.status.unlock"
-            value="../images/unlock.gif"
+            value="./images/unlock.gif"
             />
     <!--    @since 0.62 -->
     <option
             name="icon.gc"
-            value="../images/gc.gif"
+            value="./images/gc.gif"
             />
     <option
             name="icon.gc.rollover"
-            value="../images/gc2.gif"
+            value="./images/gc2.gif"
             />
     <option
             name="icon.file.input"
-            value="../images/input.gif"
+            value="./images/input.gif"
             />
     <option
             name="icon.file.output"
-            value="../images/output.gif"
+            value="./images/output.gif"
             />
     <!--    @since -->
     <option
