@@ -86,14 +86,14 @@ STED_CONSOLE_JVM_ARGS="-Dfontmap.file=fontmap.xml -Dinput.file=input.txt -Doutpu
 # ---------------------------------------------------------------------
 # You may specify your own JVM arguments in STED_JVM_ARGS variable.
 # ---------------------------------------------------------------------
-#STED_JVM_ARGS="-Xms128m -Xmx512m -XX:MaxPermSize=250m"
-STED_JVM_ARGS=
+STED_JVM_ARGS="-Xms128m -Xmx512m"
+#STED_JVM_ARGS=
 
 # ---------------------------------------------------------------------
 # NO NEED TO CHANGE ANYTHING BELOW
 # ---------------------------------------------------------------------
 #ALL_JVM_ARGS="$STED_JVM_ARGS -Dsted.home.path=$STED_HOME -Dsted.settings.path=$STED_SETTINGS_PATH -Dsted.icon.path=$STED_ICON_PATH -Dsted.resource.path=$STED_RESOURCE_PATH -Dsted.log.path=$STED_LOG_PATH"
-ALL_JVM_ARGS=
+ALL_JVM_ARGS=$STED_JVM_ARGS
 
 OLD_PATH=$PATH
 PATH=$STED_HOME:$PATH
