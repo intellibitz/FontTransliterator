@@ -30,6 +30,9 @@
  * <p>
  * $Id:FontInfo.java 55 2007-05-19 05:55:34Z sushmu $
  * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/fontmap/FontInfo.java $
+ * <p>
+ * $Id:FontInfo.java 55 2007-05-19 05:55:34Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/fontmap/FontInfo.java $
  */
 
 /**

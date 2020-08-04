@@ -204,7 +204,7 @@
         <!-- WINDOWS -->
         <exec dir="${OUT_BIN_PATH}" executable="sted.bat"/>
         <!-- LINUX -->
-<!--        <exec dir="${OUT_BIN_PATH}" executable="./sted.sh"/>-->
+        <!--        <exec dir="${OUT_BIN_PATH}" executable="./sted.sh"/>-->
     </target>
 
 </project>

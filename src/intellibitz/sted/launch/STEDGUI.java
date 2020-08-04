@@ -30,6 +30,9 @@
  * <p>
  * $Id: STEDGUI.java 56 2007-05-19 06:47:59Z sushmu $
  * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/launch/STEDGUI.java $
+ * <p>
+ * $Id: STEDGUI.java 56 2007-05-19 06:47:59Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/launch/STEDGUI.java $
  */
 
 /**

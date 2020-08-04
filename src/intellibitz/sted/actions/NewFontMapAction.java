@@ -30,6 +30,9 @@
  * <p>
  * $Id:NewFontMapAction.java 55 2007-05-19 05:55:34Z sushmu $
  * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/actions/NewFontMapAction.java $
+ * <p>
+ * $Id:NewFontMapAction.java 55 2007-05-19 05:55:34Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/actions/NewFontMapAction.java $
  */
 
 /**

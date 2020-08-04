@@ -30,6 +30,9 @@
  * <p>
  * $Id: StatusPanel.java 56 2007-05-19 06:47:59Z sushmu $
  * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/ui/StatusPanel.java $
+ * <p>
+ * $Id: StatusPanel.java 56 2007-05-19 06:47:59Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/ui/StatusPanel.java $
  */
 
 /**
