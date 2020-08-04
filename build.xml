@@ -56,11 +56,11 @@
     </target>
 
     <path id="SOURCE_PATH">
-        <pathelement location="${SOURCE_PATH}"/>
+        <pathelement path="${SOURCE_PATH}"/>
     </path>
 
     <path id="CLASS_PATH">
-        <pathelement location="${OUT_PROD_PATH}"/>
+        <pathelement path="${OUT_PROD_PATH}"/>
     </path>
 
     <target name="copy.resource" depends="init">
@@ -71,7 +71,7 @@
                     defaultexcludes="true"
                     />
         </copy>
-        <chmod file="${OUT_BIN_PATH}/sted.sh" perm="ugo+rx"/>
+        <chmod file="${OUT_BIN_PATH}/sted.sh" perm="ugo+rx" />
     </target>
 
     <target name="compile" depends="init" description="compiles source">
