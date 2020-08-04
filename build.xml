@@ -67,7 +67,7 @@
         <copy todir="${OUT_PATH}" verbose="true">
             <fileset
                     dir="${PROJECT_PATH}"
-                    excludes="**/${OUT}/**, **/${DIST}/**, **/${TEST}/**, **/.idea/**"
+                    excludes="**/${OUT}/**, **/${DIST}/**, **/${TEST}/**, **/.idea/**, **/.gradle/**, **/build/**"
                     defaultexcludes="true"
             />
         </copy>
@@ -202,9 +202,9 @@
 
     <target name="run-sted" depends="deploy-sted" description="runs sted">
         <!-- WINDOWS -->
-        <!--<exec dir="${OUT_BIN_PATH}" executable="sted.bat"/>-->
+        <exec dir="${OUT_BIN_PATH}" executable="sted.bat"/>
         <!-- LINUX -->
-        <exec dir="${OUT_BIN_PATH}" executable="./sted.sh"/>
+<!--        <exec dir="${OUT_BIN_PATH}" executable="./sted.sh"/>-->
     </target>
 
 </project>

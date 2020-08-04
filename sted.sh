@@ -17,7 +17,7 @@
 # Set the JAVA Installation Directory
 # Uncomment and set JAVA_HOME below to point to jdk if script fails to locate jdk
 # ---------------------------------------------------------------------
-JAVA_HOME=/opt/tools/jdk1.7.0_10
+JAVA_HOME=/opt/tools/jdk-14.02
 
 JAVA_EXE="java"
 if [ -n $JAVA_HOME ] ; then
