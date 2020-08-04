@@ -6,27 +6,30 @@
  * +91 44 2247 5106
  * http://groups.google.com/group/etoe
  * http://sted.sourceforge.net
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
+ * <p>
  * STED, Copyright (C) 2007 IntelliBitz Technologies
  * STED comes with ABSOLUTELY NO WARRANTY;
  * This is free software, and you are welcome
  * to redistribute it under the GNU GPL conditions;
- *
+ * <p>
  * Visit http://www.gnu.org/ for GPL License terms.
+ * <p>
+ * $Id:FontMapEntries.java 55 2007-05-19 05:55:34Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/fontmap/FontMapEntries.java $
  */
 
 /**
@@ -40,24 +43,14 @@ import intellibitz.sted.event.FontMapEntriesChangeEvent;
 import intellibitz.sted.event.IFontMapEntriesChangeListener;
 
 import javax.swing.event.EventListenerList;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA. User: Muthu Ramadoss Date: Oct 30, 2003 Time:
  * 12:09:17 AM To change this template use Options | File Templates.
  */
 public class FontMapEntries
-        implements ITransliterate.IEntries
-{
+        implements ITransliterate.IEntries {
     // unique key
     private Set<String> word1;
     // unique value
@@ -75,8 +68,7 @@ public class FontMapEntries
     private FontMapEntriesChangeEvent fontMapEntriesChangeEvent;
     private EventListenerList fontMapEntriesChangeListeners;
 
-    public FontMapEntries()
-    {
+    public FontMapEntries() {
         directEntries = new TreeMap<String, FontMapEntry>();
         allEntries = new HashMap<String, FontMapEntry>();
         ruleEntries = new TreeMap<String, FontMapEntry>();
@@ -91,8 +83,7 @@ public class FontMapEntries
     /**
      * Removes all mappings from this TreeMap.
      */
-    public void clear()
-    {
+    public void clear() {
         directEntries.clear();
         allEntries.clear();
         ruleEntries.clear();
@@ -102,8 +93,7 @@ public class FontMapEntries
         clearUndoRedo();
     }
 
-    public void clearUndoRedo()
-    {
+    public void clearUndoRedo() {
         undo.clear();
         redo.clear();
     }
@@ -114,8 +104,7 @@ public class FontMapEntries
      * @param oldKey
      * @param fontMapEntry
      */
-    public void reKey(FontMapEntry oldKey, FontMapEntry fontMapEntry)
-    {
+    public void reKey(FontMapEntry oldKey, FontMapEntry fontMapEntry) {
         // remove the old entry
         remove(oldKey);
         // add the new edited entry
@@ -125,28 +114,22 @@ public class FontMapEntries
     /**
      * @param entry
      */
-    public boolean add(FontMapEntry entry)
-    {
+    public boolean add(FontMapEntry entry) {
         // if valid entry, and entry not already added
-        if (isValid(entry))
-        {
+        if (isValid(entry)) {
             addEntry(entry);
             return true;
         }
         return false;
     }
 
-    private void addEntry(FontMapEntry entry)
-    {
+    private void addEntry(FontMapEntry entry) {
         final String key = entry.getFrom();
         final String value = entry.getTo();
-        if (entry.isRulesSet())
-        {
+        if (entry.isRulesSet()) {
             // rule entries can have the same key with different set of rules
             ruleEntries.put(entry.getId(), entry);
-        }
-        else
-        {
+        } else {
             // key must be unique for entries without rules, so store by key
             directEntries.put(key, entry);
         }
@@ -159,8 +142,7 @@ public class FontMapEntries
         fireFontMapEntriesChangeEvent();
     }
 
-    public FontMapEntry remove(String id)
-    {
+    public FontMapEntry remove(String id) {
         FontMapEntry fontMapEntry = remove(allEntries.get(id));
         fireFontMapEntriesChangeEvent();
         return fontMapEntry;
@@ -170,17 +152,14 @@ public class FontMapEntries
      * @param entry
      * @return
      */
-    private FontMapEntry remove(FontMapEntry entry)
-    {
-        if (null == entry)
-        {
+    private FontMapEntry remove(FontMapEntry entry) {
+        if (null == entry) {
             return null;
         }
         // try rule directEntries first
         FontMapEntry removed = ruleEntries.remove(entry.getId());
         // if not try blank directEntries
-        if (removed == null)
-        {
+        if (removed == null) {
             removed = directEntries.remove(entry.getFrom());
         }
         word1.remove(entry.getFrom());
@@ -194,13 +173,11 @@ public class FontMapEntries
         return removed;
     }
 
-    public Collection remove(Collection<FontMapEntry> vals)
-    {
+    public Collection remove(Collection<FontMapEntry> vals) {
         final Iterator<FontMapEntry> iterator = vals.iterator();
         final ArrayList<FontMapEntry> removedEntries =
                 new ArrayList<FontMapEntry>(vals.size());
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             removedEntries.add(remove(iterator.next()));
         }
         fireFontMapEntriesChangeEvent();
@@ -213,15 +190,12 @@ public class FontMapEntries
      * @param word
      * @return
      */
-    public List<FontMapEntry> isRuleFound(String word)
-    {
+    public List<FontMapEntry> isRuleFound(String word) {
         final Iterator<FontMapEntry> iterator = ruleEntries.values().iterator();
         final List<FontMapEntry> list = new ArrayList<FontMapEntry>();
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             final FontMapEntry entry = iterator.next();
-            if (entry != null && word.equals(entry.getFrom()))
-            {
+            if (entry != null && word.equals(entry.getFrom())) {
                 list.add(entry);
             }
         }
@@ -233,8 +207,7 @@ public class FontMapEntries
      * @return true if the entry is valid and can be added to this collection,
      *         false otherwise
      */
-    public boolean isValid(FontMapEntry entry)
-    {
+    public boolean isValid(FontMapEntry entry) {
         return entry != null && entry.isValid() &&
                 (!entry.isRulesSet() ?
                         !directEntries.containsKey(entry.getFrom()) : true) &&
@@ -248,46 +221,36 @@ public class FontMapEntries
      * @return true if the entry is valid and can be added to this collection,
      *         false otherwise
      */
-    public boolean isValidEdit(FontMapEntry entry)
-    {
+    public boolean isValidEdit(FontMapEntry entry) {
         return entry != null && entry.isValid() &&
                 !allEntries.containsValue(entry);
     }
 
-    public ITransliterate.IEntry getDirectMapping(String word)
-    {
+    public ITransliterate.IEntry getDirectMapping(String word) {
         FontMapEntry entry = directEntries.get(word);
-        if (entry != null)
-        {
+        if (entry != null) {
             entry = findDirectMapping(entry, entry);
         }
         return entry;
     }
 
     private FontMapEntry findDirectMapping(FontMapEntry entry,
-            FontMapEntry root)
-    {
+                                           FontMapEntry root) {
         final FontMapEntry tmp = directEntries.get(entry.getTo());
-        if (tmp == null || tmp.getTo().equals(root.getFrom()))
-        {
+        if (tmp == null || tmp.getTo().equals(root.getFrom())) {
             return entry;
-        }
-        else
-        {
+        } else {
             entry = findDirectMapping(tmp, root);
         }
         return entry;
     }
 
-    public ITransliterate.IEntry getReverseMapping(String word)
-    {
+    public ITransliterate.IEntry getReverseMapping(String word) {
         // match the value for reverse transliterate
         // if value matched, then return the key
-        for (FontMapEntry fontMapEntry : directEntries.values())
-        {
+        for (FontMapEntry fontMapEntry : directEntries.values()) {
             FontMapEntry entry = fontMapEntry;
-            if (entry.getTo().equals(word))
-            {
+            if (entry.getTo().equals(word)) {
                 entry = findReverseMapping(entry, entry);
                 return entry;
             }
@@ -296,88 +259,71 @@ public class FontMapEntries
     }
 
     private FontMapEntry findReverseMapping(FontMapEntry entry,
-            FontMapEntry root)
-    {
+                                            FontMapEntry root) {
         // match the value for reverse transliterate
         // if value matched, then return the key
         final Iterator<FontMapEntry> entries =
                 directEntries.values().iterator();
         FontMapEntry tmp = null;
-        while (entries.hasNext())
-        {
+        while (entries.hasNext()) {
             final FontMapEntry val = entries.next();
-            if (val.getTo().equals(entry.getFrom()))
-            {
+            if (val.getTo().equals(entry.getFrom())) {
                 tmp = val;
                 break;
             }
         }
-        if (tmp == null || tmp.getFrom().equals(root.getTo()))
-        {
+        if (tmp == null || tmp.getFrom().equals(root.getTo())) {
             return entry;
-        }
-        else
-        {
+        } else {
             entry = findReverseMapping(tmp, root);
         }
         return entry;
     }
 
-    public boolean isInWord1(String word)
-    {
+    public boolean isInWord1(String word) {
         return word1.contains(word);
     }
 
-    public boolean isInWord2(String word)
-    {
+    public boolean isInWord2(String word) {
         return word2.contains(word);
     }
 
-    public Iterator<String> getAllWords()
-    {
+    public Iterator<String> getAllWords() {
         return words.iterator();
     }
 
-    public Iterator<String> getWord2()
-    {
+    public Iterator<String> getWord2() {
         return word2.iterator();
     }
 
-    public Stack<FontMapEntry> getUndo()
-    {
+    public Stack<FontMapEntry> getUndo() {
         return undo;
     }
 
-    public Stack<FontMapEntry> getRedo()
-    {
+    public Stack<FontMapEntry> getRedo() {
         return redo;
     }
 
-    public Collection<FontMapEntry> values()
-    {
+    public Collection<FontMapEntry> values() {
         return allEntries.values();
     }
 
-    public int size()
-    {
+    public int size() {
         return allEntries.size();
     }
 
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return allEntries.isEmpty();
     }
 
     public void addFontMapEntriesChangeListener(
-            IFontMapEntriesChangeListener changeListener)
-    {
+            IFontMapEntriesChangeListener changeListener) {
         fontMapEntriesChangeListeners
                 .add(IFontMapEntriesChangeListener.class, changeListener);
     }
 
     public void removeFontMapEntriesChangeListener(
-            IFontMapEntriesChangeListener changeListener)
-    {
+            IFontMapEntriesChangeListener changeListener) {
         fontMapEntriesChangeListeners
                 .remove(IFontMapEntriesChangeListener.class, changeListener);
     }
@@ -386,20 +332,16 @@ public class FontMapEntries
     // notification on this event type.  The event instance
     // is lazily created using the parameters passed into
     // the fire method.
-    private void fireFontMapEntriesChangeEvent()
-    {
+    private void fireFontMapEntriesChangeEvent() {
         // Guaranteed to return a non-null array
         final Object[] listeners =
                 fontMapEntriesChangeListeners.getListenerList();
         // Process the listeners last to first, notifying
         // those that are interested in this event
-        for (int i = listeners.length - 2; i >= 0; i -= 2)
-        {
-            if (listeners[i] == IFontMapEntriesChangeListener.class)
-            {
+        for (int i = listeners.length - 2; i >= 0; i -= 2) {
+            if (listeners[i] == IFontMapEntriesChangeListener.class) {
                 // Lazily create the event:
-                if (fontMapEntriesChangeEvent == null)
-                {
+                if (fontMapEntriesChangeEvent == null) {
                     fontMapEntriesChangeEvent =
                             new FontMapEntriesChangeEvent(this);
                 }

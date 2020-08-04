@@ -95,7 +95,7 @@
         <menu
                 name="FontMap"
                 mnemonic="F"
-                >
+        >
             <menuitem
                     name="New"
                     mnemonic="N"
@@ -104,7 +104,7 @@
                     icon="./images/new.png"
                     action="intellibitz.sted.actions.NewFontMapAction"
                     actionCommand="New"
-                    />
+            />
             <menuitem
                     name="Open..."
                     mnemonic="O"
@@ -113,14 +113,14 @@
                     icon="./images/load.png"
                     action="intellibitz.sted.actions.OpenFontMapAction"
                     actionCommand="Open..."
-                    />
+            />
             <seperator/>
             <menu
                     name="ReOpen"
                     mnemonic="O"
                     action="intellibitz.sted.actions.ReOpenAction"
                     actionEnabled="false"
-                    >
+            >
                 <seperator/>
                 <menuitem
                         name="Clear List"
@@ -129,7 +129,7 @@
                         actionCommand="ClearList"
                         actionEnabled="true"
                         toolButtonVisible="false"
-                        />
+                />
             </menu>
             <seperator/>
             <menuitem
@@ -141,7 +141,7 @@
                     action="intellibitz.sted.actions.SaveFontMapAction"
                     actionCommand="Save"
                     actionEnabled="false"
-                    />
+            />
             <menuitem
                     name="Save As..."
                     mnemonic="A"
@@ -151,7 +151,7 @@
                     actionCommand="Save As..."
                     actionEnabled="false"
                     toolButtonVisible="false"
-                    />
+            />
             <seperator/>
             <menuitem
                     name="ReLoad from Disk"
@@ -163,7 +163,7 @@
                     actionCommand="ReLoad"
                     actionEnabled="false"
                     toolButtonVisible="false"
-                    />
+            />
             <seperator/>
             <menuitem
                     name="Close"
@@ -175,7 +175,7 @@
                     actionCommand="Close"
                     actionEnabled="false"
                     toolButtonVisible="false"
-                    />
+            />
             <seperator/>
             <menuitem
                     name="Exit"
@@ -184,12 +184,12 @@
                     action="intellibitz.sted.actions.ExitAction"
                     actionCommand="Exit"
                     toolButtonVisible="false"
-                    />
+            />
         </menu>
         <menu
                 name="Edit"
                 mnemonic="E"
-                >
+        >
             <menuitem
                     name="Undo"
                     mnemonic="u"
@@ -199,7 +199,7 @@
                     action="intellibitz.sted.actions.UndoAction"
                     actionEnabled="false"
                     actionCommand="Undo"
-                    />
+            />
             <menuitem
                     name="Redo"
                     mnemonic="r"
@@ -209,7 +209,7 @@
                     action="intellibitz.sted.actions.RedoAction"
                     actionEnabled="false"
                     actionCommand="Redo"
-                    />
+            />
             <seperator/>
             <menuitem
                     name="Cut"
@@ -220,7 +220,7 @@
                     action="intellibitz.sted.actions.CutAction"
                     actionCommand="Cut"
                     actionEnabled="false"
-                    />
+            />
             <menuitem
                     name="Copy"
                     mnemonic="C"
@@ -230,7 +230,7 @@
                     action="intellibitz.sted.actions.CopyAction"
                     actionCommand="Copy"
                     actionEnabled="false"
-                    />
+            />
             <menuitem
                     name="Paste"
                     mnemonic="P"
@@ -240,7 +240,7 @@
                     action="intellibitz.sted.actions.PasteAction"
                     actionCommand="Paste"
                     actionEnabled="false"
-                    />
+            />
             <seperator/>
             <menuitem
                     name="Select All"
@@ -251,7 +251,7 @@
                     actionCommand="Select All"
                     actionEnabled="false"
                     toolButtonVisible="false"
-                    />
+            />
             <seperator/>
             <menuitem
                     name="Delete"
@@ -263,12 +263,12 @@
                     actionCommand="Delete"
                     actionEnabled="false"
                     toolButtonVisible="false"
-                    />
+            />
         </menu>
         <menu
                 name="Transliterate"
                 mnemonic="T"
-                >
+        >
             <menuitem
                     name="Input"
                     mnemonic="I"
@@ -278,7 +278,7 @@
                     action="intellibitz.sted.actions.FileSelectAction"
                     actionEnabled="false"
                     actionCommand="Input"
-                    />
+            />
             <menuitem
                     name="Output"
                     mnemonic="O"
@@ -288,7 +288,7 @@
                     action="intellibitz.sted.actions.FileSelectAction"
                     actionEnabled="false"
                     actionCommand="Output"
-                    />
+            />
             <seperator/>
             <menuitem
                     name="Convert"
@@ -299,7 +299,7 @@
                     action="intellibitz.sted.actions.TransliterateAction"
                     actionCommand="Convert"
                     actionEnabled="false"
-                    />
+            />
             <menuitem
                     name="Stop"
                     mnemonic="S"
@@ -309,12 +309,12 @@
                     action="intellibitz.sted.actions.TransliterateStopAction"
                     actionCommand="Stop"
                     actionEnabled="false"
-                    />
+            />
         </menu>
         <menu
                 name="Options"
                 mnemonic="O"
-                >
+        >
             <menuitem
                     name="Reverse Transliterate"
                     type="javax.swing.JCheckBoxMenuItem"
@@ -326,7 +326,7 @@
                     actionMode="off"
                     toolButton="javax.swing.JCheckBox"
                     toolButtonVisible="false"
-                    />
+            />
             <menuitem
                     name="Preserve &lt;Tags&gt;"
                     type="javax.swing.JCheckBoxMenuItem"
@@ -338,18 +338,18 @@
                     actionMode="off"
                     toolButton="javax.swing.JCheckBox"
                     toolButtonTextVisible="true"
-                    />
+            />
             <seperator/>
             <menu
                     name="Look &amp; Feel"
                     mnemonic="L"
-                    >
+            >
             </menu>
         </menu>
         <menu
                 name="View"
                 mnemonic="V"
-                >
+        >
             <menuitem
                     name="Toolbar"
                     type="javax.swing.JCheckBoxMenuItem"
@@ -359,7 +359,7 @@
                     action="intellibitz.sted.actions.ViewAction$ViewToolBar"
                     actionCommand="ViewTool"
                     toolButtonVisible="false"
-                    />
+            />
             <menuitem
                     name="Status Bar"
                     type="javax.swing.JCheckBoxMenuItem"
@@ -369,7 +369,7 @@
                     action="intellibitz.sted.actions.ViewAction$ViewStatus"
                     actionCommand="ViewStatus"
                     toolButtonVisible="false"
-                    />
+            />
             <seperator/>
             <menuitem
                     name="Mapping Rules"
@@ -381,7 +381,7 @@
                     actionCommand="ViewMapping"
                     actionEnabled="false"
                     toolButtonVisible="false"
-                    />
+            />
             <menuitem
                     name="Mapping Preview"
                     type="javax.swing.JCheckBoxMenuItem"
@@ -392,17 +392,17 @@
                     actionCommand="ViewSample"
                     actionEnabled="false"
                     toolButtonVisible="false"
-                    />
+            />
         </menu>
         <menu
                 name="Samples"
                 mnemonic="S"
-                >
+        >
         </menu>
         <menu
                 name="Help"
                 mnemonic="H"
-                >
+        >
             <menuitem
                     name="Help Topics"
                     mnemonic="T"
@@ -411,7 +411,7 @@
                     icon="./images/help.png"
                     action="intellibitz.sted.actions.HelpAction"
                     actionCommand="Help"
-                    />
+            />
             <seperator/>
             <menuitem
                     name="About"
@@ -420,34 +420,34 @@
                     icon="./images/sted.gif"
                     action="intellibitz.sted.actions.AboutAction"
                     actionCommand="About"
-                    />
+            />
         </menu>
 
         <popup_menu name="Mapping">
             <menuitemref
                     name="Undo"
-                    />
+            />
             <menuitemref
                     name="Redo"
-                    />
+            />
             <seperator/>
             <menuitemref
                     name="Cut"
-                    />
+            />
             <menuitemref
                     name="Copy"
-                    />
+            />
             <menuitemref
                     name="Paste"
-                    />
+            />
             <seperator/>
             <menuitemref
                     name="Select All"
-                    />
+            />
             <seperator/>
             <menuitemref
                     name="Delete"
-                    />
+            />
         </popup_menu>
     </menubar>
 

@@ -6,27 +6,30 @@
  * +91 44 2247 5106
  * http://groups.google.com/group/etoe
  * http://sted.sourceforge.net
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
+ * <p>
  * STED, Copyright (C) 2007 IntelliBitz Technologies
  * STED comes with ABSOLUTELY NO WARRANTY;
  * This is free software, and you are welcome
  * to redistribute it under the GNU GPL conditions;
- *
+ * <p>
  * Visit http://www.gnu.org/ for GPL License terms.
+ * <p>
+ * $Id: MappingEntryPanel.java 56 2007-05-19 06:47:59Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/ui/MappingEntryPanel.java $
  */
 
 /**
@@ -50,26 +53,10 @@ import intellibitz.sted.util.Resources;
 import intellibitz.sted.widgets.DocumentListenerButton;
 import intellibitz.sted.widgets.FontChangeTextField;
 
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelListener;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import javax.swing.event.*;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Iterator;
@@ -80,8 +67,7 @@ public class MappingEntryPanel
         implements FontMapChangeListener,
         ItemListener,
         ListSelectionListener,
-        DocumentListener
-{
+        DocumentListener {
     private FontMap fontMap;
     private JTable entryTable;
     private JComboBox followedCombo;
@@ -98,13 +84,11 @@ public class MappingEntryPanel
     private MappingPopupListener directMapPopupListener;
     private EntryAction entryAction;
 
-    public MappingEntryPanel()
-    {
+    public MappingEntryPanel() {
         super();
     }
 
-    public void init()
-    {
+    public void init() {
         final TitledBorder titledBorder = BorderFactory.createTitledBorder(
                 Resources.getResource(Resources.TITLE_MAPPING));
         titledBorder.setTitleJustification(TitledBorder.CENTER);
@@ -142,8 +126,7 @@ public class MappingEntryPanel
         word1.requestFocus();
     }
 
-    public void load()
-    {
+    public void load() {
         mappingRules.load();
         directMapPopupListener.load();
         loadTable();
@@ -152,8 +135,7 @@ public class MappingEntryPanel
         word1.requestFocus();
     }
 
-    private void initTable()
-    {
+    private void initTable() {
         // Create a model of the data.
         mappingTableModel = new MappingTableModel();
         entryTable = new JTable(mappingTableModel);
@@ -187,54 +169,43 @@ public class MappingEntryPanel
         mappingTableModel.addTableModelListener(word1);
     }
 
-    public void loadTable()
-    {
+    public void loadTable() {
         addTableModelListeners();
         setTableColumnWidth();
     }
 
-    public MappingRulesPanel getMappingRules()
-    {
+    public MappingRulesPanel getMappingRules() {
         return mappingRules;
     }
 
-    private void addTableModelListeners()
-    {
+    private void addTableModelListeners() {
         final Map<String, Action> actions =
                 MenuHandler.getInstance().getActions();
-        for (Action action : actions.values())
-        {
-            if (TableModelListenerAction.class.isInstance(action))
-            {
+        for (Action action : actions.values()) {
+            if (TableModelListenerAction.class.isInstance(action)) {
                 addTableModelListener((TableModelListener) action);
             }
-            if (TableRowsSelectAction.class.isInstance(action))
-            {
+            if (TableRowsSelectAction.class.isInstance(action)) {
                 addListSelectionListener((ListSelectionListener) action);
                 ((TableRowsSelectAction) action).setTable(entryTable);
             }
         }
     }
 
-    public void addTableModelListener(TableModelListener tableModelListener)
-    {
+    public void addTableModelListener(TableModelListener tableModelListener) {
         mappingTableModel.addTableModelListener(tableModelListener);
     }
 
     public void addListSelectionListener(
-            ListSelectionListener listSelectionListener)
-    {
+            ListSelectionListener listSelectionListener) {
         entryTable.getSelectionModel()
                 .addListSelectionListener(listSelectionListener);
     }
 
-    private void setTableColumnWidth()
-    {
+    private void setTableColumnWidth() {
         final int count = mappingTableModel.getColumnCount();
-        for (int i = 0; i < count; i++)
-        {
-            switch (i)
-            {
+        for (int i = 0; i < count; i++) {
+            switch (i) {
                 default:
                     entryTable.getColumnModel().getColumn(i).setPreferredWidth
                             (mappingTableModel.getColumnName(i).length());
@@ -250,8 +221,7 @@ public class MappingEntryPanel
         }
     }
 
-    public void setFontMap(FontMap fontMap)
-    {
+    public void setFontMap(FontMap fontMap) {
         this.fontMap = fontMap;
         reset();
         firePreviewTableDataChanged();
@@ -262,8 +232,7 @@ public class MappingEntryPanel
         updateUI();
     }
 
-    private void reset()
-    {
+    private void reset() {
         clear();
         word1.setFont(fontMap.getFont1());
         word2.setFont(fontMap.getFont2());
@@ -272,16 +241,14 @@ public class MappingEntryPanel
         sym1Combo.addItem(Resources.EMPTY_STRING);
         sym2Combo.addItem(Resources.EMPTY_STRING);
         final Iterator<String> iterator = fontMap.getEntries().getAllWords();
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             final Object next = iterator.next();
             sym2Combo.addItem(next);
             precededCombo.addItem(next);
             followedCombo.addItem(next);
         }
         final Iterator<String> iter = fontMap.getEntries().getWord2();
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             sym1Combo.addItem(iter.next());
         }
         sym1Combo.setFont(fontMap.getFont1());
@@ -296,8 +263,7 @@ public class MappingEntryPanel
         setTableColumnWidth();
     }
 
-    public void clear()
-    {
+    public void clear() {
         sym1Combo.removeAllItems();
         sym2Combo.removeAllItems();
         followedCombo.removeAllItems();
@@ -305,8 +271,7 @@ public class MappingEntryPanel
     }
 
 
-    private JPanel createWordEntryPanel()
-    {
+    private JPanel createWordEntryPanel() {
         final JPanel jPanel = new JPanel();
         jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.X_AXIS));
         word1 = new FontChangeTextField();
@@ -362,60 +327,49 @@ public class MappingEntryPanel
         return jPanel;
     }
 
-    public MappingTableModel getMappingTableModel()
-    {
+    public MappingTableModel getMappingTableModel() {
         return mappingTableModel;
     }
 
-    public ListSelectionModel getListSelectionModel()
-    {
+    public ListSelectionModel getListSelectionModel() {
         return entryTable.getSelectionModel();
     }
 
-    public DocumentListenerButton getClearButton()
-    {
+    public DocumentListenerButton getClearButton() {
         return clearButton;
     }
 
-    public EntryAction getEntryAction()
-    {
+    public EntryAction getEntryAction() {
         return entryAction;
     }
 
-    public void clearPreviewDisplay()
-    {
+    public void clearPreviewDisplay() {
         word1.setText(Resources.EMPTY_STRING);
         word2.setText(Resources.EMPTY_STRING);
     }
 
-    private void firePreviewTableDataChanged()
-    {
+    private void firePreviewTableDataChanged() {
         clearPreviewDisplay();
         ((MappingTableModel) entryTable.getModel()).fireTableDataChanged();
     }
 
-    public JSplitPane getSplitPane()
-    {
+    public JSplitPane getSplitPane() {
         return splitPane;
     }
 
-    public FontChangeTextField getWord1()
-    {
+    public FontChangeTextField getWord1() {
         return word1;
     }
 
-    public FontChangeTextField getWord2()
-    {
+    public FontChangeTextField getWord2() {
         return word2;
     }
 
-    public void stateChanged(FontMapChangeEvent e)
-    {
+    public void stateChanged(FontMapChangeEvent e) {
         setFontMap(e.getFontMap());
     }
 
-    public void itemStateChanged(ItemEvent e)
-    {
+    public void itemStateChanged(ItemEvent e) {
         reset();
     }
 
@@ -424,19 +378,16 @@ public class MappingEntryPanel
      *
      * @param e the event that characterizes the change.
      */
-    public void valueChanged(ListSelectionEvent e)
-    {
+    public void valueChanged(ListSelectionEvent e) {
         final ListSelectionModel listSelectionModel =
                 (ListSelectionModel) e.getSource();
         final int row = listSelectionModel.getMinSelectionIndex();
-        if (row > -1)
-        {
+        if (row > -1) {
             showEntry(mappingTableModel.getValueAt(row));
         }
     }
 
-    private void showEntry(FontMapEntry valueAt)
-    {
+    private void showEntry(FontMapEntry valueAt) {
         word1.setText(valueAt.getFrom());
         word2.setText(valueAt.getTo());
     }
@@ -446,8 +397,7 @@ public class MappingEntryPanel
      *
      * @param e the document event
      */
-    public void changedUpdate(DocumentEvent e)
-    {
+    public void changedUpdate(DocumentEvent e) {
         toggleAdd();
     }
 
@@ -457,8 +407,7 @@ public class MappingEntryPanel
      *
      * @param e the document event
      */
-    public void insertUpdate(DocumentEvent e)
-    {
+    public void insertUpdate(DocumentEvent e) {
         toggleAdd();
     }
 
@@ -469,13 +418,11 @@ public class MappingEntryPanel
      *
      * @param e the document event
      */
-    public void removeUpdate(DocumentEvent e)
-    {
+    public void removeUpdate(DocumentEvent e) {
         toggleAdd();
     }
 
-    private void toggleAdd()
-    {
+    private void toggleAdd() {
         addButton.setEnabled(word1.getText().length() > 0 &&
                 word2.getText().length() > 0);
     }

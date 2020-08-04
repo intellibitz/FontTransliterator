@@ -6,27 +6,30 @@
  * +91 44 2247 5106
  * http://groups.google.com/group/etoe
  * http://sted.sourceforge.net
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
+ * <p>
  * STED, Copyright (C) 2007 IntelliBitz Technologies
  * STED comes with ABSOLUTELY NO WARRANTY;
  * This is free software, and you are welcome
  * to redistribute it under the GNU GPL conditions;
- *
+ * <p>
  * Visit http://www.gnu.org/ for GPL License terms.
+ * <p>
+ * $Id: DesktopFrame.java 56 2007-05-19 06:47:59Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/ui/DesktopFrame.java $
  */
 
 /**
@@ -44,9 +47,7 @@ import intellibitz.sted.fontmap.FontMap;
 import intellibitz.sted.util.MenuHandler;
 import intellibitz.sted.util.Resources;
 
-import javax.swing.BorderFactory;
-import javax.swing.JInternalFrame;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.beans.PropertyVetoException;
@@ -60,8 +61,7 @@ public class DesktopFrame
         extends JInternalFrame
         implements TableModelListener,
         FontMapChangeListener,
-        IFontMapEntriesChangeListener
-{
+        IFontMapEntriesChangeListener {
     // to hold all the different tabs.. FontMap, Input File Viewer, Output etc.,
     private JTabbedPane tabbedPane;
     // panel showing the FontMap
@@ -74,13 +74,11 @@ public class DesktopFrame
             Logger.getLogger("intellibitz.sted.ui.DesktopFrame");
     private DesktopModel desktopModel;
 
-    public DesktopFrame()
-    {
+    public DesktopFrame() {
         super("FontMapperInternalFrame", false, true, false, false);
     }
 
-    public void init()
-    {
+    public void init() {
         mapperPanel = new MapperPanel();
         mapperPanel.init();
         setNormalIcon();
@@ -125,8 +123,7 @@ public class DesktopFrame
         setVisible(true);
     }
 
-    public void load()
-    {
+    public void load() {
         mapperPanel.load();
         mapperPanel.getMappingEntryPanel().addTableModelListener(this);
         mapperPanel.setSampleInput(
@@ -139,23 +136,19 @@ public class DesktopFrame
 
     }
 
-    public FileViewer getInputFileViewer()
-    {
+    public FileViewer getInputFileViewer() {
         return inputFileViewer;
     }
 
-    public FileViewer getOutputFileViewer()
-    {
+    public FileViewer getOutputFileViewer() {
         return outputFileViewer;
     }
 
-    public DesktopModel getModel()
-    {
+    public DesktopModel getModel() {
         return desktopModel;
     }
 
-    public void setModel(DesktopModel model)
-    {
+    public void setModel(DesktopModel model) {
         desktopModel = model;
         desktopModel
                 .addFontMapChangeListener(this);
@@ -168,50 +161,39 @@ public class DesktopFrame
                         mapperPanel.getMappingEntryPanel().getMappingRules());
     }
 
-    private void setNormalIcon()
-    {
+    private void setNormalIcon() {
         setFrameIcon(Resources.getCleanIcon());
     }
 
-    private void setEditIcon()
-    {
+    private void setEditIcon() {
         setFrameIcon(Resources.getDirtyIcon());
     }
 
-    public void clear()
-    {
+    public void clear() {
         mapperPanel.clear();
         desktopModel.clear();
         setTitle(Resources.EMPTY_STRING);
         setNormalIcon();
     }
 
-    private void setInternalFrameSelected(boolean flag)
-    {
-        try
-        {
+    private void setInternalFrameSelected(boolean flag) {
+        try {
             setSelected(flag);
-        }
-        catch (PropertyVetoException e)
-        {
+        } catch (PropertyVetoException e) {
             logger.throwing(getClass().getName(), "setInternalFrameSelected",
                     e);
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
         }
     }
 
-    public void showFrame()
-    {
+    public void showFrame() {
         setVisible(true);
         tabbedPane.setVisible(true);
 //        tabbedPane.setSelectedIndex(0);
         setFrameTitle(getModel().getFontMap());
-        try
-        {
+        try {
             setMaximum(true);
-        }
-        catch (PropertyVetoException e)
-        {
+        } catch (PropertyVetoException e) {
             logger.throwing(getClass().getName(), "showFrame", e);
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
         }
@@ -219,35 +201,29 @@ public class DesktopFrame
 //        setBounds(tabbedPane.getBounds());
     }
 
-    private void hideFrame()
-    {
+    private void hideFrame() {
         setInternalFrameSelected(false);
         setVisible(false);
     }
 
-    public MapperPanel getMapperPanel()
-    {
+    public MapperPanel getMapperPanel() {
         return mapperPanel;
     }
 
     /**
      * @param flag boolean to enable or disable the tabs
      */
-    public void enableTabs(boolean flag)
-    {
+    public void enableTabs(boolean flag) {
         final int count = tabbedPane.getTabCount();
-        if (count > 0)
-        {
-            for (int i = 0; i < count; i++)
-            {
+        if (count > 0) {
+            for (int i = 0; i < count; i++) {
                 tabbedPane.setEnabledAt(i, flag);
             }
         }
 //        tabbedPane.setVisible(flag);
     }
 
-    public void close()
-    {
+    public void close() {
         hideFrame();
         enableTabs(false);
         final MenuHandler menuHandler = MenuHandler.getInstance();
@@ -267,10 +243,8 @@ public class DesktopFrame
 
 
     public void setEnabledFontMapTab
-            (boolean flag)
-    {
-        if (tabbedPane.getTabCount() > 0)
-        {
+            (boolean flag) {
+        if (tabbedPane.getTabCount() > 0) {
             tabbedPane.setEnabledAt(0, flag);
         }
     }
@@ -279,30 +253,22 @@ public class DesktopFrame
      * This fine grain notification tells listeners the exact range of cells,
      * rows, or columns that changed.
      */
-    public void tableChanged(TableModelEvent e)
-    {
-        if (getModel().getFontMap().isDirty())
-        {
+    public void tableChanged(TableModelEvent e) {
+        if (getModel().getFontMap().isDirty()) {
             setEditIcon();
         }
     }
 
-    private void setFileIcon(FontMap fontMap)
-    {
-        if (fontMap.isDirty())
-        {
+    private void setFileIcon(FontMap fontMap) {
+        if (fontMap.isDirty()) {
             setEditIcon();
-        }
-        else
-        {
+        } else {
             setNormalIcon();
         }
     }
 
-    public void setFrameTitle(FontMap fontMap)
-    {
-        if (fontMap.getFontMapFile() != null)
-        {
+    public void setFrameTitle(FontMap fontMap) {
+        if (fontMap.getFontMapFile() != null) {
             setTitle(fontMap.getFontMapFile().getAbsolutePath());
         }
     }
@@ -313,8 +279,7 @@ public class DesktopFrame
      *
      * @param e FontMapChangeEvent
      */
-    public void stateChanged(FontMapChangeEvent e)
-    {
+    public void stateChanged(FontMapChangeEvent e) {
         final FontMap fontMap = e.getFontMap();
         setFrameTitle(fontMap);
         setFileIcon(fontMap);
@@ -323,8 +288,7 @@ public class DesktopFrame
         enableConverterIfFilesLoaded();
     }
 
-    public boolean enableConverterIfFilesLoaded()
-    {
+    public boolean enableConverterIfFilesLoaded() {
         boolean flag = desktopModel.isReadyForTransliteration();
         MenuHandler.getInstance().getActions()
                 .get(Resources.ACTION_CONVERT_NAME).setEnabled(flag);
@@ -332,22 +296,18 @@ public class DesktopFrame
     }
 
 
-    public void setInputFile(File file)
-    {
+    public void setInputFile(File file) {
         desktopModel.setInputFile(file);
-        if (file != null)
-        {
+        if (file != null) {
             readFile(1);
         }
     }
 
-    private void readFile(int index)
-    {
+    private void readFile(int index) {
 //        STEDGUI.busy();
         tabbedPane.setEnabledAt(index, true);
         tabbedPane.setSelectedIndex(index);
-        switch (index)
-        {
+        switch (index) {
             case 1:
                 inputFileViewer.setFileName(
                         desktopModel.getInputFile().getAbsolutePath());
@@ -362,28 +322,23 @@ public class DesktopFrame
 //        STEDGUI.relax();
     }
 
-    public void setOutputFile(File file)
-    {
+    public void setOutputFile(File file) {
         desktopModel.setOutputFile(file);
-        if (file != null)
-        {
+        if (file != null) {
             readFile(2);
         }
     }
 
     //TODO: change this to private and add this as the respective listener
-    public void readOutputFile()
-    {
-        if (desktopModel.getOutputFile() != null)
-        {
+    public void readOutputFile() {
+        if (desktopModel.getOutputFile() != null) {
             outputFileViewer.setFileName(
                     desktopModel.getOutputFile().getAbsolutePath());
             outputFileViewer.readFile();
         }
     }
 
-    public void stateChanged(FontMapEntriesChangeEvent e)
-    {
+    public void stateChanged(FontMapEntriesChangeEvent e) {
         desktopModel.fireFontMapChangedEvent();
     }
 

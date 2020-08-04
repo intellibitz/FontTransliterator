@@ -6,27 +6,30 @@
  * +91 44 2247 5106
  * http://groups.google.com/group/etoe
  * http://sted.sourceforge.net
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
+ * <p>
  * STED, Copyright (C) 2007 IntelliBitz Technologies
  * STED comes with ABSOLUTELY NO WARRANTY;
  * This is free software, and you are welcome
  * to redistribute it under the GNU GPL conditions;
- *
+ * <p>
  * Visit http://www.gnu.org/ for GPL License terms.
+ * <p>
+ * $Id:UndoAction.java 55 2007-05-19 05:55:34Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/actions/UndoAction.java $
  */
 
 /**
@@ -55,16 +58,13 @@ import java.util.Stack;
 public class UndoAction
         extends TableModelListenerAction
         implements FontMapChangeListener,
-        ChangeListener
-{
-    public UndoAction()
-    {
+        ChangeListener {
+    public UndoAction() {
         super();
     }
 
 
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
 
         undo(getSTEDWindow());
         fireStatusPosted("Undo");
@@ -75,34 +75,27 @@ public class UndoAction
         fontMap.fireRedoEvent();
     }
 
-    public void undo(STEDWindow stedWindow)
-    {
+    public void undo(STEDWindow stedWindow) {
         final FontMap fontMap = stedWindow.getDesktop()
                 .getFontMap();
         final FontMapEntries fontMapEntries = fontMap.getEntries();
         final Stack<FontMapEntry> undoEntries = fontMapEntries.getUndo();
-        if (undoEntries.isEmpty())
-        {
+        if (undoEntries.isEmpty()) {
             return;
         }
         final FontMapEntry fontMapEntry = undoEntries.pop();
-        if (fontMapEntry.isAdded())
-        {
+        if (fontMapEntry.isAdded()) {
             final FontMapEntry current =
                     fontMapEntries.remove(fontMapEntry.getId());
             // change the status when pushing to the redo stack
             current.setStatus(Resources.ENTRY_STATUS_DELETE);
             fontMapEntries.getRedo().push(current);
-        }
-        else if (fontMapEntry.isEdited())
-        {
+        } else if (fontMapEntry.isEdited()) {
             final FontMapEntry current =
                     fontMapEntries.remove(fontMapEntry.getId());
             fontMapEntries.getRedo().push(current);
             fontMapEntries.add(fontMapEntry);
-        }
-        else if (fontMapEntry.isDeleted())
-        {
+        } else if (fontMapEntry.isDeleted()) {
             // change the status when pushing to the redo stack
             fontMapEntry.setStatus(Resources.ENTRY_STATUS_ADD);
             fontMapEntries.add(fontMapEntry);
@@ -112,18 +105,15 @@ public class UndoAction
                 .getDesktopModel().fireFontMapChangedEvent();
     }
 
-    private boolean setEnabled(FontMap fontMap)
-    {
+    private boolean setEnabled(FontMap fontMap) {
         boolean empty = fontMap.getEntries().getUndo().isEmpty();
         setEnabled(!empty);
         return !empty;
     }
 
-    public void stateChanged(FontMapChangeEvent e)
-    {
+    public void stateChanged(FontMapChangeEvent e) {
         final FontMap fontMap = e.getFontMap();
-        if (!setEnabled(fontMap))
-        {
+        if (!setEnabled(fontMap)) {
             fontMap.setDirty(false);
         }
     }
@@ -132,8 +122,7 @@ public class UndoAction
      * This fine grain notification tells listeners the exact range of cells,
      * rows, or columns that changed.
      */
-    public void tableChanged(TableModelEvent e)
-    {
+    public void tableChanged(TableModelEvent e) {
         setEnabled(getSTEDWindow().getDesktop()
                 .getFontMap());
     }
@@ -143,12 +132,10 @@ public class UndoAction
      *
      * @param e
      */
-    public void stateChanged(ChangeEvent e)
-    {
+    public void stateChanged(ChangeEvent e) {
         TabDesktop desktop = (TabDesktop) e.getSource();
         int index = desktop.getSelectedIndex();
-        if (index > -1)
-        {
+        if (index > -1) {
             DesktopFrame dframe =
                     (DesktopFrame) desktop.getComponentAt(
                             index);

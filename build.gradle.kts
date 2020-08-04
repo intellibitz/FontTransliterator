@@ -23,17 +23,19 @@ Makes compilation depend on the prepare task
 Detaches package from the ant_build task and makes it depend on compileJava
 Detaches assemble from the standard Gradle jar task and makes it depend on package instead
 */
+/*
 tasks {
     compileJava {
-        dependsOn("prepare")
+        dependsOn("init-sted")
     }
-    named("package") {
+    named("deploy-sted") {
         setDependsOn(listOf(compileJava))
     }
     assemble {
-        setDependsOn(listOf("package"))
+        setDependsOn(listOf("run-sted"))
     }
 }
+*/
 
 application {
     // Define the main class for the application.

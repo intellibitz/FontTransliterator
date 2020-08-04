@@ -6,27 +6,30 @@
  * +91 44 2247 5106
  * http://groups.google.com/group/etoe
  * http://sted.sourceforge.net
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
+ * <p>
  * STED, Copyright (C) 2007 IntelliBitz Technologies
  * STED comes with ABSOLUTELY NO WARRANTY;
  * This is free software, and you are welcome
  * to redistribute it under the GNU GPL conditions;
- *
+ * <p>
  * Visit http://www.gnu.org/ for GPL License terms.
+ * <p>
+ * $Id: MapperPanel.java 56 2007-05-19 06:47:59Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/ui/MapperPanel.java $
  */
 
 /**
@@ -42,18 +45,13 @@ import intellibitz.sted.fontmap.FontMap;
 import intellibitz.sted.util.Resources;
 import intellibitz.sted.widgets.FontChangeTextField;
 
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 
 public class MapperPanel
         extends JPanel
-        implements FontMapChangeListener
-{
+        implements FontMapChangeListener {
     private FontKeypad1 fontKeypad1;
     private MappingEntryPanel mappingEntryPanel;
     private FontKeypad2 fontKeypad2;
@@ -61,13 +59,11 @@ public class MapperPanel
     private FontChangeTextField inputText;
     private DocumentListenerTextField outputText;
 
-    public MapperPanel()
-    {
+    public MapperPanel() {
         super();
     }
 
-    public void init()
-    {
+    public void init() {
         setBorder(BorderFactory.createEtchedBorder());
         final GridBagLayout gridBagLayout = new GridBagLayout();
         setLayout(gridBagLayout);
@@ -160,8 +156,7 @@ public class MapperPanel
 
     }
 
-    public void load()
-    {
+    public void load() {
         loadPreviewPanel();
         fontKeypad1.getFontSelector()
                 .addItemListener(mappingEntryPanel.getWord1());
@@ -179,61 +174,50 @@ public class MapperPanel
         outputText.load();
     }
 
-    public void clear()
-    {
+    public void clear() {
         mappingEntryPanel.clearPreviewDisplay();
         mappingEntryPanel.clear();
         outputText.setText(Resources.EMPTY_STRING);
     }
 
 
-    public void loadPreviewPanel()
-    {
+    public void loadPreviewPanel() {
         outputText.setFontMapperPanel(this);
     }
 
-    public void setSampleInput(String text)
-    {
+    public void setSampleInput(String text) {
         inputText.setText(text);
     }
 
-    public void convertSampleText()
-    {
+    public void convertSampleText() {
         setSampleInput(inputText.getText());
     }
 
-    public JPanel getPreviewPanel()
-    {
+    public JPanel getPreviewPanel() {
         return previewPanel;
     }
 
-    public FontKeypad1 getFontKeypad1()
-    {
+    public FontKeypad1 getFontKeypad1() {
         return fontKeypad1;
     }
 
-    public MappingEntryPanel getMappingEntryPanel()
-    {
+    public MappingEntryPanel getMappingEntryPanel() {
         return mappingEntryPanel;
     }
 
-    public FontKeypad2 getFontKeypad2()
-    {
+    public FontKeypad2 getFontKeypad2() {
         return fontKeypad2;
     }
 
-    public FontChangeTextField getInputText()
-    {
+    public FontChangeTextField getInputText() {
         return inputText;
     }
 
-    public DocumentListenerTextField getOutputText()
-    {
+    public DocumentListenerTextField getOutputText() {
         return outputText;
     }
 
-    public void stateChanged(FontMapChangeEvent e)
-    {
+    public void stateChanged(FontMapChangeEvent e) {
         FontMap f = e.getFontMap();
         inputText.setFont(f.getFont1());
         outputText.setFont(f.getFont2());

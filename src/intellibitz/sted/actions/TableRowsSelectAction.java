@@ -6,27 +6,30 @@
  * +91 44 2247 5106
  * http://groups.google.com/group/etoe
  * http://sted.sourceforge.net
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
+ * <p>
  * STED, Copyright (C) 2007 IntelliBitz Technologies
  * STED comes with ABSOLUTELY NO WARRANTY;
  * This is free software, and you are welcome
  * to redistribute it under the GNU GPL conditions;
- *
+ * <p>
  * Visit http://www.gnu.org/ for GPL License terms.
+ * <p>
+ * $Id:TableRowsSelectAction.java 55 2007-05-19 05:55:34Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/actions/TableRowsSelectAction.java $
  */
 
 /**
@@ -39,7 +42,7 @@ package intellibitz.sted.actions;
 import intellibitz.sted.fontmap.FontMapEntry;
 import intellibitz.sted.ui.MappingTableModel;
 
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 import java.util.ArrayList;
@@ -47,49 +50,40 @@ import java.util.Collection;
 
 abstract public class TableRowsSelectAction
         extends STEDWindowAction
-        implements ListSelectionListener
-{
+        implements ListSelectionListener {
     private JTable table;
 
-    protected TableRowsSelectAction()
-    {
+    protected TableRowsSelectAction() {
         super();
     }
 
-    TableModel getTableModel()
-    {
+    TableModel getTableModel() {
         return table.getModel();
     }
 
-    public void setTable(JTable table)
-    {
+    public void setTable(JTable table) {
         this.table = table;
     }
 
-    void selectAll()
-    {
+    void selectAll() {
         table.selectAll();
     }
 
-    Collection<FontMapEntry> getSelectedRows()
-    {
+    Collection<FontMapEntry> getSelectedRows() {
         final int row[] = table.getSelectedRows();
         final Collection<FontMapEntry> rows =
                 new ArrayList<FontMapEntry>(row.length);
-        for (final int newVar : row)
-        {
+        for (final int newVar : row) {
             rows.add(((MappingTableModel) table.getModel()).getValueAt(newVar));
         }
         return rows;
     }
 
-    Collection copySelectedRows()
-    {
+    Collection copySelectedRows() {
         final int row[] = table.getSelectedRows();
         final Collection<FontMapEntry> rows =
                 new ArrayList<FontMapEntry>(row.length);
-        for (final int newVar : row)
-        {
+        for (final int newVar : row) {
             rows.add((FontMapEntry) ((MappingTableModel) table.getModel())
                     .getValueAt(newVar).clone());
         }

@@ -6,27 +6,30 @@
  * +91 44 2247 5106
  * http://groups.google.com/group/etoe
  * http://sted.sourceforge.net
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
+ * <p>
  * STED, Copyright (C) 2007 IntelliBitz Technologies
  * STED comes with ABSOLUTELY NO WARRANTY;
  * This is free software, and you are welcome
  * to redistribute it under the GNU GPL conditions;
- *
+ * <p>
  * Visit http://www.gnu.org/ for GPL License terms.
+ * <p>
+ * $Id: StatusPanel.java 56 2007-05-19 06:47:59Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/ui/StatusPanel.java $
  */
 
 /**
@@ -45,20 +48,13 @@ import intellibitz.sted.util.Resources;
 import intellibitz.sted.widgets.GCButton;
 import intellibitz.sted.widgets.MemoryBar;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.ListSelectionModel;
-import javax.swing.Timer;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.util.StringTokenizer;
 
 public class StatusPanel
@@ -66,8 +62,7 @@ public class StatusPanel
         implements TableModelListener,
         ListSelectionListener,
         FontMapChangeListener,
-        IStatusListener
-{
+        IStatusListener {
     private JProgressBar progressBar;
     private JLabel counter;
     private JLabel flag;
@@ -79,8 +74,7 @@ public class StatusPanel
 
     private static final String COUNTER_INIT = "0:0";
 
-    public StatusPanel(STEDWindow stedWindow)
-    {
+    public StatusPanel(STEDWindow stedWindow) {
         super();
         this.stedWindow = stedWindow;
         setBorder(BorderFactory.createLineBorder(getForeground()));
@@ -131,15 +125,13 @@ public class StatusPanel
         add(gcButton);
     }
 
-    public void runMemoryBar()
-    {
+    public void runMemoryBar() {
         // update memory status every 2 seconds
         final Timer timer = new Timer(2000, memoryBar);
         timer.start();
     }
 
-    public void clear()
-    {
+    public void clear() {
         clearStatus();
         clearProgress();
         initCounter();
@@ -147,51 +139,39 @@ public class StatusPanel
         setLockFlag(true);
     }
 
-    public void setStatus(String msg)
-    {
+    public void setStatus(String msg) {
         status.setText(Resources.SPACE + msg);
     }
 
-    private void clearStatus()
-    {
+    private void clearStatus() {
         status.setText(Resources.EMPTY_STRING);
     }
 
-    public void clearProgress()
-    {
+    public void clearProgress() {
         progressBar.setStringPainted(false);
         progressBar.setMinimum(0);
         progressBar.setMaximum(0);
         progressBar.setValue(0);
     }
 
-    private void initCounter()
-    {
+    private void initCounter() {
         counter.setText(COUNTER_INIT);
     }
 
-    public JProgressBar getProgressBar()
-    {
+    public JProgressBar getProgressBar() {
         return progressBar;
     }
 
-    private void setTotalCount(int total)
-    {
-        if (total < 1)
-        {
+    private void setTotalCount(int total) {
+        if (total < 1) {
             initCounter();
-        }
-        else
-        {
+        } else {
             final StringTokenizer stringTokenizer =
                     new StringTokenizer(counter.getText(), Resources.COLON);
             final StringBuffer stringBuffer = new StringBuffer();
-            if (stringTokenizer.hasMoreTokens())
-            {
+            if (stringTokenizer.hasMoreTokens()) {
                 stringBuffer.append(stringTokenizer.nextToken());
-            }
-            else
-            {
+            } else {
                 stringBuffer.append(String.valueOf(0));
             }
             stringBuffer.append(Resources.COLON);
@@ -200,17 +180,14 @@ public class StatusPanel
         }
     }
 
-    private void setCurrentCount(int curr)
-    {
-        if (curr >= 0)
-        {
+    private void setCurrentCount(int curr) {
+        if (curr >= 0) {
             final StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append(String.valueOf(curr + 1));
             stringBuffer.append(Resources.COLON);
             final StringTokenizer stringTokenizer =
                     new StringTokenizer(counter.getText(), Resources.COLON);
-            if (stringTokenizer.hasMoreTokens())
-            {
+            if (stringTokenizer.hasMoreTokens()) {
                 // skip the current count
                 stringTokenizer.nextToken();
                 // keep the total count
@@ -220,38 +197,28 @@ public class StatusPanel
         }
     }
 
-    public void setNeatness(FontMap fontMap)
-    {
+    public void setNeatness(FontMap fontMap) {
         clearProgress();
         setLockFlag(!fontMap.isFileWritable());
-        if (fontMap.isDirty())
-        {
+        if (fontMap.isDirty()) {
             setDirtyFlag();
-        }
-        else
-        {
+        } else {
             setCleanFlag();
         }
     }
 
-    private void setCleanFlag()
-    {
+    private void setCleanFlag() {
         flag.setIcon(Resources.getCleanIcon());
     }
 
-    private void setDirtyFlag()
-    {
+    private void setDirtyFlag() {
         flag.setIcon(Resources.getDirtyIcon());
     }
 
-    public void setLockFlag(boolean flag)
-    {
-        if (flag)
-        {
+    public void setLockFlag(boolean flag) {
+        if (flag) {
             lock.setIcon(Resources.getLockIcon());
-        }
-        else
-        {
+        } else {
             lock.setIcon(Resources.getUnLockIcon());
         }
     }
@@ -260,8 +227,7 @@ public class StatusPanel
      * This fine grain notification tells listeners the exact range of cells,
      * rows, or columns that changed.
      */
-    public void tableChanged(TableModelEvent e)
-    {
+    public void tableChanged(TableModelEvent e) {
         final TableModel tableModel = (TableModel) e.getSource();
         setTotalCount(tableModel.getRowCount());
         setNeatness(stedWindow.getDesktop()
@@ -273,20 +239,17 @@ public class StatusPanel
      *
      * @param e the event that characterizes the change.
      */
-    public void valueChanged(ListSelectionEvent e)
-    {
+    public void valueChanged(ListSelectionEvent e) {
         final ListSelectionModel listSelectionModel =
                 (ListSelectionModel) e.getSource();
         setCurrentCount(listSelectionModel.getMaxSelectionIndex());
     }
 
-    public void stateChanged(FontMapChangeEvent e)
-    {
+    public void stateChanged(FontMapChangeEvent e) {
         setNeatness(e.getFontMap());
     }
 
-    public void statusPosted(StatusEvent event)
-    {
+    public void statusPosted(StatusEvent event) {
         setStatus(event.getStatus());
     }
 }

@@ -6,27 +6,30 @@
  * +91 44 2247 5106
  * http://groups.google.com/group/etoe
  * http://sted.sourceforge.net
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
+ * <p>
  * STED, Copyright (C) 2007 IntelliBitz Technologies
  * STED comes with ABSOLUTELY NO WARRANTY;
  * This is free software, and you are welcome
  * to redistribute it under the GNU GPL conditions;
- *
+ * <p>
  * Visit http://www.gnu.org/ for GPL License terms.
+ * <p>
+ * $Id:MappingTableModel.java 55 2007-05-19 05:55:34Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/ui/MappingTableModel.java $
  */
 
 /**
@@ -51,8 +54,7 @@ import java.util.List;
 
 public class MappingTableModel
         extends AbstractTableModel
-        implements IMessageEventSource
-{
+        implements IMessageEventSource {
     private static final String[] names = new String[]
             {
                     Resources.getResource(Resources.TITLE_TABLE_COLUMN_SYMBOL1),
@@ -73,14 +75,12 @@ public class MappingTableModel
     private IMessageListener messageListener;
     private MessageEvent messageEvent;
 
-    public MappingTableModel()
-    {
+    public MappingTableModel() {
         super();
         messageEvent = new MessageEvent(this);
     }
 
-    public void setFontMap(FontMap fontMap)
-    {
+    public void setFontMap(FontMap fontMap) {
         this.fontMap = fontMap;
         fontMapEntries = fontMap.getEntries();
         entries = new ArrayList<FontMapEntry>(fontMapEntries.values());
@@ -88,56 +88,38 @@ public class MappingTableModel
         super.fireTableDataChanged();
     }
 
-    public int getRowCount()
-    {
-        if (fontMapEntries == null)
-        {
+    public int getRowCount() {
+        if (fontMapEntries == null) {
             return 0;
         }
         return fontMapEntries.size();
     }
 
 
-    public Object getValueAt(int row, int col)
-    {
-        if (col == 1)
-        {
+    public Object getValueAt(int row, int col) {
+        if (col == 1) {
             return Resources.EQUALS;
         }
-        if (entries != null && !entries.isEmpty())
-        {
+        if (entries != null && !entries.isEmpty()) {
             final FontMapEntry entry = (FontMapEntry) entries.get(row);
-            if (col == 0)
-            {
+            if (col == 0) {
                 return entry.getFrom();
-            }
-            else if (col == 2)
-            {
+            } else if (col == 2) {
                 return entry.getTo();
-            }
-            else if (col == 3)
-            {
-                if (entry.isBeginsWith())
-                {
+            } else if (col == 3) {
+                if (entry.isBeginsWith()) {
                     return Boolean.TRUE;
                 }
                 return Boolean.FALSE;
-            }
-            else if (col == 4)
-            {
-                if (entry.isEndsWith())
-                {
+            } else if (col == 4) {
+                if (entry.isEndsWith()) {
                     return Boolean.TRUE;
                 }
                 return Boolean.FALSE;
-            }
-            else if (col == 5)
-            {
+            } else if (col == 5) {
                 final String val = entry.getFollowedBy();
                 return val == null ? Resources.EMPTY_STRING : val;
-            }
-            else if (col == 6)
-            {
+            } else if (col == 6) {
                 final String val = entry.getPrecededBy();
                 return val == null ? Resources.EMPTY_STRING : val;
             }
@@ -146,33 +128,25 @@ public class MappingTableModel
         return Resources.EQUALS;
     }
 
-    public FontMapEntry getValueAt(int row)
-    {
-        if (entries != null && !entries.isEmpty())
-        {
+    public FontMapEntry getValueAt(int row) {
+        if (entries != null && !entries.isEmpty()) {
             return (FontMapEntry) entries.get(row);
         }
         return null;
     }
 
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex)
-    {
-        if (aValue != null)
-        {
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        if (aValue != null) {
             final FontMapEntry entry = (FontMapEntry) entries.get(rowIndex);
-            if (entry != null)
-            {
-                switch (columnIndex)
-                {
+            if (entry != null) {
+                switch (columnIndex) {
                     case 0:
-                        if (!entry.getFrom().equals(aValue))
-                        {
+                        if (!entry.getFrom().equals(aValue)) {
                             final FontMapEntry edited =
                                     (FontMapEntry) entry.clone();
                             edited.setFrom(aValue.toString());
                             // do a strick check - just like add
-                            if (!fontMapEntries.isValid(edited))
-                            {
+                            if (!fontMapEntries.isValid(edited)) {
                                 fireMessagePosted(
                                         "Already mapped - Invalid Edit");
                                 break;
@@ -188,13 +162,11 @@ public class MappingTableModel
                         }
                         break;
                     case 2:
-                        if (!entry.getTo().equals(aValue))
-                        {
+                        if (!entry.getTo().equals(aValue)) {
                             final FontMapEntry edited =
                                     (FontMapEntry) entry.clone();
                             edited.setTo(aValue.toString());
-                            if (!fontMapEntries.isValidEdit(edited))
-                            {
+                            if (!fontMapEntries.isValidEdit(edited)) {
                                 fireMessagePosted(
                                         "Already mapped - Invalid Edit");
                                 break;
@@ -211,13 +183,11 @@ public class MappingTableModel
                         break;
                     case 3:
                         final boolean begins = (Boolean) aValue;
-                        if (!entry.isBeginsWith() == begins)
-                        {
+                        if (!entry.isBeginsWith() == begins) {
                             final FontMapEntry edited =
                                     (FontMapEntry) entry.clone();
                             edited.setBeginsWith(begins);
-                            if (!fontMapEntries.isValidEdit(edited))
-                            {
+                            if (!fontMapEntries.isValidEdit(edited)) {
                                 fireMessagePosted(
                                         "Already mapped - Invalid Edit");
                                 break;
@@ -234,13 +204,11 @@ public class MappingTableModel
                         break;
                     case 4:
                         final boolean ends = (Boolean) aValue;
-                        if (!entry.isEndsWith() == ends)
-                        {
+                        if (!entry.isEndsWith() == ends) {
                             final FontMapEntry edited =
                                     (FontMapEntry) entry.clone();
                             edited.setEndsWith(ends);
-                            if (!fontMapEntries.isValidEdit(edited))
-                            {
+                            if (!fontMapEntries.isValidEdit(edited)) {
                                 fireMessagePosted(
                                         "Already mapped - Invalid Edit");
                                 break;
@@ -256,18 +224,15 @@ public class MappingTableModel
                         }
                         break;
                     case 5:
-                        if (!aValue.equals(entry.getFollowedBy()))
-                        {
+                        if (!aValue.equals(entry.getFollowedBy())) {
                             if (entry.getFollowedBy() == null &&
-                                    Resources.EMPTY_STRING.equals(aValue))
-                            {
+                                    Resources.EMPTY_STRING.equals(aValue)) {
                                 break;
                             }
                             final FontMapEntry edited =
                                     (FontMapEntry) entry.clone();
                             edited.setFollowedBy(aValue.toString());
-                            if (!fontMapEntries.isValidEdit(edited))
-                            {
+                            if (!fontMapEntries.isValidEdit(edited)) {
                                 fireMessagePosted(
                                         "Already mapped - Invalid Edit");
                                 break;
@@ -283,18 +248,15 @@ public class MappingTableModel
                         }
                         break;
                     case 6:
-                        if (!aValue.equals(entry.getPrecededBy()))
-                        {
+                        if (!aValue.equals(entry.getPrecededBy())) {
                             if (entry.getPrecededBy() == null &&
-                                    Resources.EMPTY_STRING.equals(aValue))
-                            {
+                                    Resources.EMPTY_STRING.equals(aValue)) {
                                 break;
                             }
                             final FontMapEntry edited =
                                     (FontMapEntry) entry.clone();
                             edited.setPrecededBy(aValue.toString());
-                            if (!fontMapEntries.isValidEdit(edited))
-                            {
+                            if (!fontMapEntries.isValidEdit(edited)) {
                                 fireMessagePosted(
                                         "Already mapped - Invalid Edit");
                                 break;
@@ -320,8 +282,7 @@ public class MappingTableModel
      * then the last column would contain text ("true"/"false"),
      * rather than a check box.
      */
-    public Class getColumnClass(int c)
-    {
+    public Class getColumnClass(int c) {
         return getValueAt(0, c).getClass();
     }
 
@@ -329,41 +290,34 @@ public class MappingTableModel
      * Don't need to implement this method unless your table's
      * editable.
      */
-    public boolean isCellEditable(int row, int col)
-    {
+    public boolean isCellEditable(int row, int col) {
         //Note that the data/cell address is constant,
         //no matter where the cell appears onscreen.
         return !(col == 1);
     }
 
-    public int getColumnCount()
-    {
+    public int getColumnCount() {
         return names.length;
     }
 
-    public String getColumnName(int column)
-    {
+    public String getColumnName(int column) {
         return names[column];
     }
 
-    public FontMap getFontMap()
-    {
+    public FontMap getFontMap() {
         return fontMap;
     }
 
-    private void fireMessagePosted(String message)
-    {
+    private void fireMessagePosted(String message) {
         messageEvent.setMessage(message);
         messageListener.messagePosted(messageEvent);
     }
 
-    public void fireMessagePosted()
-    {
+    public void fireMessagePosted() {
         messageListener.messagePosted(messageEvent);
     }
 
-    public void addMessageListener(IMessageListener messageListener)
-    {
+    public void addMessageListener(IMessageListener messageListener) {
         this.messageListener = messageListener;
     }
 }

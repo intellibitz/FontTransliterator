@@ -6,27 +6,30 @@
  * +91 44 2247 5106
  * http://groups.google.com/group/etoe
  * http://sted.sourceforge.net
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
+ * <p>
  * STED, Copyright (C) 2007 IntelliBitz Technologies
  * STED comes with ABSOLUTELY NO WARRANTY;
  * This is free software, and you are welcome
  * to redistribute it under the GNU GPL conditions;
- *
+ * <p>
  * Visit http://www.gnu.org/ for GPL License terms.
+ * <p>
+ * $Id: FontKeypad.java 56 2007-05-19 06:47:59Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/ui/FontKeypad.java $
  */
 
 /**
@@ -37,31 +40,17 @@
 package intellibitz.sted.ui;
 
 import intellibitz.sted.actions.LoadFontAction;
-import intellibitz.sted.event.FontListChangeEvent;
-import intellibitz.sted.event.FontMapChangeEvent;
-import intellibitz.sted.event.FontMapChangeListener;
-import intellibitz.sted.event.IKeypadEventSource;
-import intellibitz.sted.event.IKeypadListener;
-import intellibitz.sted.event.KeypadEvent;
+import intellibitz.sted.event.*;
 import intellibitz.sted.fontmap.FontInfo;
 import intellibitz.sted.fontmap.FontMap;
 import intellibitz.sted.util.Resources;
 
-import javax.swing.BorderFactory;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -78,8 +67,7 @@ public abstract class FontKeypad
         extends JPanel
         implements ItemListener,
         FontMapChangeListener,
-        IKeypadEventSource
-{
+        IKeypadEventSource {
     private FontMap fontMap;
     private FontList fontSelector;
     private JPanel keypad;
@@ -92,13 +80,11 @@ public abstract class FontKeypad
     private KeypadEvent keypadEvent;
     private EventListenerList keypadListeners;
 
-    protected FontKeypad()
-    {
+    protected FontKeypad() {
         super();
     }
 
-    public void init()
-    {
+    public void init() {
         final TitledBorder titledBorder =
                 new TitledBorder(Resources.getResource(Resources.TITLE_KEYPAD));
         titledBorder.setTitleJustification(TitledBorder.CENTER);
@@ -138,58 +124,47 @@ public abstract class FontKeypad
         add(fontKeypad);
     }
 
-    public void load()
-    {
+    public void load() {
     }
 
-    public ArrayList<JButton> getKeys()
-    {
+    public ArrayList<JButton> getKeys() {
         return keys;
     }
 
-    public void itemStateChanged(ItemEvent e)
-    {
+    public void itemStateChanged(ItemEvent e) {
         setCurrentFont(e.getItem().toString());
         resetKeypad();
     }
 
-    void setCurrentFont(String fontName)
-    {
+    void setCurrentFont(String fontName) {
         setCurrentFont(Resources.getFont(fontName).getFont());
     }
 
-    void setCurrentFont(Font font)
-    {
-        if (font == null)
-        {
+    void setCurrentFont(Font font) {
+        if (font == null) {
             fontSelector.setSelectedIndex(0);
             currentFont = Resources
                     .getFont(fontSelector.getSelectedItem().toString())
                     .getFont();
-        }
-        else
-        {
+        } else {
             currentFont = font;
             fontSelector.setSelectedItem(currentFont.getName());
         }
         setFont(currentFont);
     }
 
-    public void stateChanged(FontMapChangeEvent e)
-    {
+    public void stateChanged(FontMapChangeEvent e) {
         fontMap = e.getFontMap();
         setCurrentFont();
         resetKeypad();
     }
 
 
-    public String getSelectedFont()
-    {
+    public String getSelectedFont() {
         return fontSelector.getSelectedItem().toString();
     }
 
-    private JScrollPane getFontKeypad()
-    {
+    private JScrollPane getFontKeypad() {
         keypad = new JPanel();
         keypad.setBorder(BorderFactory.createEmptyBorder());
 //        resetKeypad();
@@ -198,8 +173,7 @@ public abstract class FontKeypad
         return jScrollPane;
     }
 
-    private void resetKeypad()
-    {
+    private void resetKeypad() {
         keypad.removeAll();
         final GridBagLayout gridBagLayout = new GridBagLayout();
         keypad.setLayout(gridBagLayout);
@@ -208,19 +182,14 @@ public abstract class FontKeypad
         gridBagConstraints.weightx = 0;
         gridBagConstraints.weighty = 0;
         final int numOfGlyphs = currentFont.getNumGlyphs();
-        for (int i = 0, j = 0; i < FONT_MAX_INDEX && j < numOfGlyphs; i++)
-        {
+        for (int i = 0, j = 0; i < FONT_MAX_INDEX && j < numOfGlyphs; i++) {
             final char c = (char) i;
-            if (currentFont.canDisplay(c))
-            {
+            if (currentFont.canDisplay(c)) {
                 final String cmd = Resources.EMPTY_STRING + c;
                 final JButton keyButton;
-                if (!keys.isEmpty() && j < keys.size())
-                {
+                if (!keys.isEmpty() && j < keys.size()) {
                     keyButton = keys.get(j);
-                }
-                else
-                {
+                } else {
                     keyButton = new JButton();
                     keys.add(j, keyButton);
                 }
@@ -228,18 +197,15 @@ public abstract class FontKeypad
                 // only 1 action listener to be added per button
                 final ActionListener[] actionListeners =
                         keyButton.getActionListeners();
-                if (actionListeners != null && actionListeners.length > 0)
-                {
-                    for (final ActionListener newVar : actionListeners)
-                    {
+                if (actionListeners != null && actionListeners.length > 0) {
+                    for (final ActionListener newVar : actionListeners) {
                         keyButton.removeActionListener(newVar);
                     }
                 }
                 keyButton.setFont(currentFont);
                 keyButton.setText(cmd);
                 gridBagConstraints.gridwidth = 1;
-                if ((j + 1) % KEY_COLUMNS == 0)
-                {
+                if ((j + 1) % KEY_COLUMNS == 0) {
                     gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
                 }
                 gridBagLayout.setConstraints(keyButton, gridBagConstraints);
@@ -258,19 +224,15 @@ public abstract class FontKeypad
     // notification on this event type.  The event instance
     // is lazily created using the parameters passed into
     // the fire method.
-    public void fireKeypadReset()
-    {
+    public void fireKeypadReset() {
         // Guaranteed to return a non-null array
         final Object[] listeners = keypadListeners.getListenerList();
         // Process the listeners last to first, notifying
         // those that are interested in this event
-        for (int i = listeners.length - 2; i >= 0; i -= 2)
-        {
-            if (listeners[i] == IKeypadListener.class)
-            {
+        for (int i = listeners.length - 2; i >= 0; i -= 2) {
+            if (listeners[i] == IKeypadListener.class) {
                 // Lazily create the event:
-                if (keypadEvent == null)
-                {
+                if (keypadEvent == null) {
                     keypadEvent = new KeypadEvent(this);
                 }
                 ((IKeypadListener) listeners[i + 1])
@@ -279,66 +241,55 @@ public abstract class FontKeypad
         }
     }
 
-    public void addKeypadListener(IKeypadListener keypadListener)
-    {
+    public void addKeypadListener(IKeypadListener keypadListener) {
         keypadListeners.add(IKeypadListener.class, keypadListener);
     }
 
-    public void removeKeypadListener(IKeypadListener keypadListener)
-    {
+    public void removeKeypadListener(IKeypadListener keypadListener) {
         keypadListeners.remove(IKeypadListener.class, keypadListener);
     }
 
 
-    FontMap getFontMap()
-    {
+    FontMap getFontMap() {
         return fontMap;
     }
 
-    Font getCurrentFont()
-    {
+    Font getCurrentFont() {
         return currentFont;
     }
 
-    public FontList getFontSelector()
-    {
+    public FontList getFontSelector() {
         return fontSelector;
     }
 
     static public class FontsListModel
             extends DefaultComboBoxModel
-            implements ChangeListener
-    {
+            implements ChangeListener {
         private Map<String, FontInfo> fonts;
         private static final Logger logger = Logger.getLogger(
                 "intellibitz.sted.ui.FontKeypad$FontsListModel");
 
-        public FontsListModel()
-        {
+        public FontsListModel() {
             super();
         }
 
-        public FontsListModel(Map<String, FontInfo> fonts)
-        {
+        public FontsListModel(Map<String, FontInfo> fonts) {
             this();
             setFonts(fonts);
         }
 
-        public void setFonts(Map<String, FontInfo> fonts)
-        {
+        public void setFonts(Map<String, FontInfo> fonts) {
             logger.entering(getClass().getName(), "setFonts");
             this.fonts = fonts;
             refreshFonts();
         }
 
-        private void refreshFonts()
-        {
+        private void refreshFonts() {
             logger.entering(getClass().getName(), "refreshFonts");
             removeAllElements();
             final Object[] contents = fonts.keySet().toArray();
             Arrays.sort(contents);
-            for (final Object newVar : contents)
-            {
+            for (final Object newVar : contents) {
                 addElement(newVar);
             }
         }
@@ -348,8 +299,7 @@ public abstract class FontKeypad
          *
          * @param e a ChangeEvent object
          */
-        public void stateChanged(ChangeEvent e)
-        {
+        public void stateChanged(ChangeEvent e) {
             setFonts(Resources.getFonts());
             fireContentsChanged(this, 0, fonts.size());
         }
@@ -357,8 +307,7 @@ public abstract class FontKeypad
 
     static public class FontList
             extends JComboBox
-            implements ChangeListener
-    {
+            implements ChangeListener {
         /**
          * Creates a <code>JComboBox</code> that takes it's items from an
          * existing <code>ComboBoxModel</code>.  Since the
@@ -370,8 +319,7 @@ public abstract class FontKeypad
          *               displayed list of items
          * @see DefaultComboBoxModel
          */
-        public FontList(ComboBoxModel aModel)
-        {
+        public FontList(ComboBoxModel aModel) {
             super(aModel);    //To change body of overriden methods use Options | File Templates.
         }
 
@@ -380,8 +328,7 @@ public abstract class FontKeypad
          *
          * @param e a ChangeEvent object
          */
-        public void stateChanged(ChangeEvent e)
-        {
+        public void stateChanged(ChangeEvent e) {
             ((FontsListModel) getModel()).stateChanged(e);
             setSelectedItem(
                     ((FontListChangeEvent) e).getFontChanged().getName());

@@ -6,27 +6,30 @@
  * +91 44 2247 5106
  * http://groups.google.com/group/etoe
  * http://sted.sourceforge.net
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
+ * <p>
  * STED, Copyright (C) 2007 IntelliBitz Technologies
  * STED comes with ABSOLUTELY NO WARRANTY;
  * This is free software, and you are welcome
  * to redistribute it under the GNU GPL conditions;
- *
+ * <p>
  * Visit http://www.gnu.org/ for GPL License terms.
+ * <p>
+ * $Id:FontMapXMLReader.java 55 2007-05-19 05:55:34Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/io/FontMapXMLReader.java $
  */
 
 /**
@@ -37,16 +40,7 @@
 package intellibitz.sted.io;
 
 import intellibitz.sted.util.Resources;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.DTDHandler;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
-import org.xml.sax.XMLReader;
+import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 
 import java.io.BufferedReader;
@@ -58,8 +52,7 @@ import java.util.StringTokenizer;
  * events that can be used to transform fontmap to xml document
  */
 class FontMapXMLReader
-        implements XMLReader
-{
+        implements XMLReader {
     private static final Attributes EMPTY_ATTRIBUTES = new AttributesImpl();
     private ContentHandler contentHandler;
 
@@ -69,8 +62,7 @@ class FontMapXMLReader
 
     private final String indent = "\n"; // for readability
 
-    FontMapXMLReader()
-    {
+    FontMapXMLReader() {
     }
 
     /**
@@ -79,10 +71,8 @@ class FontMapXMLReader
      * @throws SAXException
      */
     public void parse(InputSource input)
-            throws IOException, SAXException
-    {
-        if (contentHandler == null)
-        {
+            throws IOException, SAXException {
+        if (contentHandler == null) {
             throw new SAXException("No content contentHandler");
         }
         final String rootElement = "fontmap";
@@ -109,8 +99,7 @@ class FontMapXMLReader
         contentHandler.endElement(nsu, "font", "font");
         newLine();
         String line;
-        while ((line = bufferedReader.readLine()) != null)
-        {
+        while ((line = bufferedReader.readLine()) != null) {
             writeFontEntry(line);
             newLine();
         }
@@ -119,8 +108,7 @@ class FontMapXMLReader
         contentHandler.endDocument();
     }
 
-    private Attributes getFontAttributes(String line)
-    {
+    private Attributes getFontAttributes(String line) {
         final AttributesImpl atts = new AttributesImpl();
         final StringTokenizer stringTokenizer =
                 new StringTokenizer(line, Resources.SYMBOL_ASTERISK);
@@ -131,32 +119,28 @@ class FontMapXMLReader
         return atts;
     }
 
-    private Attributes getValueAttribute(String val)
-    {
+    private Attributes getValueAttribute(String val) {
         return getAttributeImpl(nsu, Resources.EMPTY_STRING, "value", "CDATA",
                 val);
     }
 
     private static Attributes getAttributeImpl(String uri, String localName,
-            String qName, String type,
-            String value)
-    {
+                                               String qName, String type,
+                                               String value) {
         final AttributesImpl atts = new AttributesImpl();
         atts.addAttribute(uri, localName, qName, type, value);
         return atts;
     }
 
     private void writeElement(String uri, String localName, String qName,
-            Attributes atts)
-            throws SAXException
-    {
+                              Attributes atts)
+            throws SAXException {
         contentHandler.startElement(uri, localName, qName, atts);
         contentHandler.endElement(uri, localName, qName);
     }
 
     private void newLine()
-            throws SAXException
-    {
+            throws SAXException {
         contentHandler.ignorableWhitespace(indent.toCharArray(),
                 0, // start index
                 indent.length());
@@ -171,23 +155,19 @@ class FontMapXMLReader
      * @throws SAXException
      */
     private void writeFontEntry(String entry)
-            throws SAXException
-    {
+            throws SAXException {
         contentHandler.startElement(nsu, "font_entry", "font_entry",
                 EMPTY_ATTRIBUTES);
         newLine();
         final StringTokenizer stringTokenizer =
                 new StringTokenizer(entry, Resources.ENTRY_TOSTRING_DELIMITER);
         int i = 0;
-        while (stringTokenizer.hasMoreElements())
-        {
+        while (stringTokenizer.hasMoreElements()) {
             final String token = stringTokenizer.nextToken();
             if (!(token.toLowerCase().startsWith("null")
                     || token.toLowerCase().startsWith("false")
-                    || Resources.EMPTY_STRING.equals(token)))
-            {
-                switch (i)
-                {
+                    || Resources.EMPTY_STRING.equals(token))) {
+                switch (i) {
                     case 0:
                         writeElement(nsu, "entry_from", "entry_from",
                                 getValueAttribute(token));
@@ -232,74 +212,61 @@ class FontMapXMLReader
         contentHandler.endElement(nsu, "font_entry", "font_entry");
     }
 
-    public ContentHandler getContentHandler()
-    {
+    public ContentHandler getContentHandler() {
         return contentHandler;  //To change body of implemented methods use Options | File Templates.
     }
 
-    public void setContentHandler(ContentHandler handler)
-    {
+    public void setContentHandler(ContentHandler handler) {
         contentHandler = handler;
         //To change body of implemented methods use Options | File Templates.
     }
 
     public void parse(String systemId)
-            throws IOException, SAXException
-    {
+            throws IOException, SAXException {
         //To change body of implemented methods use Options | File Templates.
     }
 
     public boolean getFeature(String name)
-            throws SAXNotRecognizedException, SAXNotSupportedException
-    {
+            throws SAXNotRecognizedException, SAXNotSupportedException {
         return false;  //To change body of implemented methods use Options | File Templates.
     }
 
     public void setFeature(String name, boolean value)
-            throws SAXNotRecognizedException, SAXNotSupportedException
-    {
+            throws SAXNotRecognizedException, SAXNotSupportedException {
         //To change body of implemented methods use Options | File Templates.
     }
 
-    public DTDHandler getDTDHandler()
-    {
+    public DTDHandler getDTDHandler() {
         return null;  //To change body of implemented methods use Options | File Templates.
     }
 
-    public void setDTDHandler(DTDHandler handler)
-    {
+    public void setDTDHandler(DTDHandler handler) {
         //To change body of implemented methods use Options | File Templates.
     }
 
-    public EntityResolver getEntityResolver()
-    {
+    public EntityResolver getEntityResolver() {
         return null;  //To change body of implemented methods use Options | File Templates.
     }
 
-    public void setEntityResolver(EntityResolver resolver)
-    {
+    public void setEntityResolver(EntityResolver resolver) {
         //To change body of implemented methods use Options | File Templates.
     }
 
-    public ErrorHandler getErrorHandler()
-    {
+    public ErrorHandler getErrorHandler() {
         return null;  //To change body of implemented methods use Options | File Templates.
     }
 
-    public void setErrorHandler(ErrorHandler handler)
-    {
+    public void setErrorHandler(ErrorHandler handler) {
         //To change body of implemented methods use Options | File Templates.
     }
 
     public Object getProperty(String name)
-            throws SAXNotRecognizedException, SAXNotSupportedException
-    {
+            throws SAXNotRecognizedException, SAXNotSupportedException {
         return null;  //To change body of implemented methods use Options | File Templates.
     }
 
     public void setProperty(String name, Object value)
-            throws SAXNotRecognizedException, SAXNotSupportedException
-    {
+            throws SAXNotRecognizedException, SAXNotSupportedException {
         //To change body of implemented methods use Options | File Templates.
     }
 

@@ -6,27 +6,30 @@
  * +91 44 2247 5106
  * http://groups.google.com/group/etoe
  * http://sted.sourceforge.net
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
+ * <p>
  * STED, Copyright (C) 2007 IntelliBitz Technologies
  * STED comes with ABSOLUTELY NO WARRANTY;
  * This is free software, and you are welcome
  * to redistribute it under the GNU GPL conditions;
- *
+ * <p>
  * Visit http://www.gnu.org/ for GPL License terms.
+ * <p>
+ * $Id:MenuHandler.java 55 2007-05-19 05:55:34Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/util/MenuHandler.java $
  */
 
 /**
@@ -46,26 +49,11 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.swing.AbstractButton;
-import javax.swing.Action;
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-import javax.swing.LookAndFeel;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.HashMap;
@@ -75,8 +63,7 @@ import java.util.Stack;
 import java.util.logging.Logger;
 
 public class MenuHandler
-        extends DefaultHandler
-{
+        extends DefaultHandler {
     private static final Map<String, Action> actions =
             new HashMap<String, Action>();
     private static final Map<String, String> toolTips =
@@ -103,75 +90,57 @@ public class MenuHandler
     private static MenuHandler menuHandler;
     private static UIManager.LookAndFeelInfo[] lookAndFeelInfos;
 
-    static
-    {
-        try
-        {
-            synchronized (MenuHandler.class)
-            {
+    static {
+        try {
+            synchronized (MenuHandler.class) {
                 menuHandler = new MenuHandler();
                 menuHandler.loadMenu(
                         Resources.getResource(Resources.MENU_CONFIG_NAME));
             }
-        }
-        catch (ParserConfigurationException e)
-        {
+        } catch (ParserConfigurationException e) {
             logger.throwing("intellibitz.sted.launch.STEDGUI", "main", e);
-        }
-        catch (SAXException e)
-        {
+        } catch (SAXException e) {
             logger.throwing("intellibitz.sted.launch.STEDGUI", "main", e);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.throwing("intellibitz.sted.launch.STEDGUI", "main", e);
         }
 
     }
 
-    private MenuHandler()
-    {
+    private MenuHandler() {
         super();
     }
 
-    public static Map<String, String> getToolTips()
-    {
+    public static Map<String, String> getToolTips() {
         return toolTips;
     }
 
-    public static Map<String, AbstractButton> getToolButtons()
-    {
+    public static Map<String, AbstractButton> getToolButtons() {
         return toolButtons;
     }
 
-    public static Map<String, JMenu> getMenus()
-    {
+    public static Map<String, JMenu> getMenus() {
         return menus;
     }
 
-    public static Map<String, JPopupMenu> getPopupMenus()
-    {
+    public static Map<String, JPopupMenu> getPopupMenus() {
         return popupMenus;
     }
 
-    public static Map<String, JMenuBar> getMenuBars()
-    {
+    public static Map<String, JMenuBar> getMenuBars() {
         return menuBars;
     }
 
-    public static Map<String, JToolBar> getToolBars()
-    {
+    public static Map<String, JToolBar> getToolBars() {
         return toolBars;
     }
 
-    public static MenuHandler getInstance()
-    {
+    public static MenuHandler getInstance() {
         return menuHandler;
     }
 
     private void loadMenu(String xml)
-            throws SAXException, ParserConfigurationException, IOException
-    {
+            throws SAXException, ParserConfigurationException, IOException {
         final SAXParserFactory saxParserFactory =
                 SAXParserFactory.newInstance();
         saxParserFactory.setValidating(true);
@@ -179,149 +148,108 @@ public class MenuHandler
         saxParser.parse(ClassLoader.getSystemResourceAsStream(xml), this);
     }
 
-    public JMenuBar getMenuBar(String name)
-    {
+    public JMenuBar getMenuBar(String name) {
         return menuBars.get(name);
     }
 
-    public JToolBar getToolBar(String name)
-    {
+    public JToolBar getToolBar(String name) {
         return toolBars.get(name);
     }
 
-    public Map<String, JMenuItem> getMenuItems()
-    {
+    public Map<String, JMenuItem> getMenuItems() {
         return menuItems;
     }
 
-    public Map<String, String> getTooltips()
-    {
+    public Map<String, String> getTooltips() {
         return toolTips;
     }
 
-    public Map<String, Action> getActions()
-    {
+    public Map<String, Action> getActions() {
         return actions;
     }
 
-    public Map<String, ImageIcon> getImageIcons()
-    {
+    public Map<String, ImageIcon> getImageIcons() {
         return Resources.imageIcons;
     }
 
-    public Action getAction(String name)
-    {
+    public Action getAction(String name) {
         return actions.get(name);
     }
 
-    public AbstractButton getToolButton(String name)
-    {
+    public AbstractButton getToolButton(String name) {
         return toolButtons.get(name);
     }
 
-    public JMenu getMenu(String name)
-    {
+    public JMenu getMenu(String name) {
         return menus.get(name);
     }
 
-    public JMenuItem getMenuItem(String name)
-    {
+    public JMenuItem getMenuItem(String name) {
         return menuItems.get(name);
     }
 
-    public void removeMenuItem(String name)
-    {
+    public void removeMenuItem(String name) {
         menuItems.remove(name);
     }
 
-    public void addMenuItem(JMenuItem menuItem)
-    {
-        if (!menuItems.containsKey(menuItem.getName()))
-        {
+    public void addMenuItem(JMenuItem menuItem) {
+        if (!menuItems.containsKey(menuItem.getName())) {
             menuItems.put(menuItem.getName(), menuItem);
         }
     }
 
-    public JPopupMenu getPopupMenu(String name)
-    {
+    public JPopupMenu getPopupMenu(String name) {
         return popupMenus.get(name);
     }
 
     public void startElement(String uri, String localName,
-            String qName, Attributes attributes)
-            throws SAXException
-    {
-        if ("menubar".equals(qName))
-        {
+                             String qName, Attributes attributes)
+            throws SAXException {
+        if ("menubar".equals(qName)) {
             menuBar = new JMenuBar();
             menuBar.setName(attributes.getValue("name"));
             final String toolBarName = attributes.getValue("toolBarName");
             toolBar = toolBars.get(toolBarName);
-            if (toolBar == null)
-            {
+            if (toolBar == null) {
                 toolBar = new JToolBar(JToolBar.HORIZONTAL);
                 toolBar.setName(toolBarName);
             }
-        }
-        else if ("menu".equals(qName))
-        {
-            try
-            {
+        } else if ("menu".equals(qName)) {
+            try {
                 stack.push(createMenu(attributes));
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 logger.severe("Unable to create Menu Item: " + e.getMessage());
                 e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             }
-        }
-        else if ("popup_menu".equals(qName))
-        {
+        } else if ("popup_menu".equals(qName)) {
             popupMenu = createPopupMenu(attributes);
-        }
-        else if ("menuitem".equals(qName))
-        {
-            if (popupMenu == null)
-            {
+        } else if ("menuitem".equals(qName)) {
+            if (popupMenu == null) {
                 final JMenu menu = stack.peek();
                 menu.add(createMenuItem(attributes));
-            }
-            else
-            {
+            } else {
                 popupMenu.add(createMenuItem(attributes));
             }
-        }
-        else if ("menuitemref".equals(qName))
-        {
-            if (popupMenu == null)
-            {
+        } else if ("menuitemref".equals(qName)) {
+            if (popupMenu == null) {
                 final JMenu menu = stack.peek();
                 menu.add(createMenuItemRef(attributes));
-            }
-            else
-            {
+            } else {
                 popupMenu.add(createMenuItemRef(attributes));
             }
-        }
-        else if ("seperator".equals(qName))
-        {
-            if (popupMenu == null)
-            {
+        } else if ("seperator".equals(qName)) {
+            if (popupMenu == null) {
                 final JMenu menu = stack.peek();
                 menu.addSeparator();
-            }
-            else
-            {
+            } else {
                 popupMenu.addSeparator();
             }
         }
     }
 
     public void endElement(String uri, String localName, String qName)
-            throws SAXException
-    {
-        if ("menubar".equals(qName))
-        {
+            throws SAXException {
+        if ("menubar".equals(qName)) {
             menuBars.put(menuBar.getName(), menuBar);
             // moved from getToolBar block
             toolBar.setOrientation(JToolBar.HORIZONTAL);
@@ -330,24 +258,17 @@ public class MenuHandler
             toolBar.add(Box.createVerticalGlue());
             //
             toolBars.put(toolBar.getName(), toolBar);
-        }
-        else if ("menu".equals(qName))
-        {
+        } else if ("menu".equals(qName)) {
             final JMenu menu = stack.pop();
-            if (stack.isEmpty())
-            {
+            if (stack.isEmpty()) {
                 toolBar.add(Box.createHorizontalStrut(5));
                 menuBar.add(menu);
-            }
-            else
-            {
+            } else {
                 final JMenu parent = stack.peek();
                 parent.add(menu);
             }
             menus.put(menu.getName(), menu);
-        }
-        else if ("popup_menu".equals(qName))
-        {
+        } else if ("popup_menu".equals(qName)) {
             popupMenus.put(popupMenu.getName(), popupMenu);
         }
     }
@@ -355,8 +276,7 @@ public class MenuHandler
 
     private JMenu createMenu(Attributes attributes)
             throws ClassNotFoundException, IllegalAccessException,
-            InstantiationException
-    {
+            InstantiationException {
         final JMenu menu = new JMenu();
         final String name = attributes.getValue("name");
         menu.setName(name);
@@ -364,8 +284,7 @@ public class MenuHandler
         final String mnemonic = attributes.getValue("mnemonic");
         menu.setMnemonic(mnemonic.charAt(0));
         final String actionName = attributes.getValue("action");
-        if (null != actionName)
-        {
+        if (null != actionName) {
             final Action action =
                     (Action) Class.forName(actionName).newInstance();
             action.putValue(Action.NAME, name);
@@ -377,15 +296,13 @@ public class MenuHandler
         return menu;
     }
 
-    private JPopupMenu createPopupMenu(Attributes attributes)
-    {
+    private JPopupMenu createPopupMenu(Attributes attributes) {
         final JPopupMenu menu = new JPopupMenu(attributes.getValue("name"));
         menu.setName(attributes.getValue("name"));
         return menu;
     }
 
-    private JMenuItem createMenuItemRef(Attributes attributes)
-    {
+    private JMenuItem createMenuItemRef(Attributes attributes) {
         final JMenuItem menuItem = getMenuItem(attributes.getValue("name"));
         final JMenuItem cloned = new JMenuItem(menuItem.getAction());
         cloned.setName(menuItem.getName());
@@ -393,21 +310,17 @@ public class MenuHandler
         cloned.setSelected(menuItem.isSelected());
         cloned.setHorizontalTextPosition(menuItem.getHorizontalTextPosition());
         final ItemListener[] itemListeners = menuItem.getItemListeners();
-        if (itemListeners != null)
-        {
-            for (final ItemListener itemListener : itemListeners)
-            {
+        if (itemListeners != null) {
+            for (final ItemListener itemListener : itemListeners) {
                 cloned.addItemListener(itemListener);
             }
         }
         return cloned;
     }
 
-    private JMenuItem createMenuItem(Attributes attributes)
-    {
+    private JMenuItem createMenuItem(Attributes attributes) {
         JMenuItem menuItem = null;
-        try
-        {
+        try {
             final String name = attributes.getValue("name");
             final String type = attributes.getValue("type");
             final String ic = attributes.getValue("icon");
@@ -417,15 +330,13 @@ public class MenuHandler
             final Action action = (Action) Class
                     .forName(attributes.getValue("action")).newInstance();
             action.putValue(Action.NAME, name);
-            if (ic != null)
-            {
+            if (ic != null) {
                 final Icon icon = Resources.getSystemResourceIcon(ic);
 //                imageIcons.put(name, icon);
                 action.putValue(Action.SMALL_ICON, icon);
             }
             action.putValue(Action.SHORT_DESCRIPTION, tooltip);
-            if (null != shortcut && shortcut.length() > 0)
-            {
+            if (null != shortcut && shortcut.length() > 0) {
                 action.putValue(Action.MNEMONIC_KEY, (int) shortcut.charAt(0));
             }
             action.putValue(Action.ACCELERATOR_KEY,
@@ -433,13 +344,11 @@ public class MenuHandler
             final String cmd = attributes.getValue("actionCommand");
             action.putValue(Action.ACTION_COMMAND_KEY, cmd);
             final String listener = attributes.getValue("listener");
-            if (listener != null)
-            {
+            if (listener != null) {
 //                action.addPropertyChangeListener((PropertyChangeListener) Class.forName(listener).newInstance());
             }
             final String enabled = attributes.getValue("actionEnabled");
-            if (enabled != null)
-            {
+            if (enabled != null) {
                 action.setEnabled(Boolean.valueOf(enabled));
             }
             menuItem = (JMenuItem) Class.forName(type).newInstance();
@@ -454,69 +363,54 @@ public class MenuHandler
                     attributes.getValue("toolButtonVisible");
             final String buttonTextVisible =
                     attributes.getValue("toolButtonTextVisible");
-            if ("true".equalsIgnoreCase(buttonVisible))
-            {
+            if ("true".equalsIgnoreCase(buttonVisible)) {
                 final JComponent component =
                         (JComponent) Class.forName(button).newInstance();
                 component.setToolTipText(tooltip);
-                if (AbstractButton.class.isInstance(component))
-                {
+                if (AbstractButton.class.isInstance(component)) {
                     final AbstractButton abstractButton =
                             (AbstractButton) component;
                     abstractButton.setAction(action);
-                    if (ItemListener.class.isInstance(action))
-                    {
+                    if (ItemListener.class.isInstance(action)) {
                         abstractButton.addItemListener((ItemListener) action);
                     }
-                    if ("false".equalsIgnoreCase(buttonTextVisible))
-                    {
+                    if ("false".equalsIgnoreCase(buttonTextVisible)) {
                         abstractButton.setText("");
                     }
                 }
                 toolBar.add(component);
                 toolButtons.put(name, (AbstractButton) component);
             }
-            if (ItemListener.class.isInstance(action))
-            {
+            if (ItemListener.class.isInstance(action)) {
                 menuItem.addItemListener((ItemListener) action);
             }
-        }
-        catch (InstantiationException e)
-        {
+        } catch (InstantiationException e) {
             logger.severe("Unable to create Menu Item: " + e.getMessage());
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        }
-        catch (IllegalAccessException e)
-        {
+        } catch (IllegalAccessException e) {
             logger.severe("Unable to create Menu Item: " + e.getMessage());
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        }
-        catch (ClassNotFoundException e)
-        {
+        } catch (ClassNotFoundException e) {
             logger.severe("Unable to create Menu Item: " + e.getMessage());
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
         }
         return menuItem;
     }
 
-    private static KeyStroke getAccelerator(String key)
-    {
-        if (key != null && key.length() > 0)
-        {
+    private static KeyStroke getAccelerator(String key) {
+        if (key != null && key.length() > 0) {
             return KeyStroke.getKeyStroke(key);
         }
         return null;
     }
 
 
-    public static void clearReOpenItems(MenuHandler menuHandler)
-    {
+    public static void clearReOpenItems(MenuHandler menuHandler) {
         final JMenu menu =
                 menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND);
         final int sz = menu.getMenuComponentCount();
         int i = sz - 2;
-        while (i > 0)
-        {
+        while (i > 0) {
             final Component menuItem = menu.getMenuComponent(0);
             menu.remove(0);
             menuHandler.removeMenuItem(menuItem.getName());
@@ -526,31 +420,26 @@ public class MenuHandler
     }
 
     public static void addReOpenItem(JMenu menu,
-            String fileName)
-    {
+                                     String fileName) {
         addReOpenItem(menu, fileName, new ReOpenFontMapAction(), true);
     }
 
     public static void addSampleFontMapMenuItem(JMenu menu,
-            String fileName)
-    {
+                                                String fileName) {
         addReOpenItem(menu, fileName, new OpenSampleFontMapAction(), false);
     }
 
     public static void addReOpenItem(JMenu menu,
-            String fileName, Action action, boolean checkInCache)
-    {
+                                     String fileName, Action action, boolean checkInCache) {
         final MenuHandler menuHandler = getInstance();
-        if (null == fileName || Resources.EMPTY_STRING.equals(fileName))
-        {
+        if (null == fileName || Resources.EMPTY_STRING.equals(fileName)) {
             throw new IllegalArgumentException(
                     "Invalid File name: " + fileName);
         }
         JMenuItem menuItem = menuHandler.getMenuItem(fileName);
         // check if the menu item already exists.. if not add new
         // this check is done only if cachecheck is enabled.. opensamplefontmap does not require this
-        if (!checkInCache || menuItem == null)
-        {
+        if (!checkInCache || menuItem == null) {
             menuItem = new JMenuItem(fileName);
             action.putValue(Action.NAME, fileName);
             action.putValue(Action.ACTION_COMMAND_KEY,
@@ -564,19 +453,16 @@ public class MenuHandler
         }
     }
 
-    public static void disableMenuItem(MenuHandler menuHandler, String fileName)
-    {
+    public static void disableMenuItem(MenuHandler menuHandler, String fileName) {
         disableMenuItem(
                 menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND),
                 fileName);
     }
 
-    private static void disableMenuItem(JMenu menu, String name)
-    {
+    private static void disableMenuItem(JMenu menu, String name) {
         int count = menu.getItemCount();
         int i = 0;
-        while (count > Resources.DEFAULT_MENU_COUNT)
-        {
+        while (count > Resources.DEFAULT_MENU_COUNT) {
             final JMenuItem menuItem = menu.getItem(i++);
             menuItem.setEnabled(!name.equals(menuItem.getName()));
             count--;
@@ -584,18 +470,15 @@ public class MenuHandler
         menu.setEnabled(menu.getItemCount() > Resources.DEFAULT_MENU_COUNT);
     }
 
-    public static void enableReOpenItems(MenuHandler menuHandler)
-    {
+    public static void enableReOpenItems(MenuHandler menuHandler) {
         enableReOpenItems(
                 menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND));
     }
 
-    public static void enableReOpenItems(JMenu menu)
-    {
+    public static void enableReOpenItems(JMenu menu) {
         int count = menu.getItemCount();
         int i = 0;
-        while (count > Resources.DEFAULT_MENU_COUNT)
-        {
+        while (count > Resources.DEFAULT_MENU_COUNT) {
             final JMenuItem menuItem = menu.getItem(i++);
             menuItem.setEnabled(true);
             count--;
@@ -604,40 +487,31 @@ public class MenuHandler
     }
 
     public static void enableItemsInReOpenMenu(MenuHandler menuHandler,
-            FontMap fontMap)
-    {
+                                               FontMap fontMap) {
         final JMenu menu =
                 menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND);
-        if (fontMap.isNew())
-        {
+        if (fontMap.isNew()) {
             enableReOpenItems(menu);
-        }
-        else
-        {
+        } else {
             disableMenuItem(menu, fontMap.getFileName());
         }
     }
 
-    public static String getUserOptions()
-    {
+    public static String getUserOptions() {
         final Map<String, JMenuItem> menuItems =
                 getInstance().getMenuItems();
         final Iterator<String> keys = menuItems.keySet().iterator();
         final StringBuffer userOptions = new StringBuffer();
-        while (keys.hasNext())
-        {
+        while (keys.hasNext()) {
             final String name = keys.next();
             final JMenuItem menuItem = menuItems.get(name);
             final Action action = menuItem.getAction();
-            if (ItemListenerAction.class.isInstance(action))
-            {
+            if (ItemListenerAction.class.isInstance(action)) {
                 userOptions.append(name);
                 userOptions.append(Resources.SYMBOL_ASTERISK);
                 userOptions.append(menuItem.isSelected());
                 userOptions.append(Resources.NEWLINE_DELIMITER);
-            }
-            else if (ReOpenFontMapAction.class.isInstance(action))
-            {
+            } else if (ReOpenFontMapAction.class.isInstance(action)) {
                 userOptions.append(
                         Resources.ACTION_FILE_REOPEN_COMMAND + name.hashCode());
                 userOptions.append(Resources.SYMBOL_ASTERISK);
@@ -648,14 +522,12 @@ public class MenuHandler
         return userOptions.toString();
     }
 
-    public static void loadLookAndFeelMenu(STEDWindow stedWindow)
-    {
+    public static void loadLookAndFeelMenu(STEDWindow stedWindow) {
         final MenuHandler menuHandler = getInstance();
         lookAndFeelInfos = UIManager.getInstalledLookAndFeels();
         final ButtonGroup buttonGroup = new ButtonGroup();
         final LookAndFeel curLookAndFeel = UIManager.getLookAndFeel();
-        for (final UIManager.LookAndFeelInfo lookAndFeelInfo : lookAndFeelInfos)
-        {
+        for (final UIManager.LookAndFeelInfo lookAndFeelInfo : lookAndFeelInfos) {
             final JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem();
             final LAFAction lafAction = new LAFAction();
             lafAction.setSTEDWindow(stedWindow);
@@ -665,8 +537,7 @@ public class MenuHandler
             menuItem.setName(lookAndFeelInfo.getName());
             menuItem.setAction(lafAction);
             menuHandler.addMenuItem(menuItem);
-            if (menuItem.getName().equals(curLookAndFeel.getName()))
-            {
+            if (menuItem.getName().equals(curLookAndFeel.getName())) {
                 menuItem.setSelected(true);
             }
             buttonGroup.add(menuItem);
@@ -675,12 +546,9 @@ public class MenuHandler
         }
     }
 
-    public static boolean isLAF(String name)
-    {
-        for (final UIManager.LookAndFeelInfo lookAndFeelInfo : lookAndFeelInfos)
-        {
-            if (lookAndFeelInfo.getName().equals(name))
-            {
+    public static boolean isLAF(String name) {
+        for (final UIManager.LookAndFeelInfo lookAndFeelInfo : lookAndFeelInfos) {
+            if (lookAndFeelInfo.getName().equals(name)) {
                 return true;
             }
         }

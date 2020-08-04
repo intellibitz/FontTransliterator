@@ -38,12 +38,12 @@
  */
 -->
 
-<project name="STED" default="init" basedir=".">
+<project name="STED" default="init-sted" basedir=".">
 
     <property file="build.properties"
               description="STED User Environment Settings"/>
 
-    <target name="init">
+    <target name="init-sted">
         <tstamp/>
         <!-- Create the build directory structure used by compile -->
         <mkdir dir="${OUT_PATH}"/>
@@ -63,24 +63,24 @@
         <pathelement path="${OUT_PROD_PATH}"/>
     </path>
 
-    <target name="copy.resource" depends="init">
+    <target name="copy.resource" depends="init-sted">
         <copy todir="${OUT_PATH}" verbose="true">
             <fileset
                     dir="${PROJECT_PATH}"
                     excludes="**/${OUT}/**, **/${DIST}/**, **/${TEST}/**, **/.idea/**"
                     defaultexcludes="true"
-                    />
+            />
         </copy>
-        <chmod file="${OUT_BIN_PATH}/sted.sh" perm="ugo+rx" />
+        <chmod file="${OUT_BIN_PATH}/sted.sh" perm="ugo+rx"/>
     </target>
 
-    <target name="compile" depends="init" description="compiles source">
+    <target name="compile-sted" depends="init-sted" description="compiles source">
         <javac
                 srcdir="${SOURCE_PATH}"
                 destdir="${OUT_PROD_PATH}"
                 deprecation="on"
                 verbose="true"
-                >
+        >
         </javac>
         <!--HACK for development builds only-->
         <!--copy 'config' folder in classess.. since ResourceBundle would fail-->
@@ -90,17 +90,17 @@
                     dir="${PROJECT_PATH}"
                     includes="config/**"
                     defaultexcludes="true"
-                    />
+            />
         </copy>
     </target>
 
-    <target name="deploy.widgets" depends="compile"
+    <target name="deploy.widgets" depends="compile-sted"
             description="creates sted-widgets.jar">
         <jar
                 basedir="${OUT_PROD_PATH}"
                 destfile="${STED-WIDGETS.JAR}"
                 includes="**/intellibitz/sted/widgets/**"
-                >
+        >
             <manifest>
                 <attribute name="Built-By"
                            value="IntelliBitz Technologies., Muthu Ramadoss."/>
@@ -119,14 +119,14 @@
         </jar>
     </target>
 
-    <target name="deploy.sted" depends="copy.resource, compile, deploy.widgets"
+    <target name="deploy-sted" depends="copy.resource, compile-sted, deploy.widgets"
             description="creates sted.jar">
         <jar
                 basedir="${OUT_PROD_PATH}"
                 destfile="${STED.JAR}"
                 includes="**/intellibitz/**"
                 excludes="**/config/**, **/intellibitz/sted/widgets/**"
-                >
+        >
             <manifest>
                 <attribute name="Main-Class" value="intellibitz.sted.Main"/>
                 <attribute name="Class-Path" value="${STED-WIDGETS.JAR_NAME} ."/>
@@ -147,7 +147,7 @@
         </jar>
     </target>
 
-    <target name="clean.deploy" depends="clean.build, deploy.sted"
+    <target name="clean.deploy" depends="clean.build, deploy-sted"
             description="Cleans and Creates Deployment"/>
 
     <target name="undeploy" description="removes sted.jar">
@@ -155,7 +155,7 @@
             <fileset
                     dir="${OUT_BIN_PATH}"
                     includes="${STED.JAR_NAME}"
-                    />
+            />
         </delete>
     </target>
 
@@ -165,7 +165,7 @@
                     dir="${OUT_PROD_PATH}"
                     excludes="**/.dependency-info/**"
                     defaultexcludes="false"
-                    />
+            />
         </delete>
     </target>
 
@@ -175,7 +175,7 @@
                     dir="${OUT_PATH}"
                     excludes="**/.dependency-info/**"
                     defaultexcludes="false"
-                    />
+            />
         </delete>
     </target>
 
@@ -186,7 +186,7 @@
                 basedir="${OUT_PATH}"
                 destfile="${STED.ZIP}"
                 excludes="**/${CLASSES}/**, **/${SRC}/**, **/temp/**, ${STED.ZIP}, ${STED-FULL.ZIP}"
-                >
+        >
         </jar>
     </target>
 
@@ -196,11 +196,11 @@
                 basedir="${OUT_PATH}"
                 destfile="${STED-FULL.ZIP}"
                 excludes="**/${CLASSES}/**, **/temp/**, ${STED.ZIP}, ${STED-FULL.ZIP}"
-                >
+        >
         </jar>
     </target>
 
-    <target name="run" depends="deploy.sted" description="runs sted">
+    <target name="run-sted" depends="deploy-sted" description="runs sted">
         <!-- WINDOWS -->
         <!--<exec dir="${OUT_BIN_PATH}" executable="sted.bat"/>-->
         <!-- LINUX -->

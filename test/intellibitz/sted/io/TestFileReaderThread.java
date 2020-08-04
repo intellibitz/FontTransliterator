@@ -1,22 +1,16 @@
 package intellibitz.sted.io;
 
-public class TestFileReaderThread
-{
+public class TestFileReaderThread {
 
-    public TestFileReaderThread()
-    {
+    public TestFileReaderThread() {
     }
 
 
-    public static void testViewToolBar()
-    {
+    public static void testViewToolBar() {
         final FileReaderThread fileReaderThread = new FileReaderThread(null);
-        try
-        {
+        try {
             fileReaderThread.start();
-        }
-        catch (IllegalStateException e)
-        {
+        } catch (IllegalStateException e) {
             System.out.println("Caught Exception");
             e.printStackTrace();
         }

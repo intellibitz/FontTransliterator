@@ -2,40 +2,30 @@ package intellibitz.sted.actions;
 
 import org.junit.Test;
 
-import javax.swing.Action;
+import javax.swing.*;
 
-public class TestViewAction
-{
+public class TestViewAction {
 
-    public TestViewAction()
-    {
+    public TestViewAction() {
     }
 
 
     @Test
-    public void testViewToolBar()
-    {
+    public void testViewToolBar() {
         Action action = null;
         Action action2 = null;
-        try
-        {
+        try {
             action = (Action) Class
                     .forName("intellibitz.sted.actions.ViewAction")
                     .newInstance();
             action2 = (Action) Class
                     .forName("intellibitz.sted.actions.ViewAction$ViewToolBar")
                     .newInstance();
-        }
-        catch (InstantiationException e)
-        {
+        } catch (InstantiationException e) {
             e.printStackTrace();
-        }
-        catch (IllegalAccessException e)
-        {
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
-        }
-        catch (ClassNotFoundException e)
-        {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         assert action != null;

@@ -6,27 +6,30 @@
  * +91 44 2247 5106
  * http://groups.google.com/group/etoe
  * http://sted.sourceforge.net
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
+ * <p>
  * STED, Copyright (C) 2007 IntelliBitz Technologies
  * STED comes with ABSOLUTELY NO WARRANTY;
  * This is free software, and you are welcome
  * to redistribute it under the GNU GPL conditions;
- *
+ * <p>
  * Visit http://www.gnu.org/ for GPL License terms.
+ * <p>
+ * $Id: MappingRulesPanel.java 56 2007-05-19 06:47:59Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/ui/MappingRulesPanel.java $
  */
 
 /**
@@ -42,27 +45,20 @@ import intellibitz.sted.fontmap.FontMap;
 import intellibitz.sted.fontmap.FontMapEntry;
 import intellibitz.sted.util.Resources;
 
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 
 public class MappingRulesPanel
         extends JPanel
         implements TableModelListener,
         FontMapChangeListener,
-        ListSelectionListener
-{
+        ListSelectionListener {
     private FontMap fontMap;
     private JTextField followedText;
     private JTextField precededText;
@@ -75,13 +71,11 @@ public class MappingRulesPanel
     private JLabel followedByTitle;
     private JLabel precededByTitle;
 
-    public MappingRulesPanel()
-    {
+    public MappingRulesPanel() {
         super();
     }
 
-    public void init()
-    {
+    public void init() {
         final TitledBorder titledBorder = BorderFactory.createTitledBorder(
                 Resources.getResource(Resources.TITLE_MAPPING_RULE));
         titledBorder.setTitleJustification(TitledBorder.CENTER);
@@ -185,19 +179,16 @@ public class MappingRulesPanel
         setVisible(true);
     }
 
-    public void load()
-    {
+    public void load() {
     }
 
-    private void setFontMap(FontMap fontMap)
-    {
+    private void setFontMap(FontMap fontMap) {
         this.fontMap = fontMap;
         clear();
         reset();
     }
 
-    private void reset()
-    {
+    private void reset() {
         word1.setFont(fontMap.getFont1());
         word2.setFont(fontMap.getFont2());
         followedText.setFont(fontMap.getFont2());
@@ -205,8 +196,7 @@ public class MappingRulesPanel
         ruleTitle.setFont(fontMap.getFont2());
     }
 
-    private void clear()
-    {
+    private void clear() {
         word1.setText(Resources.EMPTY_STRING);
         word2.setText(Resources.EMPTY_STRING);
         followedText.setText(Resources.EMPTY_STRING);
@@ -216,26 +206,21 @@ public class MappingRulesPanel
         ruleTitle.setText(Resources.RULE_TITLE);
     }
 
-    private void load(FontMapEntry entry)
-    {
+    private void load(FontMapEntry entry) {
         clear();
-        if (entry != null)
-        {
+        if (entry != null) {
             word1.setText(entry.getFrom());
             word2.setText(entry.getTo());
-            if (entry.isRulesSet())
-            {
+            if (entry.isRulesSet()) {
                 ruleTitle.setText("If <" + word1.getText() + "> is: ");
                 beginsWithCheck.setSelected(entry.isBeginsWith());
                 endsWithCheck.setSelected(entry.isEndsWith());
                 String val = entry.getFollowedBy();
-                if (val != null)
-                {
+                if (val != null) {
                     followedText.setText(val);
                 }
                 val = entry.getPrecededBy();
-                if (val != null)
-                {
+                if (val != null) {
                     precededText.setText(val);
                 }
             }
@@ -243,32 +228,25 @@ public class MappingRulesPanel
         }
     }
 
-    public void stateChanged(FontMapChangeEvent e)
-    {
+    public void stateChanged(FontMapChangeEvent e) {
         setFontMap(e.getFontMap());
     }
 
-    public void tableChanged(TableModelEvent e)
-    {
+    public void tableChanged(TableModelEvent e) {
         tableModel = (TableModel) e.getSource();
-        if (tableModel.getValueAt(0, 0) == null)
-        {
+        if (tableModel.getValueAt(0, 0) == null) {
             setEnabled(false);
-        }
-        else
-        {
+        } else {
             load(((MappingTableModel) tableModel).getValueAt(e.getFirstRow()));
             setEnabled(true);
         }
     }
 
-    public void valueChanged(ListSelectionEvent e)
-    {
+    public void valueChanged(ListSelectionEvent e) {
         final ListSelectionModel listSelectionModel =
                 (ListSelectionModel) e.getSource();
         final int row = listSelectionModel.getMinSelectionIndex();
-        if (row > -1)
-        {
+        if (row > -1) {
             load(((MappingTableModel) tableModel).getValueAt(row));
         }
     }
