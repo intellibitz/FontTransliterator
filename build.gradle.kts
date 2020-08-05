@@ -1,5 +1,15 @@
 // keep this until all targets fully migrated
 //ant.importBuild("build.xml")
+defaultTasks("initSted")
+val projectPathProp: String by project
+println("Project Path: $projectPathProp")
+val sourcePathProp: String by project
+println("Source Path: $sourcePathProp")
+val outPathProp: String by project
+println("Deploy Path: $outPathProp")
+val stedJarProp: String by project
+println("Jar Path: $stedJarProp")
+
 
 plugins {
     // Apply the application plugin to add support for building a CLI application.
@@ -10,31 +20,20 @@ plugins {
 
 // if normal source directory convention is not followed, define custom sourcesets
 sourceSets.main {
-    java.srcDir("src")
-    java.outputDir = file("./out/classes/production/FontTransliterator")
+    java.srcDirs(listOf("src/main"))
+    java.outputDir = file(outPathProp)
+    resources.srcDirs(listOf("src/main/resources"))
 }
 sourceSets.test {
-    java.srcDir("test")
-    java.outputDir = file("./out/classes/test/FontTransliterator")
+    java.srcDirs(listOf("src/test"))
+    java.outputDir = file(outPathProp)
+    resources.srcDirs(listOf("src/test/resources"))
 }
-
-defaultTasks("initSted")
-val projectPathProp: String by project
-println("Project Path: $projectPathProp")
-val sourcePathProp: String by project
-println("Source Path: $sourcePathProp")
-val outProdPathProp: String by project
-println("Classes Path: $outProdPathProp")
-val outPathProp: String by project
-println("Deploy Path: $outPathProp")
-val stedJarProp: String by project
-println("Jar Path: $stedJarProp")
 
 tasks {
     register("initSted") {
         doLast {
             if (File(outPathProp).createNewFile()) println("created $outPathProp")
-            if (File(outProdPathProp).createNewFile()) println("created $outProdPathProp")
         }
     }
     register("copyResource") {
@@ -43,7 +42,7 @@ tasks {
             copy {
                 from(projectPathProp)
                 into(outPathProp)
-                exclude("out", "build", "dist", "test", "gradle", ".idea", ".gradle")
+                exclude("out", "build", "dist", "gradle", ".idea", ".gradle")
             }
         }
     }
@@ -52,6 +51,11 @@ tasks {
         dependsOn("compileJava")
         doLast {
         }
+    }
+    register("deploySted") {
+        dependsOn("copyResource")
+        dependsOn("compileSted")
+        dependsOn("jar")
     }
 /*
 

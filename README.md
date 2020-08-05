@@ -39,10 +39,7 @@ Please read License.txt that was bundled with STED for licensing terms.
 Contact STED
 =======================
   IntelliBitz Technologies
-  http://androidrocks.googlecode.com
-  http://www.intellibitz.com
-  http://groups.google.com/group/etoe
-  http://sted.sourceforge.net
-  sted@intellibitz.com
+  http://linkedin.com/in/tellibitz
+  muthu.ramadoss@gmail.com
 
 

@@ -1,0 +1,69 @@
+<!-- DTD used by the STED fontmap.xml -->
+
+        <!ELEMENT fontmap (font, font_entry+)>
+
+        <!ELEMENT font (font_from, font_to)>
+
+        <!ELEMENT font_from EMPTY>
+
+        <!ELEMENT font_to EMPTY>
+
+        <!ELEMENT font_entry
+                (entry_from, entry_to, begins_with?, ends_with?, followed_by?, preceded_by?, conditional?)>
+
+        <!ELEMENT entry_from EMPTY>
+
+        <!ELEMENT entry_to EMPTY>
+
+        <!ELEMENT begins_with EMPTY>
+
+        <!ELEMENT ends_with EMPTY>
+
+        <!ELEMENT followed_by EMPTY>
+
+        <!ELEMENT preceded_by EMPTY>
+
+        <!ELEMENT conditional EMPTY>
+
+        <!ATTLIST fontmap
+                name ID #REQUIRED
+                version CDATA #REQUIRED
+                >
+
+        <!ATTLIST font_from
+                value CDATA #REQUIRED
+                location CDATA #OPTIONAL
+                >
+
+        <!ATTLIST font_to
+                value CDATA #REQUIRED
+                location CDATA #OPTIONAL
+                >
+
+        <!ATTLIST entry_from
+                value CDATA #REQUIRED
+                >
+
+        <!ATTLIST entry_to
+                value CDATA #REQUIRED
+                >
+
+        <!ATTLIST begins_with
+                value (true | false) "false"
+                >
+
+        <!ATTLIST ends_with
+                value (true | false) "false"
+                >
+
+        <!ATTLIST followed_by
+                value CDATA #REQUIRED
+                >
+
+        <!ATTLIST preceded_by
+                value CDATA #REQUIRED
+                >
+
+        <!ATTLIST conditional
+                value (AND | OR | NOT) "OR"
+                >
