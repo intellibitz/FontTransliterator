@@ -2,7 +2,7 @@ package intellibitz.sted.actions;
 
 import intellibitz.sted.event.FontMapChangeEvent;
 import intellibitz.sted.event.FontMapChangeListener;
-import intellibitz.sted.launch.STEDGUI;
+import intellibitz.sted.STEDGUI;
 import intellibitz.sted.ui.STEDWindow;
 
 import javax.swing.event.InternalFrameEvent;

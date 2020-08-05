@@ -1,4 +1,4 @@
-package intellibitz.sted.launch;
+package intellibitz.sted;
 
 import intellibitz.sted.ui.AboutText;
 import intellibitz.sted.ui.STEDWindow;
@@ -52,7 +52,7 @@ public class STEDGUI {
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             logger.severe("Exception : " + e.getMessage());
-            logger.throwing("intellibitz.sted.launch.STEDGUI", "main", e);
+            logger.throwing("intellibitz.sted.STEDGUI", "main", e);
             System.exit(-1);
         }
     }

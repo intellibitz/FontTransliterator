@@ -6,7 +6,7 @@ import intellibitz.sted.event.*;
 import intellibitz.sted.fontmap.FontMap;
 import intellibitz.sted.io.FileFilterHelper;
 import intellibitz.sted.io.FontMapReader;
-import intellibitz.sted.launch.STEDGUI;
+import intellibitz.sted.STEDGUI;
 import intellibitz.sted.util.FileHelper;
 import intellibitz.sted.util.MenuHandler;
 import intellibitz.sted.util.Resources;

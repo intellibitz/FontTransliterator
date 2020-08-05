@@ -1,6 +1,6 @@
 package intellibitz.sted.actions;
 
-import intellibitz.sted.launch.STEDGUI;
+import intellibitz.sted.STEDGUI;
 import intellibitz.sted.ui.STEDWindow;
 import intellibitz.sted.ui.TabDesktop;
 

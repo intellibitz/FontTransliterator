@@ -59,11 +59,11 @@ public class MenuHandler
                         Resources.getResource(Resources.MENU_CONFIG_NAME));
             }
         } catch (ParserConfigurationException e) {
-            logger.throwing("intellibitz.sted.launch.STEDGUI", "main", e);
+            logger.throwing("intellibitz.sted.STEDGUI", "main", e);
         } catch (SAXException e) {
-            logger.throwing("intellibitz.sted.launch.STEDGUI", "main", e);
+            logger.throwing("intellibitz.sted.STEDGUI", "main", e);
         } catch (IOException e) {
-            logger.throwing("intellibitz.sted.launch.STEDGUI", "main", e);
+            logger.throwing("intellibitz.sted.STEDGUI", "main", e);
         }
 
     }

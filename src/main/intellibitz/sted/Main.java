@@ -1,9 +1,5 @@
 package intellibitz.sted;
 
-import intellibitz.sted.launch.STEDConsole;
-import intellibitz.sted.launch.STEDGUI;
-import intellibitz.sted.launch.STEDLogManager;
-
 import java.util.logging.Logger;
 
 /**

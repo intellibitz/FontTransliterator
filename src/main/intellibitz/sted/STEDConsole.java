@@ -1,4 +1,4 @@
-package intellibitz.sted.launch;
+package intellibitz.sted;
 
 import intellibitz.sted.event.IThreadListener;
 import intellibitz.sted.event.ThreadEvent;
@@ -26,7 +26,7 @@ public class STEDConsole
     private static Logger logger;
 
     public STEDConsole(List<String> args) {
-        logger = Logger.getLogger("intellibitz.sted.launch.STEDConsole");
+        logger = Logger.getLogger("intellibitz.sted.STEDConsole");
         STEDLogManager.getLogmanager().addLogger(logger);
         loadArgs(args);
         if (null == fontMapName || Resources.EMPTY_STRING.equals(fontMapName)) {
@@ -66,19 +66,19 @@ public class STEDConsole
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             logger.severe("Exception : " + e.getMessage());
-            logger.throwing("intellibitz.sted.launch.STEDConsole",
+            logger.throwing("intellibitz.sted.STEDConsole",
                     "Constructor", e);
             System.exit(-1);
         } catch (SAXException e) {
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             logger.severe("Exception : " + e.getMessage());
-            logger.throwing("intellibitz.sted.launch.STEDConsole",
+            logger.throwing("intellibitz.sted.STEDConsole",
                     "Constructor", e);
             System.exit(-1);
         } catch (ParserConfigurationException e) {
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             logger.severe("Exception : " + e.getMessage());
-            logger.throwing("intellibitz.sted.launch.STEDConsole",
+            logger.throwing("intellibitz.sted.STEDConsole",
                     "Constructor", e);
             System.exit(-1);
         }
@@ -90,7 +90,7 @@ public class STEDConsole
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             logger.severe("Exception : " + e.getMessage());
-            logger.throwing("intellibitz.sted.launch.STEDConsole", "main", e);
+            logger.throwing("intellibitz.sted.STEDConsole", "main", e);
             System.exit(-1);
         } finally {
         }
@@ -99,10 +99,10 @@ public class STEDConsole
     private static void printUsage() {
         logger.info("STED Console Usage: ");
         logger.info(
-                "   java -Dfontmap.file='<file>' -Dinput.file='<input>' -Doutput.file='<output>' intellibitz.sted.launch.STEDConsole");
+                "   java -Dfontmap.file='<file>' -Dinput.file='<input>' -Doutput.file='<output>' intellibitz.sted.STEDConsole");
         logger.info(" -OR- ");
         logger.info(
-                "   java intellibitz.sted.launch.STEDConsole -map='<file>' -in='<input>' -out='<output>'");
+                "   java intellibitz.sted.STEDConsole -map='<file>' -in='<input>' -out='<output>'");
     }
 
     private void loadArgs(List<String> args) {

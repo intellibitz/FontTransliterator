@@ -1,4 +1,4 @@
-package intellibitz.sted.launch;
+package intellibitz.sted;
 
 import intellibitz.sted.util.FileHelper;
 import intellibitz.sted.util.Resources;
