@@ -8,7 +8,10 @@ plugins {
 application {
     // Define the main class for the application.
     mainClass.set("intellibitz.sted.Main")
+//    the executable batch file name and the jar name
     applicationName = "sted"
+//    copy it at the base of the distribution, NOTE: default is under 'bin'
+    executableDir = ""
 }
 
 // if normal source directory convention is not followed, define custom sourcesets
