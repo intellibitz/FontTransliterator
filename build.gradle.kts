@@ -5,6 +5,12 @@ plugins {
     kotlin("jvm") version "1.4.0-rc"
 }
 
+application {
+    // Define the main class for the application.
+    mainClass.set("intellibitz.sted.Main")
+    applicationName = "sted"
+}
+
 // if normal source directory convention is not followed, define custom sourcesets
 sourceSets.main {
     java.srcDirs(listOf("src/main"))
@@ -13,6 +19,35 @@ sourceSets.main {
 sourceSets.test {
     java.srcDirs(listOf("src/test"))
     resources.srcDirs(listOf("src/test/resources"))
+}
+
+distributions {
+    main {
+        contents {
+
+        }
+    }
+}
+
+repositories {
+    // Use jcenter for resolving dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+    mavenCentral()
+    maven("https://dl.bintray.com/kotlin/kotlin-eap")
+    maven("https://kotlin.bintray.com/kotlinx")
+}
+
+dependencies {
+    implementation(kotlin("script-runtime"))
+    // Use the Kotlin JDK 8 standard library.
+    implementation(kotlin("stdlib-jdk8"))
+    // Align versions of all Kotlin components
+    implementation(kotlin("bom"))
+    // Use the Kotlin test library.
+    testImplementation(kotlin("test"))
+    // Use the Kotlin JUnit integration.
+    testImplementation(kotlin("test-junit"))
 }
 
 defaultTasks("initSted")
@@ -47,28 +82,3 @@ tasks {
     }
 }
 
-application {
-    // Define the main class for the application.
-    mainClass.set("intellibitz.sted.Main")
-}
-
-repositories {
-    // Use jcenter for resolving dependencies.
-    // You can declare any Maven/Ivy/file repository here.
-    jcenter()
-    mavenCentral()
-    maven("https://dl.bintray.com/kotlin/kotlin-eap")
-    maven("https://kotlin.bintray.com/kotlinx")
-}
-
-dependencies {
-    implementation(kotlin("script-runtime"))
-    // Use the Kotlin JDK 8 standard library.
-    implementation(kotlin("stdlib-jdk8"))
-    // Align versions of all Kotlin components
-    implementation(kotlin("bom"))
-    // Use the Kotlin test library.
-    testImplementation(kotlin("test"))
-    // Use the Kotlin JUnit integration.
-    testImplementation(kotlin("test-junit"))
-}
