@@ -5,6 +5,9 @@ plugins {
     kotlin("jvm") version "1.4.0-rc"
 }
 
+version = 0.9
+group = "intellibitz"
+
 application {
     // Define the main class for the application.
     mainClass.set("intellibitz.sted.Main")
@@ -53,7 +56,7 @@ dependencies {
     testImplementation(kotlin("test-junit"))
 }
 
-defaultTasks("initSted")
+defaultTasks("runSted")
 tasks {
     register("initSted") {
         doLast {
@@ -82,6 +85,16 @@ tasks {
         dependsOn("copyResource")
         dependsOn("compileSted")
         dependsOn("jar")
+    }
+    register("runSted") {
+        dependsOn("installDist")
+        doLast {
+            exec {
+                workingDir("./build/install/sted")
+                commandLine("cmd", "/c", "sted.bat")
+//                executable("./build/install/sted.bat")
+            }
+        }
     }
 }
 
