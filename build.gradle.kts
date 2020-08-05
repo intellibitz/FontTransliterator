@@ -1,16 +1,3 @@
-// keep this until all targets fully migrated
-//ant.importBuild("build.xml")
-defaultTasks("initSted")
-val projectPathProp: String by project
-println("Project Path: $projectPathProp")
-val sourcePathProp: String by project
-println("Source Path: $sourcePathProp")
-val outPathProp: String by project
-println("Deploy Path: $outPathProp")
-val stedJarProp: String by project
-println("Jar Path: $stedJarProp")
-
-
 plugins {
     // Apply the application plugin to add support for building a CLI application.
     application
@@ -21,29 +8,30 @@ plugins {
 // if normal source directory convention is not followed, define custom sourcesets
 sourceSets.main {
     java.srcDirs(listOf("src/main"))
-    java.outputDir = file(outPathProp)
     resources.srcDirs(listOf("src/main/resources"))
 }
 sourceSets.test {
     java.srcDirs(listOf("src/test"))
-    java.outputDir = file(outPathProp)
     resources.srcDirs(listOf("src/test/resources"))
 }
 
+defaultTasks("initSted")
 tasks {
     register("initSted") {
         doLast {
-            if (File(outPathProp).createNewFile()) println("created $outPathProp")
+//            if (File(buildPathProp).createNewFile()) println("created $buildPathProp")
         }
     }
     register("copyResource") {
         dependsOn("initSted")
         doLast {
+/*
             copy {
-                from(projectPathProp)
-                into(outPathProp)
+                from(".")
+                into(buildPathProp)
                 exclude("out", "build", "dist", "gradle", ".idea", ".gradle")
             }
+*/
         }
     }
     register("compileSted") {
@@ -57,9 +45,6 @@ tasks {
         dependsOn("compileSted")
         dependsOn("jar")
     }
-/*
-
- */
 }
 
 application {
