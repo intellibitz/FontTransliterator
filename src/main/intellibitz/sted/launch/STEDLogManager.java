@@ -24,7 +24,7 @@ public class STEDLogManager {
                         new BufferedInputStream(FileHelper.getInputStream
                                 (new File(FileHelper.suffixFileSeparator(
                                         System.getProperty(Resources.LOG_PATH,
-                                                "./log/")) +
+                                                "src/dist/log/")) +
                                         Resources
                                                 .getResource(
                                                         Resources.LOG_CONFIG_NAME)))));

@@ -182,9 +182,9 @@ public class Resources {
                 .getBundle(Resources.STED_CONFIG_NAME, Locale.getDefault());
         logger.finest("retrieved resource bundle " + resourceBundle);
         RESOURCE_PATH_VAL =
-                System.getProperty(Resources.RESOURCE_PATH, "./resource/");
+                System.getProperty(Resources.RESOURCE_PATH, "src/dist/resource/");
         String settingsPath =
-                System.getProperty(Resources.SETTINGS_PATH, "./settings/");
+                System.getProperty(Resources.SETTINGS_PATH, "src/dist/settings/");
         settingsPath = FileHelper.suffixFileSeparator(settingsPath);
         String SETTINGS_FILE_PATH_STED = settingsPath
                 + getResource(
