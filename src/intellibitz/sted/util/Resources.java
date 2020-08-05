@@ -33,6 +33,9 @@
  * <p>
  * $Id:Resources.java 55 2007-05-19 05:55:34Z sushmu $
  * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/util/Resources.java $
+ * <p>
+ * $Id:Resources.java 55 2007-05-19 05:55:34Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/util/Resources.java $
  */
 
 /**

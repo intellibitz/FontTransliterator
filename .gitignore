@@ -11,3 +11,6 @@
 # Ignore Gradle build output directory
 build
 out
+
+# Location of the SDK. This is only used by Gradle.
+local.properties

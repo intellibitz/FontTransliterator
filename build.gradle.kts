@@ -1,18 +1,12 @@
+// keep this until all targets fully migrated
+//ant.importBuild("build.xml")
+
 plugins {
     // Apply the application plugin to add support for building a CLI application.
     application
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     kotlin("jvm") version "1.4.0-rc"
 }
-
-// keep this until all targets fully migrated
-ant.importBuild("build.xml")
-val PROJECT_PATH: String by project
-val SOURCE_PATH: String by project
-val OUT_PROD_PATH: String by project
-val OUT_PATH: String by project
-val STED_JAR: String by project
-
 
 // if normal source directory convention is not followed, define custom sourcesets
 sourceSets.main {
@@ -25,36 +19,38 @@ sourceSets.test {
 }
 
 defaultTasks("initSted")
-
-val outPath = File(OUT_PATH)
-val outProdPath = File(OUT_PROD_PATH)
+val projectPathProp: String by project
+println("Project Path: $projectPathProp")
+val sourcePathProp: String by project
+println("Source Path: $sourcePathProp")
+val outProdPathProp: String by project
+println("Classes Path: $outProdPathProp")
+val outPathProp: String by project
+println("Deploy Path: $outPathProp")
+val stedJarProp: String by project
+println("Jar Path: $stedJarProp")
 
 tasks {
     register("initSted") {
         doLast {
-            outPath.createNewFile()
-            outProdPath.createNewFile()
-            println("Project Path: ${PROJECT_PATH}")
-            println("Source Path: ${SOURCE_PATH}")
-            println("Classes Path: ${OUT_PROD_PATH}")
-            println("Deploy Path: ${OUT_PATH}")
-            println("Jar Path: ${STED_JAR}")
+            if (File(outPathProp).createNewFile()) println("created $outPathProp")
+            if (File(outProdPathProp).createNewFile()) println("created $outProdPathProp")
         }
     }
     register("copyResource") {
         dependsOn("initSted")
         doLast {
             copy {
-                from(PROJECT_PATH)
-                into(OUT_PATH)
+                from(projectPathProp)
+                into(outPathProp)
                 exclude("out", "build", "dist", "test", "gradle", ".idea", ".gradle")
             }
         }
     }
     register("compileSted") {
         dependsOn("initSted")
+        dependsOn("compileJava")
         doLast {
-            named("compileJava")
         }
     }
 /*

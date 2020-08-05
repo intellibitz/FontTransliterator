@@ -33,6 +33,9 @@
  * <p>
  * $Id: TabDesktop.java 59 2007-05-19 08:11:31Z sushmu $
  * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/ui/TabDesktop.java $
+ * <p>
+ * $Id: TabDesktop.java 59 2007-05-19 08:11:31Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/ui/TabDesktop.java $
  */
 
 /**

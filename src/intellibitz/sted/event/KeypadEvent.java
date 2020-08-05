@@ -39,6 +39,12 @@
  * <p>
  * sted event package
  * defines the listeners and the event types
+ * <p>
+ * $Id: KeypadEvent.java 56 2007-05-19 06:47:59Z sushmu $
+ * $HeadURL: svn+ssh://sushmu@svn.code.sf.net/p/sted/code/FontTransliterator/trunk/src/intellibitz/sted/event/KeypadEvent.java $
+ * <p>
+ * sted event package
+ * defines the listeners and the event types
  */
 
 /**
