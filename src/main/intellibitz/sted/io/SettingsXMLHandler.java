@@ -61,7 +61,7 @@ public class SettingsXMLHandler
     public void startElement(String uri, String localName, String qName,
                              Attributes attributes)
             throws SAXException {
-        if ("src/dist/settings".equals(qName)) {
+        if ("settings".equals(qName)) {
         } else if ("option".equals(qName)) {
             key = attributes.getValue("name");
             value = attributes.getValue("value");

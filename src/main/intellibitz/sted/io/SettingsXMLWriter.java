@@ -72,7 +72,7 @@ public class SettingsXMLWriter {
             if (contentHandler == null) {
                 throw new SAXException("No content contentHandler");
             }
-            final String rootElement = "src/dist/settings";
+            final String rootElement = "settings";
             // Get an efficient reader for the file
             final BufferedReader bufferedReader =
                     new BufferedReader(input.getCharacterStream());
