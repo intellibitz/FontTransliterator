@@ -3,6 +3,7 @@ package intellibitz.sted.ui;
 import intellibitz.sted.actions.ExitAction;
 import intellibitz.sted.actions.ItemListenerAction;
 import intellibitz.sted.actions.STEDWindowAction;
+import intellibitz.sted.event.*;
 import intellibitz.sted.fontmap.FontMap;
 import intellibitz.sted.io.FileReaderThread;
 import intellibitz.sted.util.FileHelper;

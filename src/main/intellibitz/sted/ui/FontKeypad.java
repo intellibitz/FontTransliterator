@@ -1,6 +1,7 @@
 package intellibitz.sted.ui;
 
 import intellibitz.sted.actions.LoadFontAction;
+import intellibitz.sted.event.*;
 import intellibitz.sted.fontmap.FontInfo;
 import intellibitz.sted.fontmap.FontMap;
 import intellibitz.sted.util.Resources;

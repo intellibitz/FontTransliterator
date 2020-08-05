@@ -2,6 +2,7 @@ package intellibitz.sted.ui;
 
 import intellibitz.sted.actions.RedoAction;
 import intellibitz.sted.actions.UndoAction;
+import intellibitz.sted.event.*;
 import intellibitz.sted.fontmap.FontMap;
 import intellibitz.sted.io.FileFilterHelper;
 import intellibitz.sted.io.FontMapReader;

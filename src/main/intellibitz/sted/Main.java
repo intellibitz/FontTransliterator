@@ -10,8 +10,6 @@ import java.util.logging.Logger;
  * Main<br> Invoke STED Console or the GUI based on the arguments
  */
 public class Main {
-    private static Logger logger;
-
 
     private Main() {
     }
@@ -19,10 +17,10 @@ public class Main {
     /**
      * Entry point
      *
-     * @param args
+     * @param args the command line arguments for the application
      */
     public static void main(String[] args) {
-        logger = Logger.getLogger("intellibitz.sted.Main");
+        Logger logger = Logger.getLogger("intellibitz.sted.Main");
         STEDLogManager.getLogmanager().addLogger(logger);
         if (args != null && args.length > 0) {
             final String param1 = args[0];
