@@ -178,9 +178,13 @@ public class Resources {
 
 
     static {
-        resourceBundle = ResourceBundle
-                .getBundle(Resources.STED_CONFIG_NAME, Locale.getDefault());
-        logger.finest("retrieved resource bundle " + resourceBundle);
+        try {
+            resourceBundle = ResourceBundle
+                    .getBundle(Resources.STED_CONFIG_NAME, Locale.getDefault());
+            logger.finest("retrieved resource bundle " + resourceBundle);
+        } catch (MissingResourceException mre){
+//            todo: log this
+        }
         RESOURCE_PATH_VAL =
                 System.getProperty(Resources.RESOURCE_PATH, "resource");
         String settingsPath =
@@ -282,6 +286,7 @@ public class Resources {
     public static String getResource(String name) {
         String val = null;
         try {
+            if (resourceBundle != null)
             val = resourceBundle.getString(name);
         } catch (MissingResourceException e) {
             // ignore, since we will try alternates
