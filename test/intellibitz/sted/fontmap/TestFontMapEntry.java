@@ -1,9 +1,5 @@
 package intellibitz.sted.fontmap;
 
-/**
- * Created by IntelliJ IDEA. User: Muthu Ramadoss Date: Nov 4, 2003 Time:
- * 11:49:35 PM To change this template use Options | File Templates.
- */
 public class TestFontMapEntry {
 
     public TestFontMapEntry() {

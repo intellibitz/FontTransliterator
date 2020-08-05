@@ -10,13 +10,19 @@ Thank you for downloading STED!
 
 STED PLATFORM
 ========================
-Developed and Tested on JDK 1.7.0 on Ubuntu Linux.
+Developed and Tested on JDK 1.8.0 on Windows / Ubuntu Linux.
     ** IMPORTANT: **
-JDK 1.7.0 or later is required for running STED 0.80 or later.
+JDK 1.8.0 or later is required for running STED 0.80 or later.
 
 Installing STED
 ========================
 Unzip the dowloaded zip file, into a folder.
+
+Running STED
+========================
+    ** All Platforms **
+    java -jar sted.jar
+    
     ** UNIX: **
     Edit 'bin/sted.sh' to SET JAVA_HOME etc., and run 'sted.sh' from bin folder.
     ** WINDOWS: **
