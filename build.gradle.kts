@@ -34,11 +34,12 @@ sourceSets {
 }
 
 application {
-    // Define the main class for the application.
-    mainClass.set("intellibitz.sted.Main")
-//    mainModule.set("intellibitz")
+    //    mainModule.set("intellibitz")
 //    the executable batch file name and the jar name
     applicationName = "sted"
+    applicationDefaultJvmArgs = listOf("-Duser.dir=STED_APP_HOME")
+    // Define the main class for the application.
+    mainClass.set("intellibitz.sted.Main")
 //    copy it at the base of the distribution, NOTE: default is under 'bin'
     executableDir = ""
     java {
@@ -50,6 +51,15 @@ application {
 tasks {
     startScripts {
         doLast {
+            var text = windowsScript.absoluteFile.readText()
+//            text = text.replace("STED_APP_HOME", "%~dp0..")
+            text = text.replace("STED_APP_HOME", "%APP_HOME%")
+            text = text.replace("CLASSPATH=", "CLASSPATH=.;")
+            windowsScript.absoluteFile.writeText(text)
+            var text2 = unixScript.absoluteFile.readText()
+            text2 = text2.replace("STED_APP_HOME", "\$APP_HOME")
+            text2 = text2.replace("CLASSPATH=", "CLASSPATH=.:")
+            unixScript.absoluteFile.writeText(text2)
         }
     }
 }
