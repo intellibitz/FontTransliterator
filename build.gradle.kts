@@ -1,3 +1,6 @@
+//version = 0.9
+//group = "intellibitz"
+
 plugins {
     // Apply the java application plugin to add support for building a CLI application.
     application
@@ -5,26 +8,16 @@ plugins {
     kotlin("jvm") version "1.4.0-rc"
 }
 
-version = 0.9
-group = "intellibitz"
-
-application {
-    // Define the main class for the application.
-    mainClass.set("intellibitz.sted.Main")
-//    mainModule.set("intellibitz")
-//    the executable batch file name and the jar name
-    applicationName = "sted"
-//    copy it at the base of the distribution, NOTE: default is under 'bin'
-    executableDir = ""
-    java {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
+repositories {
+    mavenCentral()
+    maven("https://dl.bintray.com/kotlin/kotlin-eap")
+    maven("https://kotlin.bintray.com/kotlinx")
 }
 
 distributions {
     main {
         distributionBaseName.set("sted")
+        version = 0.9
     }
 }
 
@@ -40,10 +33,25 @@ sourceSets {
     }
 }
 
-repositories {
-    mavenCentral()
-    maven("https://dl.bintray.com/kotlin/kotlin-eap")
-    maven("https://kotlin.bintray.com/kotlinx")
+application {
+    // Define the main class for the application.
+    mainClass.set("intellibitz.sted.Main")
+//    mainModule.set("intellibitz")
+//    the executable batch file name and the jar name
+    applicationName = "sted"
+//    copy it at the base of the distribution, NOTE: default is under 'bin'
+    executableDir = ""
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+}
+
+tasks {
+    startScripts {
+        doLast {
+        }
+    }
 }
 
 dependencies {
@@ -57,3 +65,4 @@ dependencies {
     // Use the Kotlin JUnit integration.
     testImplementation(kotlin("test-junit"))
 }
+
