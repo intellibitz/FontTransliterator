@@ -11,20 +11,33 @@ group = "intellibitz"
 application {
     // Define the main class for the application.
     mainClass.set("intellibitz.sted.Main")
+//    mainModule.set("intellibitz")
 //    the executable batch file name and the jar name
     applicationName = "sted"
 //    copy it at the base of the distribution, NOTE: default is under 'bin'
     executableDir = ""
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+}
+
+distributions {
+    main {
+        distributionBaseName.set("sted")
+    }
 }
 
 // if normal source directory convention is not followed, define custom sourcesets
-sourceSets.main {
-    java.srcDirs(listOf("src/main"))
-    resources.srcDirs(listOf("src/main/resources"))
-}
-sourceSets.test {
-    java.srcDirs(listOf("src/test"))
-    resources.srcDirs(listOf("src/test/resources"))
+sourceSets {
+    main {
+        java.srcDirs(listOf("src/main"))
+        resources.srcDirs(listOf("src/main/resources"))
+    }
+    test {
+        java.srcDirs(listOf("src/test"))
+        resources.srcDirs(listOf("src/test/resources"))
+    }
 }
 
 repositories {
