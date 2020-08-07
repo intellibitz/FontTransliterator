@@ -5,8 +5,8 @@ import sted.actions.ItemListenerAction;
 import sted.actions.STEDWindowAction;
 import sted.event.*;
 import sted.fontmap.FontMap;
-import sted.io.FileReaderThread;
 import sted.io.FileHelper;
+import sted.io.FileReaderThread;
 import sted.io.Resources;
 
 import javax.swing.*;
@@ -23,11 +23,11 @@ public class STEDWindow
         ChangeListener,
         IMessageListener,
         IStatusEventSource {
+    private static final Logger logger =
+            Logger.getLogger(STEDWindow.class.getName());
     // desktop to show fontmap
     private TabDesktop tabDesktop;
     private StatusPanel statusPanel;
-    private static final Logger logger =
-            Logger.getLogger(STEDWindow.class.getName());
     private IStatusListener statusListener;
     private StatusEvent statusEvent;
 
@@ -188,8 +188,8 @@ public class STEDWindow
 
         // set the sample fontmap action
         String[] sampleFontMapPaths = FileHelper
-                .getSampleFontMapPaths(Resources.getResourceDirPath());
-        if (sampleFontMapPaths.length > 0) {
+                .getSampleFontMapPaths("resource");
+        if ((sampleFontMapPaths != null ? sampleFontMapPaths.length : 0) > 0) {
             final JMenu menu =
                     MenuHandler.getInstance()
                             .getMenu(Resources.MENU_SAMPLES_NAME);

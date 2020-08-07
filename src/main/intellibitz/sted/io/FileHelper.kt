@@ -1,62 +1,65 @@
-package sted.io;
+package sted.io
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.*;
-import java.util.logging.Logger;
+import java.awt.Component
+import java.io.*
+import java.util.logging.Logger
+import javax.swing.JFileChooser
+import javax.swing.JOptionPane
 
-public class FileHelper {
-    private static final Logger logger =
-            Logger.getLogger("sted.io.FileHelper");
-
-    private FileHelper() {
+object FileHelper {
+    private val logger = Logger.getLogger("sted.io.FileHelper")
+    @JvmStatic
+    fun openFont(parent: Component?): File? {
+        return openFile("Please select Font location:", "ttf", "Fonts", parent)
     }
 
-    public static File openFont(Component parent) {
-        return openFile("Please select Font location:", "ttf", "Fonts", parent);
+    @JvmStatic
+    fun alertAndOpenFont(alert: String?, parent: Component?): File? {
+        JOptionPane.showMessageDialog(
+            parent, alert, "Missing Resource",
+            JOptionPane.WARNING_MESSAGE
+        )
+        return openFont(parent)
     }
 
-    public static File alertAndOpenFont(String alert, Component parent) {
-        JOptionPane.showMessageDialog(parent, alert, "Missing Resource",
-                JOptionPane.WARNING_MESSAGE);
-        return openFont(parent);
+    @JvmStatic
+    fun openFile(
+        title: String?, extension: String?,
+        description: String?,
+        parent: Component?
+    ): File? {
+        val jFileChooser = JFileChooser(System.getProperty("user.dir"))
+        jFileChooser.dialogTitle = title
+        val fileFilterHelper = FileFilterHelper(extension, description)
+        jFileChooser.fileFilter = fileFilterHelper
+        val result = jFileChooser.showOpenDialog(parent)
+        return if (result == JFileChooser.APPROVE_OPTION) {
+            jFileChooser.selectedFile
+        } else null
     }
 
-    public static File openFile(String title, String extension,
-                                String description,
-                                Component parent) {
-        final JFileChooser jFileChooser =
-                new JFileChooser(System.getProperty("user.dir"));
-        jFileChooser.setDialogTitle(title);
-        final FileFilterHelper fileFilterHelper =
-                new FileFilterHelper(extension, description);
-        jFileChooser.setFileFilter(fileFilterHelper);
-        final int result = jFileChooser.showOpenDialog(parent);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            return jFileChooser.getSelectedFile();
-        }
-        return null;
-    }
-
-    public static String suffixFileSeparator(String path) {
+    @JvmStatic
+    fun suffixFileSeparator(path: String): String {
+        var path = path
         if (!path.endsWith(File.separator)) {
-            path += File.separator;
+            path += File.separator
         }
-        return path;
+        return path
     }
 
-    public static void fileCopy(File source, String dest)
-            throws IOException {
-        final File newFile = new File(dest);
-        final byte[] buffer = new byte[4096];
-        final FileInputStream inputStream = new FileInputStream(source);
-        final FileOutputStream outputStream = new FileOutputStream(newFile);
-        int len;
-        while ((len = inputStream.read(buffer)) != -1) {
-            outputStream.write(buffer, 0, len);
+    @JvmStatic
+    @Throws(IOException::class)
+    fun fileCopy(source: File?, dest: String?) {
+        val newFile = File(dest)
+        val buffer = ByteArray(4096)
+        val inputStream = FileInputStream(source)
+        val outputStream = FileOutputStream(newFile)
+        var len: Int
+        while (inputStream.read(buffer).also { len = it } != -1) {
+            outputStream.write(buffer, 0, len)
         }
-        inputStream.close();
-        outputStream.close();
+        inputStream.close()
+        outputStream.close()
     }
 
     /**
@@ -64,50 +67,50 @@ public class FileHelper {
      * @return InputStream the input stread from the file
      * @throws java.io.FileNotFoundException if file cannot be read, not found
      */
-    public static InputStream getInputStream(File file)
-            throws FileNotFoundException {
-        logger.entering(Resources.class.getName(), "getInputStream", file);
-        InputStream inputStream;
-        if (file.isAbsolute()) {
+    @JvmStatic
+    @Throws(FileNotFoundException::class)
+    fun getInputStream(file: File): InputStream {
+        logger.entering(Resources::class.java.name, "getInputStream", file)
+        var inputStream: InputStream?
+        inputStream = if (file.isAbsolute) {
             logger.finest(
-                    "file is absolute.. using ClassLoader.getSystemResourceAsStream " +
-                            file.getAbsolutePath());
-            inputStream = ClassLoader
-                    .getSystemResourceAsStream(file.getAbsolutePath());
+                "file is absolute.. using ClassLoader.getSystemResourceAsStream " +
+                        file.absolutePath
+            )
+            ClassLoader
+                .getSystemResourceAsStream(file.absolutePath)
         } else {
-            final String resource = file.getPath().replace('\\', '/');
+            val resource = file.path.replace('\\', '/')
             logger.finest(
-                    "file is relative.. using Resources.class.getClass().getResourceAsStream with " +
-                            resource);
-            inputStream = ClassLoader.getSystemResourceAsStream(resource);
+                "file is relative.. using Resources.class.getClass().getResourceAsStream with " +
+                        resource
+            )
+            ClassLoader.getSystemResourceAsStream(resource)
         }
         if (inputStream == null) {
-            inputStream = new FileInputStream(file);
+            inputStream = FileInputStream(file)
         }
-        logger.exiting(Resources.class.getName(), "getInputStream",
-                inputStream);
-        return inputStream;
+        logger.exiting(
+            Resources::class.java.name, "getInputStream",
+            inputStream
+        )
+        return inputStream
     }
 
-    public static String[] getSampleFontMapPaths(String dir) {
-        File dirFile = new File(dir);
-        if (!dirFile.isDirectory()) {
-            throw new IllegalArgumentException(dir + " Is not a directory");
-        }
-        String[] files = dirFile.list(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith("xml");
-            }
-        });
-        if (null != files && files.length > 0) {
-            for (int i = 0; i < files.length; i++) {
-                if (!files[i].contains(dir)) {
-                    files[i] = dir + files[i];
+    @JvmStatic
+    fun getSampleFontMapPaths(dir: String): Array<String>? {
+        val dirFile = File(dir)
+        if (dirFile.isDirectory) {
+            val files = dirFile.list { dir, name -> name.endsWith("xml") }
+            if (null != files && files.size > 0) {
+                for (i in files.indices) {
+                    if (!files[i].contains(dir)) {
+                        files[i] = dir + files[i]
+                    }
                 }
-
             }
-
+            return files
         }
-        return files;
+        return null
     }
 }
