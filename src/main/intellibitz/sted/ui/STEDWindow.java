@@ -41,7 +41,9 @@ public class STEDWindow
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setTitle(Resources.getResource("title"));
-        setIconImage(Resources.getSTEDImage());
+        ImageIcon imageIcon = Resources.getSystemResourceIcon(Resources.getSetting("icon.sted"));
+        if (imageIcon != null)
+            setIconImage(imageIcon.getImage());
 
         statusEvent = new StatusEvent(this);
 

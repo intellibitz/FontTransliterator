@@ -128,7 +128,6 @@ public class Resources {
 
     public static final String FOLLOWED_BY = "Followed By: ";
     public static final String PRECEDED_BY = "Preceded By: ";
-    public static final String TITLE = "title";
     public static final String XML = "xml";
     public static final String ENTRIES = "entries";
 
@@ -160,83 +159,51 @@ public class Resources {
     public static final int DEFAULT_MENU_COUNT = 2;
     public static final String SAMPLE_FONTMAP = "sample.fontmap";
     public static final String MENU_SAMPLES_NAME = "Samples";
+
     public static final String SETTINGS_FILE_PATH_USER;
     public static final Map<String, ImageIcon> imageIcons =
             new HashMap<String, ImageIcon>();
-    static final Map<String, FontInfo> fonts =
+    public static final Map<String, FontInfo> fonts =
             new HashMap<String, FontInfo>();
-    private static final Logger logger =
-            Logger.getLogger("sted.io.Resources");
+
     private static final Map<String, String> settings =
             new HashMap<String, String>();
+    private static final Logger logger =
+            Logger.getLogger("sted.io.Resources");
     private static ResourceBundle resourceBundle;
     private static int id;
     private static String RESOURCE_PATH_VAL;
 
-
     static {
         try {
-            resourceBundle = ResourceBundle
-                    .getBundle(Resources.STED_CONFIG_NAME, Locale.getDefault());
+            resourceBundle = ResourceBundle.getBundle(Resources.STED_CONFIG_NAME, Locale.getDefault());
             logger.finest("retrieved resource bundle " + resourceBundle);
         } catch (MissingResourceException mre) {
-//            todo: log this
+            logger.severe("Unable to load ResourceBundle " + mre.getMessage());
         }
-        RESOURCE_PATH_VAL =
-                System.getProperty(Resources.RESOURCE_PATH, "resource");
+        RESOURCE_PATH_VAL = System.getProperty(Resources.RESOURCE_PATH, "resource");
         String SETTINGS_FILE_PATH_STED = getResource(Resources.SETTINGS_STED_UI);
         SETTINGS_FILE_PATH_USER = getResource(Resources.SETTINGS_STED_USER);
         try {
             readSettings(SETTINGS_FILE_PATH_STED);
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.throwing("Resources", "static initializer block", e);
-            logger.severe(
-                    "Unable to read settings - IOException " + e.getMessage());
-        } catch (SAXException e) {
-            logger.throwing("Resources", "static initializer block", e);
-            logger.severe(
-                    "Unable to read settings - SAXException " + e.getMessage());
-        } catch (ParserConfigurationException e) {
-            logger.throwing("Resources", "static initializer block", e);
-            logger.severe(
-                    "Unable to read settings - ParserConfigurationException " +
-                            e.getMessage());
+            logger.severe("Unable to read settings - ParserConfigurationException " + e.getMessage());
         }
         try {
             readSettings(SETTINGS_FILE_PATH_USER);
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.throwing("Resources", "static initializer block", e);
-            logger.severe(
-                    "Unable to read settings - IOException " + e.getMessage());
-            logger.info(
-                    "NOTE: Safely ignore the user.xml not found error if starting STED for the first time");
-        } catch (SAXException e) {
-            logger.throwing("Resources", "static initializer block", e);
-            logger.severe(
-                    "Unable to read settings - SAXException " + e.getMessage());
-        } catch (ParserConfigurationException e) {
-            logger.throwing("Resources", "static initializer block", e);
-            logger.severe(
-                    "Unable to read settings - ParserConfigurationException " +
-                            e.getMessage());
+            logger.severe("Unable to read settings - ParserConfigurationException " + e.getMessage());
+            logger.info("NOTE: Safely ignore the user.xml not found error if starting STED for the first time");
         }
-        Resources.getImageIcons()
-                .put(Resources.ICON_STED, Resources.getSystemResourceIcon
-                        (Resources.getResource(Resources.ICON_STED)));
-
+        Resources.getImageIcons().put(Resources.ICON_STED,
+                Resources.getSystemResourceIcon(Resources.getResource(Resources.ICON_STED)));
         // load all system fonts
         loadFonts(getLocalGraphicsEnvironment().getAllFonts());
     }
 
     private Resources() {
-    }
-
-    public static String getSTEDTitle() {
-        return getResource(TITLE);
-    }
-
-    public static Image getSTEDImage() {
-        return getSTEDIcon().getImage();
     }
 
     public static ImageIcon getSTEDIcon() {
