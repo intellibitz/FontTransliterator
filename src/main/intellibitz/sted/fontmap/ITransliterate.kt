@@ -1,33 +1,19 @@
-package sted.fontmap;
+package sted.fontmap
 
-import java.util.List;
-
-
-public interface ITransliterate {
-    String parseLine(String input);
-
-    void setReverseTransliterate(boolean flag);
-
-    void setHTMLAware(boolean flag);
-
-    void setEntries(ITransliterate.IEntries entries);
-
-    public interface IEntries {
-        IEntry getReverseMapping(String wordToConvert);
-
-        IEntry getDirectMapping(String wordToConvert);
-
-        List<FontMapEntry> isRuleFound(String word);
-
-        boolean isInWord1(String word);
-
-        boolean isInWord2(String word);
+interface ITransliterate {
+    fun parseLine(input: String?): String?
+    fun setReverseTransliterate(flag: Boolean)
+    fun setHTMLAware(flag: Boolean)
+    fun setEntries(entries: IEntries?)
+    interface IEntries {
+        fun getReverseMapping(wordToConvert: String?): IEntry?
+        fun getDirectMapping(wordToConvert: String?): IEntry?
+        fun isRuleFound(word: String?): List<FontMapEntry?>?
+        fun isInWord1(word: String?): Boolean
+        fun isInWord2(word: String?): Boolean
     }
-
-    public interface IEntry {
-        String getFrom();
-
-        String getTo();
-
+    interface IEntry {
+        val from: String?
+        val to: String?
     }
 }

@@ -1,294 +1,206 @@
-package sted.fontmap;
+package sted.fontmap
 
-import sted.io.Resources;
+import sted.fontmap.ITransliterate.IEntry
+import sted.io.Resources
 
 /**
  * Represents a FontMap Entry. All Mappings are transformed to a FontMapEntry.
  */
-public class FontMapEntry
-        implements ITransliterate.IEntry,
-        Comparable,
-        Cloneable {
-    private String from;
-    private String to;
-    private boolean beginsWith;
-    private boolean endsWith;
-    private String followedBy;
-    private String precededBy;
-    private String conditional = Resources.ENTRY_CONDITIONAL_AND;
-    private String id;
-    private int status = -1;
+class FontMapEntry() : IEntry, Comparable<Any?>, Cloneable {
+    override var from: String? = null
+    override var to: String? = null
+    var isBeginsWith = false
+    var isEndsWith = false
 
-    public FontMapEntry() {
-        id = String.valueOf(Resources.getId());
+    private var conditional = Resources.ENTRY_CONDITIONAL_AND
+    var id: String
+        private set
+    private var status = -1
+
+    constructor(from: String?, to: String?) : this() {
+        this.from = from
+        this.to = to
     }
 
-    public FontMapEntry(String from, String to) {
-        this();
-        this.from = from;
-        this.to = to;
+    val isAdded: Boolean
+        get() = Resources.ENTRY_STATUS_ADD == status
+    val isEdited: Boolean
+        get() = Resources.ENTRY_STATUS_EDIT == status
+    val isDeleted: Boolean
+        get() = Resources.ENTRY_STATUS_DELETE == status
+
+    private fun getConditional(): String {
+        return conditional
     }
 
-    public boolean isAdded() {
-        return Resources.ENTRY_STATUS_ADD == status;
-    }
-
-    public boolean isEdited() {
-        return Resources.ENTRY_STATUS_EDIT == status;
-    }
-
-    public boolean isDeleted() {
-        return Resources.ENTRY_STATUS_DELETE == status;
-    }
-
-    private String getConditional() {
-        return conditional;
-    }
-
-    public void setConditional(String conditional) {
-        if (Resources.ENTRY_CONDITIONAL_AND.equalsIgnoreCase(conditional)) {
-            this.conditional = Resources.ENTRY_CONDITIONAL_AND;
-        } else if (Resources.ENTRY_CONDITIONAL_OR.equalsIgnoreCase(conditional)) {
-            this.conditional = Resources.ENTRY_CONDITIONAL_OR;
-        } else if (Resources.ENTRY_CONDITIONAL_NOT.equalsIgnoreCase(conditional)) {
-            this.conditional = Resources.ENTRY_CONDITIONAL_NOT;
-        } else {
-            throw new IllegalArgumentException(conditional);
+    fun setConditional(conditional: String?) {
+        when {
+            Resources.ENTRY_CONDITIONAL_AND.equals(conditional, ignoreCase = true) -> {
+                this.conditional = Resources.ENTRY_CONDITIONAL_AND
+            }
+            Resources.ENTRY_CONDITIONAL_OR.equals(conditional, ignoreCase = true) -> {
+                this.conditional = Resources.ENTRY_CONDITIONAL_OR
+            }
+            Resources.ENTRY_CONDITIONAL_NOT.equals(conditional, ignoreCase = true) -> {
+                this.conditional = Resources.ENTRY_CONDITIONAL_NOT
+            }
+            else -> {
+                throw IllegalArgumentException(conditional)
+            }
         }
     }
 
-    public String getFrom() {
-        return from;
+    fun setBeginsWith(beginsWith: String?) {
+        isBeginsWith = java.lang.Boolean.parseBoolean(beginsWith)
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    fun setEndsWith(endsWith: String?) {
+        isEndsWith = java.lang.Boolean.parseBoolean(endsWith)
     }
 
-    public String getTo() {
-        return to;
-    }
-
-    public void setTo(String to) {
-        this.to = to;
-    }
-
-    public boolean isBeginsWith() {
-        return beginsWith;
-    }
-
-    public void setBeginsWith(boolean beginsWith) {
-        this.beginsWith = beginsWith;
-    }
-
-    public void setBeginsWith(String beginsWith) {
-        this.beginsWith = Boolean.valueOf(beginsWith);
-    }
-
-    public boolean isEndsWith() {
-        return endsWith;
-    }
-
-    public void setEndsWith(boolean endsWith) {
-        this.endsWith = endsWith;
-    }
-
-    public void setEndsWith(String endsWith) {
-        this.endsWith = Boolean.valueOf(endsWith);
-    }
-
-    public String getFollowedBy() {
-        return followedBy;
-    }
-
-    public void setFollowedBy(String followedBy) {
-        if (Resources.EMPTY_STRING.equals(followedBy)) {
-            this.followedBy = null;
-        } else {
-            this.followedBy = followedBy;
+    var followedBy: String? = null
+        set(value) {
+            if (!value?.isBlank()!!) {
+                field = value
+            }
         }
-    }
 
-    public String getPrecededBy() {
-        return precededBy;
-    }
-
-    public void setPrecededBy(String precededBy) {
-        if (Resources.EMPTY_STRING.equals(precededBy)) {
-            this.precededBy = null;
-        } else {
-            this.precededBy = precededBy;
+    var precededBy: String? = null
+        set(value) {
+            if (!value?.isBlank()!!) {
+                field = value
+            }
         }
-    }
 
-    public boolean isValid() {
-        return from != null
-                && to != null
-                && !Resources.EMPTY_STRING.equals(from)
-                && !Resources.EMPTY_STRING.equals(to)
-                && !from.equals(to);
-    }
+    val isValid: Boolean
+        get() = (from != null && to != null && Resources.EMPTY_STRING != from
+                && Resources.EMPTY_STRING != to
+                && from != to)
 
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public String getId() {
-        return id;
+    fun setStatus(status: Int) {
+        this.status = status
     }
 
     /**
      * @return true if atleast one of the rules is set
      */
-    public boolean isRulesSet() {
-        return beginsWith
-                || endsWith
-                || followedBy != null && followedBy.length() > 0
-                || precededBy != null && precededBy.length() > 0;
-    }
+    val isRulesSet: Boolean
+        get() = (isBeginsWith
+                || isEndsWith
+                || followedBy != null && followedBy!!.isNotEmpty() || precededBy != null && precededBy!!.isNotEmpty())
 
     /**
      * returns a string representation of a fontmap entry
      *
      * @return String
      */
-    public String toString() {
-        final StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append(getFrom());
-        stringBuffer.append(Resources.ENTRY_TOSTRING_DELIMITER);
-        stringBuffer.append(getTo());
-        stringBuffer.append(Resources.ENTRY_TOSTRING_DELIMITER);
-        stringBuffer.append(isBeginsWith());
-        stringBuffer.append(Resources.ENTRY_TOSTRING_DELIMITER);
-        stringBuffer.append(isEndsWith());
-        stringBuffer.append(Resources.ENTRY_TOSTRING_DELIMITER);
-        stringBuffer.append(getFollowedBy());
-        stringBuffer.append(Resources.ENTRY_TOSTRING_DELIMITER);
-        stringBuffer.append(getPrecededBy());
-        stringBuffer.append(Resources.ENTRY_TOSTRING_DELIMITER);
-        stringBuffer.append(getConditional());
-        return stringBuffer.toString();
+    override fun toString(): String {
+        return from +
+                Resources.ENTRY_TOSTRING_DELIMITER +
+                to +
+                Resources.ENTRY_TOSTRING_DELIMITER +
+                isBeginsWith +
+                Resources.ENTRY_TOSTRING_DELIMITER +
+                isEndsWith +
+                Resources.ENTRY_TOSTRING_DELIMITER +
+                followedBy +
+                Resources.ENTRY_TOSTRING_DELIMITER +
+                precededBy +
+                Resources.ENTRY_TOSTRING_DELIMITER +
+                getConditional()
     }
 
-    /**
-     * Compares this object with the specified object for order.  Returns a
-     * negative integer, zero, or a positive integer as this object is less
-     * than, equal to, or greater than the specified object.<p>
-     *
-     * @param tgt the Object to be compared.
-     * @return a negative integer, zero, or a positive integer as this object is
-     * less than, equal to, or greater than the specified object.
-     * @throws ClassCastException if the specified object's type prevents it
-     *                            from being compared to this Object.
-     */
-    public int compareTo(Object tgt) {
-        if (FontMapEntry.class.isInstance(tgt)) {
-            final FontMapEntry target = (FontMapEntry) tgt;
-            if (equals(target)) {
-                return 0;  //To change body of implemented methods use Options | File Templates.
+    override fun compareTo(other: Any?): Int {
+        if (other is FontMapEntry) {
+            if (equals(other)) {
+                return 0 //To change body of implemented methods use Options | File Templates.
             } else {
-                if (!from.equals(target.getFrom())) {
-                    return from.compareTo(target.getFrom());
+                if (from != other.from) {
+                    return from!!.compareTo(other.from!!)
                 }
-                if (!to.equals(target.getTo())) {
-                    return to.compareTo(target.getTo());
+                if (to != other.to) {
+                    return to!!.compareTo(other.to!!)
                 }
-                if (beginsWith != target.isBeginsWith()) {
-                    return 1;
+                if (isBeginsWith != other.isBeginsWith) {
+                    return 1
                 }
-                if (endsWith != target.isEndsWith()) {
-                    return 1;
+                if (isEndsWith != other.isEndsWith) {
+                    return 1
                 }
-                if (!conditional.equals(target.getConditional())) {
-                    return conditional.compareTo(target.getConditional());
+                if (conditional != other.getConditional()) {
+                    return conditional.compareTo(other.getConditional())
                 }
-                boolean val = followedBy == null ?
-                        target.getFollowedBy() == null :
-                        followedBy.equals(target.getFollowedBy());
-                if (!val) {
-                    if (followedBy != null && target.getFollowedBy() != null) {
-                        return followedBy.compareTo(target.getFollowedBy());
-                    }
-                    return 1;
+                var `val` = if (followedBy == null) other.followedBy == null else followedBy == other.followedBy
+                if (!`val`) {
+                    return if (followedBy != null && other.followedBy != null) {
+                        followedBy!!.compareTo(other.followedBy!!)
+                    } else 1
                 }
-                val = precededBy == null ?
-                        target.getPrecededBy() == null :
-                        precededBy.equals(target.getPrecededBy());
-                if (!val) {
-                    if (precededBy != null && target.getPrecededBy() != null) {
-                        return precededBy.compareTo(target.getPrecededBy());
-                    }
-                    return 1;
+                `val` = if (precededBy == null) other.precededBy == null else precededBy == other.precededBy
+                if (!`val`) {
+                    return if (precededBy != null && other.precededBy != null) {
+                        precededBy!!.compareTo(other.precededBy!!)
+                    } else 1
                 }
             }
         }
-        return -1;  //To change body of implemented methods use Options | File Templates.
+        return -1 //To change body of implemented methods use Options | File Templates.
     }
 
-    /**
-     * @param tgt
-     * @return
-     */
-    public boolean equals(Object tgt) {
-        if (this == tgt) {
-            return true;
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
+            return true
         }
-        if (!(tgt instanceof FontMapEntry)) {
-            return false;
+        if (other !is FontMapEntry) {
+            return false
         }
-        final FontMapEntry target = (FontMapEntry) tgt;
-        if (!from.equals(target.getFrom())) {
-            return false;
+        if (from != other.from) {
+            return false
         }
-        if (!to.equals(target.getTo())) {
-            return false;
+        if (to != other.to) {
+            return false
         }
-        if (beginsWith != target.isBeginsWith()) {
-            return false;
+        if (isBeginsWith != other.isBeginsWith) {
+            return false
         }
-        if (endsWith != target.isEndsWith()) {
-            return false;
+        if (isEndsWith != other.isEndsWith) {
+            return false
         }
-        if (!conditional.equals(target.getConditional())) {
-            return false;
+        if (conditional != other.getConditional()) {
+            return false
         }
-//        if (status != target.getStatus()) return false;
-        final boolean val = followedBy == null ?
-                target.getFollowedBy() == null :
-                followedBy.equals(target.getFollowedBy());
-        if (!val) {
-            return false;
+        //        if (status != target.getStatus()) return false;
+        val `val` = if (followedBy == null) other.followedBy == null else followedBy == other.followedBy
+        if (!`val`) {
+            return false
         }
-        return precededBy == null ? target.getPrecededBy() == null :
-                precededBy.equals(target.getPrecededBy());
+        return if (precededBy == null) other.precededBy == null else precededBy == other.precededBy
     }
 
-    public int hashCode() {
-        int result;
-        result = from.hashCode();
-        result = 29 * result + to.hashCode();
-        result = 29 * result + conditional.hashCode();
-        result = 29 * result + (beginsWith ? 1 : 0);
-        result = 29 * result + (endsWith ? 1 : 0);
-        result = 29 * result + (followedBy != null ? followedBy.hashCode() : 0);
-        result = 29 * result + (precededBy != null ? precededBy.hashCode() : 0);
-        return result;
+    override fun hashCode(): Int {
+        var result: Int = from.hashCode()
+        result = 29 * result + to.hashCode()
+        result = 29 * result + conditional.hashCode()
+        result = 29 * result + if (isBeginsWith) 1 else 0
+        result = 29 * result + if (isEndsWith) 1 else 0
+        result = 29 * result + if (followedBy != null) followedBy.hashCode() else 0
+        result = 29 * result + if (precededBy != null) precededBy.hashCode() else 0
+        return result
     }
 
-    /**
-     * @see Cloneable
-     */
-    public Object clone() {
+    public override fun clone(): Any {
 //            throws CloneNotSupportedException {
         try {
-            final FontMapEntry cloned = (FontMapEntry) super.clone();
-            cloned.id = id;
-            return cloned;
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+            val cloned = super.clone() as FontMapEntry
+            cloned.id = id
+            return cloned
+        } catch (e: CloneNotSupportedException) {
+            e.printStackTrace() //To change body of catch statement use Options | File Templates.
         }
-        return null;
+        return 0
     }
 
+    init {
+        id = Resources.getId().toString()
+    }
 }
-
