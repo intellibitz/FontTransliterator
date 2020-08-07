@@ -1,8 +1,5 @@
 package sted
 
-import sted.io.FileHelper
-import java.io.File
-import java.io.IOException
 import java.util.logging.LogManager
 import java.util.logging.Logger
 
@@ -43,12 +40,11 @@ object Main {
                 try {
                     with(logManager) {
                         this?.readConfiguration(
-                            FileHelper.getInputStream(File("log/logging.properties"))
+                            ClassLoader.getSystemResourceAsStream("log/logging.properties")
+//                            FileHelper.getInputStream(File("log/logging.properties"))
                         )
                     }
-                } catch (e: IOException) {
-                    e.printStackTrace() //To change body of catch statement use Options | File Templates.
-                } catch (e: SecurityException) {
+                } catch (e: Exception) {
                     e.printStackTrace() //To change body of catch statement use Options | File Templates.
                 }
             }

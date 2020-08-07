@@ -184,14 +184,8 @@ public class Resources {
         }
         RESOURCE_PATH_VAL =
                 System.getProperty(Resources.RESOURCE_PATH, "resource");
-        String settingsPath =
-                System.getProperty(Resources.SETTINGS_PATH, "settings");
-        settingsPath = FileHelper.suffixFileSeparator(settingsPath);
-        String SETTINGS_FILE_PATH_STED = settingsPath
-                + getResource(
-                Resources.SETTINGS_STED_UI);
-        SETTINGS_FILE_PATH_USER = settingsPath
-                + getResource(Resources.SETTINGS_STED_USER);
+        String SETTINGS_FILE_PATH_STED =getResource(Resources.SETTINGS_STED_UI);
+        SETTINGS_FILE_PATH_USER = getResource(Resources.SETTINGS_STED_USER);
         try {
             readSettings(SETTINGS_FILE_PATH_STED);
         } catch (IOException e) {
