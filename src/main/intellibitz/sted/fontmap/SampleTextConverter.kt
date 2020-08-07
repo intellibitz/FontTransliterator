@@ -1,26 +1,13 @@
-package sted.fontmap;
+package sted.fontmap
 
-import sted.ui.MapperPanel;
-import sted.io.Resources;
+import sted.ui.MapperPanel
 
-
-public class SampleTextConverter
-        extends Converter {
-    private MapperPanel mapperPanel;
-
-    public SampleTextConverter(MapperPanel mapperPanel) {
-        super();
-        this.mapperPanel = mapperPanel;
-    }
-
-    public void run() {
-        final String input = mapperPanel.getInputText().getText();
-        mapperPanel.getOutputText().setText(Resources.EMPTY_STRING);
-        if (isReady() && input != null && input.length() > 0) {
-            mapperPanel.getOutputText().setText
-                    (getTransliterate().parseLine(input));
+class SampleTextConverter(private val mapperPanel: MapperPanel) : Converter() {
+    override fun run() {
+        val input = mapperPanel.inputText.text
+        mapperPanel.outputText.text = ""
+        if (isReady && !input.isNullOrBlank()) {
+            mapperPanel.outputText.text = transliterate?.parseLine(input)
         }
     }
-
 }
-

@@ -1,171 +1,161 @@
-package sted.fontmap;
+package sted.fontmap
 
-import sted.event.ThreadEventSourceBase;
-import sted.event.TransliterateEvent;
-import sted.io.FileHelper;
+import sted.event.ThreadEventSourceBase
+import sted.event.TransliterateEvent
+import sted.io.FileHelper.fileCopy
+import java.io.*
+import java.util.logging.Logger
 
-import java.io.*;
-import java.util.logging.Logger;
+open class Converter() : ThreadEventSourceBase() {
+    private var stopRequested = false
+    private var fontMap: FontMap? = null
+    private var fileToConvert: File? = null
+    private var convertedFile: File? = null
+    private var initialized = false
+    private var success = false
+    var transliterate: ITransliterate? = null
+        private set
 
-public class Converter
-        extends ThreadEventSourceBase {
-    private boolean stopRequested;
-    private FontMap fontMap;
-    private File fileToConvert;
-    private File convertedFile;
-    private boolean initialized;
-    private boolean success;
-    private static final Logger logger =
-            Logger.getLogger("sted.fontmap.Converter");
-    private ITransliterate transliterate;
-
-    public Converter() {
-        super();
-        setThreadEvent(new TransliterateEvent(this));
-        initTransliterator();
+    constructor(fontMap: FontMap, input: File, output: File) : this() {
+        init(fontMap, input, output)
     }
 
-    public Converter(FontMap fontMap, File input, File output) {
-        this();
-        init(fontMap, input, output);
+    private fun init(fontMap: FontMap, input: File, output: File) {
+        fileToConvert = input
+        convertedFile = output
+        initialized = true
+        success = false
+        stopRequested = false
+        setFontMap(fontMap)
     }
 
-    private void init(FontMap fontMap, File input, File output) {
-        fileToConvert = input;
-        convertedFile = output;
-        initialized = true;
-        success = false;
-        stopRequested = false;
-        setFontMap(fontMap);
-    }
-
-    private void initTransliterator() {
+    private fun initTransliterator() {
         if (transliterate == null) {
-            transliterate = new DefaultTransliterator();
+            transliterate = DefaultTransliterator()
         }
     }
 
-    public ITransliterate getTransliterate() {
-        return transliterate;
-    }
-
-    public void setTransliterate(ITransliterate transliterate) {
-        this.transliterate = transliterate;
-    }
-
-    public void run() {
-        fireThreadRunStarted();
+    override fun run() {
+        fireThreadRunStarted()
         if (!initialized) {
-            throw new IllegalThreadStateException(
-                    "Thread should be initialized.. Call init method before invoking run");
+            throw IllegalThreadStateException(
+                "Thread should be initialized.. Call init method before invoking run"
+            )
         }
-        convertFile();
-        initialized = false;
+        convertFile()
+        initialized = false
         if (success) {
-            fireThreadRunFinished();
+            fireThreadRunFinished()
         } else {
-            fireThreadRunFailed();
+            fireThreadRunFailed()
         }
     }
 
-    public boolean isSuccess() {
-        return success;
+    fun setSuccess(success: Boolean) {
+        this.success = success
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
+    val isReady: Boolean
+        get() = fontMap != null && !fontMap!!.entries.isEmpty
+
+    fun setHTMLAware(flag: Boolean) {
+        transliterate!!.setHTMLAware(flag)
     }
 
-    boolean isReady() {
-        return fontMap != null && !fontMap.getEntries().isEmpty();
-    }
-
-    public void setHTMLAware(boolean flag) {
-        transliterate.setHTMLAware(flag);
-    }
-
-    private void convertFile() {
+    private fun convertFile() {
         try {
-            FileHelper.fileCopy(fileToConvert,
-                    fileToConvert.getAbsolutePath() + ".bakup");
-        } catch (IOException e) {
-            setMessage("Unable to Backup input file: " + e.getMessage());
-            success = false;
-            logger.severe("Unable to Backup input file: " + e.getMessage());
-            logger.throwing(getClass().getName(), "convertFile", e);
-            return;
+            fileCopy(
+                fileToConvert,
+                fileToConvert!!.absolutePath + ".bakup"
+            )
+        } catch (e: IOException) {
+            message = "Unable to Backup input file: " + e.message
+            success = false
+            logger.severe("Unable to Backup input file: " + e.message)
+            logger.throwing(javaClass.name, "convertFile", e)
+            return
         }
-        final BufferedReader bufferedReader;
+        val bufferedReader: BufferedReader
         try {
-            bufferedReader = new BufferedReader(new FileReader(fileToConvert));
-        } catch (FileNotFoundException e) {
-            setMessage("File Not Found: " + e.getMessage());
-            success = false;
-            logger.severe("Cannot Read - File Not Found: " + e.getMessage());
-            logger.throwing(getClass().getName(), "convertFile", e);
-            return;
+            bufferedReader = BufferedReader(FileReader(fileToConvert!!))
+        } catch (e: FileNotFoundException) {
+            message = "File Not Found: " + e.message
+            success = false
+            logger.severe("Cannot Read - File Not Found: " + e.message)
+            logger.throwing(javaClass.name, "convertFile", e)
+            return
         }
-        final BufferedWriter bufferedWriter;
+        val bufferedWriter: BufferedWriter
         try {
-            bufferedWriter = new BufferedWriter(new FileWriter(convertedFile));
-        } catch (IOException e) {
-            setMessage("Cannot create Writer: " + e.getMessage());
-            success = false;
-            logger.severe("Cannot Write - IOException: " + e.getMessage());
-            logger.throwing(getClass().getName(), "convertFile", e);
-            return;
+            bufferedWriter = BufferedWriter(FileWriter(convertedFile!!))
+        } catch (e: IOException) {
+            message = "Cannot create Writer: " + e.message
+            success = false
+            logger.severe("Cannot Write - IOException: " + e.message)
+            logger.throwing(javaClass.name, "convertFile", e)
+            return
         }
-        String input;
+        var input: String?
         try {
-            while ((input = bufferedReader.readLine()) != null) {
+            while (bufferedReader.readLine().also { input = it } != null) {
                 if (stopRequested) {
-                    break;
+                    break
                 }
-                bufferedWriter.write(transliterate.parseLine(input));
-                bufferedWriter.newLine();
-                fireThreadRunning();
+                bufferedWriter.write(transliterate!!.parseLine(input)!!)
+                bufferedWriter.newLine()
+                fireThreadRunning()
             }
-        } catch (IOException e) {
-            setMessage("IOException: " + e.getMessage());
-            success = false;
+        } catch (e: IOException) {
+            message = "IOException: " + e.message
+            success = false
             logger.severe(
-                    "IOException - Ceasing Conversion: " + e.getMessage());
-            logger.throwing(getClass().getName(), "convertFile", e);
-            return;
+                "IOException - Ceasing Conversion: " + e.message
+            )
+            logger.throwing(javaClass.name, "convertFile", e)
+            return
         } finally {
             try {
-                bufferedReader.close();
-                bufferedWriter.close();
-            } catch (IOException e) {
-                setMessage("Cannot Close Reader/Writer - IOException: " +
-                        e.getMessage());
-                success = false;
+                bufferedReader.close()
+                bufferedWriter.close()
+            } catch (e: IOException) {
+                message = "Cannot Close Reader/Writer - IOException: " +
+                        e.message
+                success = false
                 logger.severe(
-                        "Cannot close File Streams - Ceasing Conversion: " +
-                                e.getMessage());
-                logger.throwing(getClass().getName(), "convertFile", e);
-                return;
+                    "Cannot close File Streams - Ceasing Conversion: " +
+                            e.message
+                )
+                logger.throwing(javaClass.name, "convertFile", e)
             }
         }
         if (!stopRequested) {
-            setMessage("Transliterate Done.");
-            success = true;
+            message = "Transliterate Done."
+            success = true
         }
     }
 
-    public void setReverseTransliterate(boolean flag) {
-        transliterate.setReverseTransliterate(flag);
+    fun setReverseTransliterate(flag: Boolean) {
+        transliterate!!.setReverseTransliterate(flag)
     }
 
-    public void setFontMap(FontMap fontMap) {
-        this.fontMap = fontMap;
+    fun setFontMap(fontMap: FontMap?) {
+        this.fontMap = fontMap
         if (fontMap != null) {
-            transliterate.setEntries(fontMap.getEntries());
+            transliterate!!.setEntries(fontMap.entries)
         }
     }
 
-    public synchronized void setStopRequested(boolean flag) {
-        stopRequested = flag;
+    @Synchronized
+    fun setStopRequested(flag: Boolean) {
+        stopRequested = flag
+    }
+
+    companion object {
+        private val logger = Logger.getLogger("sted.fontmap.Converter")
+    }
+
+    init {
+        threadEvent = TransliterateEvent(this)
+        initTransliterator()
     }
 }
-
