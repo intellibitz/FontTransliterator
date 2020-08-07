@@ -1,7 +1,6 @@
 package sted
 
 import sted.Main.addLogger
-import sted.io.Resources
 import sted.ui.AboutText
 import sted.ui.STEDWindow
 import sted.widgets.SplashWindow
@@ -48,20 +47,6 @@ class STEDGUI {
             sTEDWindow!!.cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)
         }
 
-        /**
-         * A very nice trick is to center windows on screen
-         *
-         * @param component The `Component` to center
-         */
-        fun centerComponent(component: Component) {
-            val dimension = Toolkit.getDefaultToolkit().screenSize
-            val size = component.size
-            component.location = Point(
-                (dimension.width - size.width) / 2,
-                (dimension.height - size.height) / 2
-            )
-        }
-
         @JvmStatic
         @Throws(
             ClassNotFoundException::class,
@@ -79,6 +64,21 @@ class STEDGUI {
                 SwingUtilities.updateComponentTreeUI(component)
             }
         }
+
+        /**
+         * A very nice trick is to center windows on screen
+         *
+         * @param component The `Component` to center
+         */
+        fun centerComponent(component: Component) {
+            val dimension = Toolkit.getDefaultToolkit().screenSize
+            val size = component.size
+            component.location = Point(
+                (dimension.width - size.width) / 2,
+                (dimension.height - size.height) / 2
+            )
+        }
+
     }
 
     init {
@@ -93,14 +93,14 @@ class STEDGUI {
         sTEDWindow!!.load()
         splashWindow.setProgress(90)
         sTEDWindow!!.isVisible = true
-        val fileName = System.getProperty(Resources.FONTMAP_FILE)
-        if (null != fileName && Resources.EMPTY_STRING != fileName) {
-            sTEDWindow!!.desktop
-                .openFontMap(File(fileName))
-        } else {
+        val fileName = System.getProperty("fontmap.file")
+        if (fileName.isNullOrBlank()) {
 //            File file = new File(Resources.getSampleFontMap());
 //            stedWindow.getDesktop().openFontMap(file);
             sTEDWindow!!.desktop.newFontMap()
+        } else {
+            sTEDWindow!!.desktop
+                .openFontMap(File(fileName))
         }
         splashWindow.setProgress(100)
         splashWindow.dispose()
