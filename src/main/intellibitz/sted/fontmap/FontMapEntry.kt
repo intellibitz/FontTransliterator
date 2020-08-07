@@ -201,6 +201,6 @@ class FontMapEntry() : IEntry, Comparable<Any?>, Cloneable {
     }
 
     init {
-        id = Resources.getId().toString()
+        id = Resources.id.toString()
     }
 }
