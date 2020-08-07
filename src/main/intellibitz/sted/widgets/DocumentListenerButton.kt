@@ -1,33 +1,23 @@
-package sted.widgets;
+package sted.widgets
 
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.JButton
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 
-public class DocumentListenerButton
-        extends JButton
-        implements DocumentListener {
-    public DocumentListenerButton() {
+class DocumentListenerButton : JButton(), DocumentListener {
+    override fun insertUpdate(e: DocumentEvent) {
+        toggle(e)
     }
 
-    public void insertUpdate(DocumentEvent e) {
-        toggle(e);
+    override fun removeUpdate(e: DocumentEvent) {
+        toggle(e)
     }
 
-    public void removeUpdate(DocumentEvent e) {
-        toggle(e);
+    override fun changedUpdate(e: DocumentEvent) {
+        toggle(e)
     }
 
-    public void changedUpdate(DocumentEvent e) {
-        toggle(e);
-    }
-
-    private void toggle(DocumentEvent e) {
-        if (e.getDocument().getLength() > 0) {
-            setEnabled(true);
-        } else {
-            setEnabled(false);
-        }
+    private fun toggle(e: DocumentEvent) {
+        isEnabled = e.document.length > 0
     }
 }
-

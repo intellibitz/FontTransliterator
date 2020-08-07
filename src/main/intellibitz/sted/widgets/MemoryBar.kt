@@ -1,35 +1,30 @@
-package sted.widgets;
+package sted.widgets
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent
+import java.awt.event.ActionListener
+import javax.swing.JProgressBar
 
-public class MemoryBar
-        extends JProgressBar
-        implements ActionListener {
-    private long totalMemory;
-    private final Runtime runtime;
-    private final long meg = 1000000;
-
-    public MemoryBar() {
-        super(0, 0);
-        setStringPainted(true);
-        runtime = Runtime.getRuntime();
-        showMemoryStatus();
+class MemoryBar : JProgressBar(0, 0), ActionListener {
+    private var totalMemory: Long = 0
+    private val runtime: Runtime
+    private val meg: Long = 1000000
+    private fun showMemoryStatus() {
+        totalMemory = runtime.totalMemory() / meg
+        val free = runtime.freeMemory() / meg
+        val current = totalMemory - free
+        val value = current.toString() + "M of " + totalMemory + "M"
+        string = value
+        maximum = totalMemory.toInt()
+        setValue(current.toInt())
     }
 
-    private void showMemoryStatus() {
-        totalMemory = runtime.totalMemory() / meg;
-        final long free = runtime.freeMemory() / meg;
-        final long current = totalMemory - free;
-        final String value = current + "M of " + totalMemory + "M";
-        setString(value);
-        setMaximum((int) totalMemory);
-        setValue((int) current);
+    override fun actionPerformed(e: ActionEvent) {
+        showMemoryStatus()
     }
 
-    public void actionPerformed(ActionEvent e) {
-        showMemoryStatus();
+    init {
+        isStringPainted = true
+        runtime = Runtime.getRuntime()
+        showMemoryStatus()
     }
-
 }

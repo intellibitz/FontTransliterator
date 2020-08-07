@@ -1,32 +1,29 @@
-package sted.widgets;
+package sted.widgets
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Dimension
+import java.awt.Insets
+import java.awt.event.ActionEvent
+import java.awt.event.ActionListener
+import javax.swing.Icon
+import javax.swing.JButton
 
-public class GCButton
-        extends JButton
-        implements ActionListener {
-    private final Runtime runtime;
+class GCButton(icon: Icon, rollOverIcon: Icon?) : JButton(), ActionListener {
+    private val runtime: Runtime
+    override fun actionPerformed(e: ActionEvent) {
+        runtime.runFinalization()
+        runtime.gc()
+    }
 
-    public GCButton(Icon icon, Icon rollOverIcon) {
-        super();
-        setIcon(icon);
-        setRolloverIcon(rollOverIcon);
-        setRolloverEnabled(true);
-        setMargin(new Insets(0, 0, 0, 0));
-        setSize(new Dimension(icon.getIconHeight(), icon.getIconWidth()));
-        setToolTipText("Runs Garbage Collector");
-        runtime = Runtime.getRuntime();
+    init {
+        setIcon(icon)
+        rolloverIcon = rollOverIcon
+        isRolloverEnabled = true
+        margin = Insets(0, 0, 0, 0)
+        size = Dimension(icon.iconHeight, icon.iconWidth)
+        toolTipText = "Runs Garbage Collector"
+        runtime = Runtime.getRuntime()
         // add the button as the self action listener
         // the button knows what to do anyways
-        addActionListener(this);
+        addActionListener(this)
     }
-
-    public void actionPerformed(ActionEvent e) {
-        runtime.runFinalization();
-        runtime.gc();
-    }
-
 }

@@ -1,51 +1,42 @@
-package sted.widgets;
+package sted.widgets
 
-import sted.event.IKeypadListener;
-import sted.event.KeypadEvent;
-import sted.ui.FontKeypad;
+import javax.swing.JTextField
+import java.awt.event.ItemListener
+import java.awt.event.ActionListener
+import javax.swing.event.TableModelListener
+import sted.event.IKeypadListener
+import java.awt.event.ItemEvent
+import java.awt.Font
+import java.awt.event.ActionEvent
+import javax.swing.JButton
+import javax.swing.event.TableModelEvent
+import sted.event.KeypadEvent
+import sted.ui.FontKeypad
 
-import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.List;
-
-public class FontChangeTextField
-        extends JTextField
-        implements ItemListener,
-        ActionListener,
-        TableModelListener,
-        IKeypadListener {
-    public FontChangeTextField() {
+open class FontChangeTextField : JTextField(), ItemListener, ActionListener, TableModelListener, IKeypadListener {
+    override fun itemStateChanged(e: ItemEvent) {
+        val f = Font(e.item.toString(), Font.PLAIN, 14)
+        font = f
     }
 
-    public void itemStateChanged(ItemEvent e) {
-        Font f = new Font(e.getItem().toString(), Font.PLAIN, 14);
-        setFont(f);
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        setText(getText() + ((JButton) e.getSource()).getText());
+    override fun actionPerformed(e: ActionEvent) {
+        text += (e.source as JButton).text
     }
 
     /**
      * This fine grain notification tells listeners the exact range of cells,
      * rows, or columns that changed.
      */
-    public void tableChanged(TableModelEvent e) {
-        requestFocus();
+    override fun tableChanged(e: TableModelEvent) {
+        requestFocus()
     }
 
-    public void keypadReset(KeypadEvent event) {
-        FontKeypad fontKeypad = (FontKeypad) event.getEventSource();
-        List<JButton> keys = fontKeypad.getKeys();
-        final int sz = keys.size();
-        for (int i = 0; i < sz; i++) {
-            (keys.get(i)).addActionListener(this);
+    override fun keypadReset(event: KeypadEvent) {
+        val fontKeypad = event.eventSource as FontKeypad
+        val keys: List<JButton> = fontKeypad.keys
+        val sz = keys.size
+        for (i in 0 until sz) {
+            keys[i].addActionListener(this)
         }
     }
 }
