@@ -1,8 +1,7 @@
-package sted.event;
+package sted.event
 
-import java.util.EventListener;
+import java.util.*
 
-public interface IKeypadListener
-        extends EventListener {
-    void keypadReset(KeypadEvent event);
+interface IKeypadListener : EventListener {
+    fun keypadReset(event: KeypadEvent?)
 }

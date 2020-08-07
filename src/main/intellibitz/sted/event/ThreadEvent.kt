@@ -1,34 +1,10 @@
-package sted.event;
+package sted.event
 
-import java.util.EventObject;
+import java.util.*
 
-/**
- * holds the source Thread information
- */
-public class ThreadEvent
-        extends EventObject
-        implements Cloneable {
-    private IThreadEventSource threadEventSource;
-
-    /**
-     * @param runnable IThreadEventSource
-     * @see IThreadEventSource
-     */
-    public ThreadEvent(IThreadEventSource runnable) {
-        super(runnable);
-        threadEventSource = runnable;
-    }
-
-    /**
-     * @return IThreadEventSource the Source which generated this ThreadEvent
-     * @see IThreadEventSource
-     */
-    public IThreadEventSource getEventSource() {
-        return threadEventSource;
-    }
-
-    public Object clone()
-            throws CloneNotSupportedException {
-        return super.clone();
+open class ThreadEvent(val eventSource: IThreadEventSource?) : EventObject(eventSource), Cloneable {
+    @Throws(CloneNotSupportedException::class)
+    public override fun clone(): Any {
+        return super.clone()
     }
 }

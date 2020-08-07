@@ -1,17 +1,9 @@
-package sted.event;
+package sted.event
 
-import sted.fontmap.FontMap;
+import sted.fontmap.FontMap
+import javax.swing.event.ChangeEvent
 
-import javax.swing.event.ChangeEvent;
-
-public class FontMapChangeEvent
-        extends ChangeEvent {
-    public FontMapChangeEvent(FontMap fontMap) {
-        super(fontMap);
-    }
-
-    public FontMap getFontMap() {
-        return (FontMap) getSource();
-    }
-
+class FontMapChangeEvent(fontMap: FontMap?) : ChangeEvent(fontMap) {
+    val fontMap: FontMap
+        get() = getSource() as FontMap
 }

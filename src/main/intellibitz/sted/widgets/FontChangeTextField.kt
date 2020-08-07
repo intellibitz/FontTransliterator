@@ -1,17 +1,17 @@
 package sted.widgets
 
-import javax.swing.JTextField
-import java.awt.event.ItemListener
-import java.awt.event.ActionListener
-import javax.swing.event.TableModelListener
 import sted.event.IKeypadListener
-import java.awt.event.ItemEvent
-import java.awt.Font
-import java.awt.event.ActionEvent
-import javax.swing.JButton
-import javax.swing.event.TableModelEvent
 import sted.event.KeypadEvent
 import sted.ui.FontKeypad
+import java.awt.Font
+import java.awt.event.ActionEvent
+import java.awt.event.ActionListener
+import java.awt.event.ItemEvent
+import java.awt.event.ItemListener
+import javax.swing.JButton
+import javax.swing.JTextField
+import javax.swing.event.TableModelEvent
+import javax.swing.event.TableModelListener
 
 open class FontChangeTextField : JTextField(), ItemListener, ActionListener, TableModelListener, IKeypadListener {
     override fun itemStateChanged(e: ItemEvent) {
@@ -31,8 +31,8 @@ open class FontChangeTextField : JTextField(), ItemListener, ActionListener, Tab
         requestFocus()
     }
 
-    override fun keypadReset(event: KeypadEvent) {
-        val fontKeypad = event.eventSource as FontKeypad
+    override fun keypadReset(event: KeypadEvent?) {
+        val fontKeypad = event?.eventSource as FontKeypad
         val keys: List<JButton> = fontKeypad.keys
         val sz = keys.size
         for (i in 0 until sz) {

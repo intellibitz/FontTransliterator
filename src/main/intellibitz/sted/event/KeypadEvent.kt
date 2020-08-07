@@ -1,32 +1,13 @@
-package sted.event;
+package sted.event
 
-import java.util.EventObject;
+import java.util.*
 
 /**
  * holds the source Thread information
  */
-public class KeypadEvent
-        extends EventObject
-        implements Cloneable {
-    private IKeypadEventSource keypadEventSource;
-
-    /**
-     * @param src the source for this event
-     */
-    public KeypadEvent(IKeypadEventSource src) {
-        super(src);
-        keypadEventSource = src;
-    }
-
-    /**
-     * @return IKeypadEventSource the Source which generated this Event
-     */
-    public IKeypadEventSource getEventSource() {
-        return keypadEventSource;
-    }
-
-    public Object clone()
-            throws CloneNotSupportedException {
-        return super.clone();
+class KeypadEvent(val eventSource: IKeypadEventSource) : EventObject(eventSource), Cloneable {
+    @Throws(CloneNotSupportedException::class)
+    public override fun clone(): Any {
+        return super.clone()
     }
 }

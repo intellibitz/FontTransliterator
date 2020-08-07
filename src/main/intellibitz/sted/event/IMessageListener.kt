@@ -1,8 +1,7 @@
-package sted.event;
+package sted.event
 
-import java.util.EventListener;
+import java.util.*
 
-public interface IMessageListener
-        extends EventListener {
-    void messagePosted(MessageEvent event);
+interface IMessageListener : EventListener {
+    fun messagePosted(event: MessageEvent?)
 }

@@ -1,7 +1,6 @@
-package sted.event;
+package sted.event
 
-public interface IStatusEventSource {
-    void fireStatusPosted();
-
-    void addStatusListener(IStatusListener statusListener);
+interface IStatusEventSource {
+    fun fireStatusPosted()
+    fun addStatusListener(statusListener: IStatusListener?)
 }

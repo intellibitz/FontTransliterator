@@ -1,8 +1,7 @@
-package sted.event;
+package sted.event
 
-import java.util.EventListener;
+import java.util.*
 
-public interface IStatusListener
-        extends EventListener {
-    void statusPosted(StatusEvent event);
+interface IStatusListener : EventListener {
+    fun statusPosted(event: StatusEvent?)
 }

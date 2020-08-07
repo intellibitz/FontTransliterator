@@ -1,41 +1,12 @@
-package sted.event;
+package sted.event
 
-import java.util.EventObject;
+import java.util.*
 
-/**
- * holds the source Thread information
- */
-public class StatusEvent
-        extends EventObject
-        implements Cloneable {
-    private IStatusEventSource statusEventSource;
-    private String status;
+class StatusEvent(val eventSource: IStatusEventSource) : EventObject(eventSource), Cloneable {
+    var status: String? = null
 
-    /**
-     * @param src the source for this event
-     */
-    public StatusEvent(IStatusEventSource src) {
-        super(src);
-        statusEventSource = src;
-    }
-
-    /**
-     * @return IStatusEventSource the Source which generated this Event
-     */
-    public IStatusEventSource getEventSource() {
-        return statusEventSource;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Object clone()
-            throws CloneNotSupportedException {
-        return super.clone();
+    @Throws(CloneNotSupportedException::class)
+    public override fun clone(): Any {
+        return super.clone()
     }
 }

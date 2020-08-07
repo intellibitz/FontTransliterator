@@ -1,8 +1,7 @@
-package sted.event;
+package sted.event
 
-import java.util.EventListener;
+import java.util.*
 
-public interface IFontMapEntriesChangeListener
-        extends EventListener {
-    void stateChanged(FontMapEntriesChangeEvent e);
+interface IFontMapEntriesChangeListener : EventListener {
+    fun stateChanged(e: FontMapEntriesChangeEvent?)
 }

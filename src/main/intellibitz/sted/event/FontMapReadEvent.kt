@@ -1,8 +1,3 @@
-package sted.event;
+package sted.event
 
-public class FontMapReadEvent
-        extends ThreadEvent {
-    public FontMapReadEvent(IThreadEventSource runnable) {
-        super(runnable);
-    }
-}
+class FontMapReadEvent(runnable: IThreadEventSource?) : ThreadEvent(runnable)

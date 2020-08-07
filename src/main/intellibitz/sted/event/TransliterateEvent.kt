@@ -1,15 +1,8 @@
-package sted.event;
+package sted.event
 
-import sted.fontmap.Converter;
+import sted.fontmap.Converter
 
-public class TransliterateEvent
-        extends ThreadEvent {
-    public TransliterateEvent(Converter converter) {
-        super(converter);
-    }
-
-    public Converter getConverter() {
-        return (Converter) getSource();
-    }
-
+class TransliterateEvent(converter: Converter?) : ThreadEvent(converter!!) {
+    val converter: Converter
+        get() = getSource() as Converter
 }

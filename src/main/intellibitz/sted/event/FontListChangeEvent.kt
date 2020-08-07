@@ -1,32 +1,10 @@
-package sted.event;
+package sted.event
 
-import sted.fontmap.FontMap;
+import sted.fontmap.FontMap
+import java.awt.Font
+import javax.swing.event.ChangeEvent
 
-import javax.swing.event.ChangeEvent;
-import java.awt.*;
-
-public class FontListChangeEvent
-        extends ChangeEvent {
-    private Font font;
-    private int fontIndex;
-
-    public FontListChangeEvent(FontMap fontMap) {
-        super(fontMap);
-    }
-
-    public int getFontIndex() {
-        return fontIndex;
-    }
-
-    public void setFontIndex(int fontIndex) {
-        this.fontIndex = fontIndex;
-    }
-
-    public Font getFontChanged() {
-        return font;
-    }
-
-    public void setFontChanged(Font font) {
-        this.font = font;
-    }
+class FontListChangeEvent(fontMap: FontMap?) : ChangeEvent(fontMap) {
+    var fontChanged: Font? = null
+    var fontIndex = 0
 }
