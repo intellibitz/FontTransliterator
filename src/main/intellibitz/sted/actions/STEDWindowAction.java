@@ -63,7 +63,7 @@ public class STEDWindowAction
 
     public STEDWindow getSTEDWindow() {
         if (null == stedWindow) {
-            stedWindow = STEDGUI.getSTEDWindow();
+            stedWindow = STEDGUI.Companion.getSTEDWindow();
         }
         return stedWindow;
     }

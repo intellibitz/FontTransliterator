@@ -10,7 +10,7 @@ object Main {
     @JvmStatic
     fun main(args: Array<String>) {
         val logger = Logger.getLogger("sted.Main")
-        logmanager?.addLogger(logger)
+        addLogger(logger)
         if (args.isNotEmpty()) {
             val param1 = args[0]
             // launch Console
@@ -24,8 +24,13 @@ object Main {
         } else {
             logger.info("Launching STED GUI: ")
             // launch GUI
-            STEDGUI.main(args)
+            STEDGUI()
         }
+    }
+
+    @JvmStatic
+    fun addLogger(logger: Logger) {
+        logmanager?.addLogger(logger)
     }
 
     private var logManager: LogManager? = null
