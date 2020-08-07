@@ -1,30 +1,31 @@
-package sted.ui;
+package sted.ui
 
-import sted.io.Resources;
-
-import javax.swing.*;
-import javax.swing.text.html.HTMLEditorKit;
+import sted.io.Resources
+import javax.swing.JTextPane
+import javax.swing.text.html.HTMLEditorKit
 
 /**
  * sets HTMLEditorKit. reads Resources for the text to be displayed. Singleton.
  */
-public class AboutText
-        extends JTextPane {
+class AboutText private constructor() : JTextPane() {
+    companion object {
+        private var aboutText: AboutText? = null
 
-    private static AboutText aboutText;
-
-    private AboutText() {
-        super();
-        setEditable(false);
-        setSize(400, 400);
-        setEditorKit(new HTMLEditorKit());
-        setText(Resources.getResource("about.dialog.text"));
+        @JvmStatic
+        @get:Synchronized
+        val instance: AboutText?
+            get() {
+                if (aboutText == null) {
+                    aboutText = AboutText()
+                }
+                return aboutText
+            }
     }
 
-    public static synchronized AboutText getInstance() {
-        if (aboutText == null) {
-            aboutText = new AboutText();
-        }
-        return aboutText;
+    init {
+        isEditable = false
+        setSize(400, 400)
+        editorKit = HTMLEditorKit()
+        text = Resources.getResource("about.dialog.text")
     }
 }

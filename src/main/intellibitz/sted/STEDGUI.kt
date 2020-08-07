@@ -82,7 +82,7 @@ class STEDGUI {
     }
 
     init {
-        val splashWindow = SplashWindow(AboutText.getInstance())
+        val splashWindow = SplashWindow(AboutText.instance)
         centerComponent(splashWindow)
         splashWindow.isVisible = true
         addLogger(logger)

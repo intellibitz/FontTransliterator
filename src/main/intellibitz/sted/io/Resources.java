@@ -1,7 +1,7 @@
 package sted.io;
 
-import sted.fontmap.FontInfo;
 import org.xml.sax.SAXException;
+import sted.fontmap.FontInfo;
 
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
@@ -160,19 +160,17 @@ public class Resources {
     public static final int DEFAULT_MENU_COUNT = 2;
     public static final String SAMPLE_FONTMAP = "sample.fontmap";
     public static final String MENU_SAMPLES_NAME = "Samples";
-
-
-    private static ResourceBundle resourceBundle;
+    public static final String SETTINGS_FILE_PATH_USER;
+    public static final Map<String, ImageIcon> imageIcons =
+            new HashMap<String, ImageIcon>();
+    static final Map<String, FontInfo> fonts =
+            new HashMap<String, FontInfo>();
     private static final Logger logger =
             Logger.getLogger("sted.io.Resources");
     private static final Map<String, String> settings =
             new HashMap<String, String>();
-    public static final String SETTINGS_FILE_PATH_USER;
-    public static final Map<String, ImageIcon> imageIcons =
-            new HashMap<String, ImageIcon>();
+    private static ResourceBundle resourceBundle;
     private static int id;
-    static final Map<String, FontInfo> fonts =
-            new HashMap<String, FontInfo>();
     private static String RESOURCE_PATH_VAL;
 
 
@@ -181,7 +179,7 @@ public class Resources {
             resourceBundle = ResourceBundle
                     .getBundle(Resources.STED_CONFIG_NAME, Locale.getDefault());
             logger.finest("retrieved resource bundle " + resourceBundle);
-        } catch (MissingResourceException mre){
+        } catch (MissingResourceException mre) {
 //            todo: log this
         }
         RESOURCE_PATH_VAL =
@@ -239,12 +237,6 @@ public class Resources {
     private Resources() {
     }
 
-    protected void finalize()
-            throws Throwable {
-        resourceBundle = null;
-        super.finalize();
-    }
-
     public static String getSTEDTitle() {
         return getResource(TITLE);
     }
@@ -286,12 +278,10 @@ public class Resources {
         String val = null;
         try {
             if (resourceBundle != null)
-            val = resourceBundle.getString(name);
+                val = resourceBundle.getString(name);
         } catch (MissingResourceException e) {
             // ignore, since we will try alternates
-        }
-        // if not from resource bundle.. try system property.. or the settings file
-        if (val == null) {
+            // if not from resource bundle.. try system property.. or the settings file
             val = getPropertySettings(name);
         }
         if (val == null) {
@@ -327,7 +317,6 @@ public class Resources {
         }
         return result;
     }
-
 
     private static void readSettings(String path)
             throws IOException, SAXException, ParserConfigurationException {
@@ -385,7 +374,6 @@ public class Resources {
         return FileHelper.suffixFileSeparator(RESOURCE_PATH_VAL);
     }
 
-
     public static int getId() {
         return ++id;
     }
@@ -403,5 +391,11 @@ public class Resources {
 
     public static FontInfo getFont(String fontName) {
         return fonts.get(fontName);
+    }
+
+    protected void finalize()
+            throws Throwable {
+        resourceBundle = null;
+        super.finalize();
     }
 }
