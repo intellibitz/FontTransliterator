@@ -54,12 +54,13 @@ object Main {
 }
 
 class App {
-    val greeting: String
+    val projectName: String
         get() {
-            return "Hello world."
+            return "FontTransliterator - STED."
         }
 }
 
 fun main(args: Array<String>) {
-    println(App().greeting + args)
+    println(App().projectName + args)
+    Main.main(args)
 }

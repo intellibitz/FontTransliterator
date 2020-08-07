@@ -1,35 +1,22 @@
-package sted.actions;
+package sted.actions
 
-import org.junit.Test;
+import org.junit.Test
+import javax.swing.Action
 
-import javax.swing.*;
-
-public class TestViewAction {
-
-    public TestViewAction() {
-    }
-
-
+class TestViewAction {
     @Test
-    public void testViewToolBar() {
-        Action action = null;
-        Action action2 = null;
+    fun testViewToolBar() {
+        var action: Action? = null
+        var action2: Action? = null
         try {
-            action = (Action) Class
-                    .forName("sted.actions.ViewAction")
-                    .newInstance();
-            action2 = (Action) Class
-                    .forName("sted.actions.ViewAction$ViewToolBar")
-                    .newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            action = Class.forName("sted.actions.ViewAction")
+                .getDeclaredConstructor().newInstance() as Action
+            action2 = Class.forName("sted.actions.ViewAction\$ViewToolBar")
+                .getDeclaredConstructor().newInstance() as Action
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        assert action != null;
-        assert action2 != null;
+        action!!
+        action2!!
     }
-
 }

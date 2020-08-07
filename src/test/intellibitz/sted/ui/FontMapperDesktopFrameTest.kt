@@ -1,25 +1,19 @@
-package sted.ui;
+package sted.ui
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.Before
+import org.junit.Test
 
-public class FontMapperDesktopFrameTest {
-    private STEDWindow stedWindow;
-
-    public FontMapperDesktopFrameTest() {
-    }
-
+class FontMapperDesktopFrameTest {
+    private val stedWindow: STEDWindow? = null
     @Before
-    public void testSTEDWindow() {
+    fun testSTEDWindow() {
 //        stedWindow = new STEDWindow();
 //        stedWindow.load();
     }
 
     @Test
-    public void testFontMapperDesktopFrame() {
-        DesktopFrame desktopFrame =
-                new DesktopFrame();
-        desktopFrame.init();
+    fun testFontMapperDesktopFrame() {
+        val desktopFrame = DesktopFrame()
+        desktopFrame.init()
     }
-
 }

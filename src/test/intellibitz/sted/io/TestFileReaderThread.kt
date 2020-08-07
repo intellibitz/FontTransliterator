@@ -1,20 +1,17 @@
-package sted.io;
+package sted.io
 
-public class TestFileReaderThread {
+import org.junit.Test
 
-    public TestFileReaderThread() {
-    }
-
-
-    public static void testViewToolBar() {
-        final FileReaderThread fileReaderThread = new FileReaderThread(null);
+class TestFileReaderThread {
+    @Test
+    fun testViewToolBar() {
+        val fileReaderThread = FileReaderThread(null)
         try {
-            fileReaderThread.start();
-        } catch (IllegalStateException e) {
-            System.out.println("Caught Exception");
-            e.printStackTrace();
+            fileReaderThread.start()
+        } catch (e: IllegalStateException) {
+            println("Caught Exception")
+            e.printStackTrace()
         }
-        System.out.println("After Start");
+        println("After Start")
     }
-
 }

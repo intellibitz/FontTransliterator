@@ -1,40 +1,32 @@
-package sted.ui;
+package sted.ui
 
-import javax.swing.*;
+import javax.swing.JFrame
 
-/**
- * Created by IntelliJ IDEA. User: sara Date: May 9, 2007 Time: 3:46:32 PM To
- * change this template use File | Settings | File Templates.
- */
-public class FontMapperDesktopTest {
-    private STEDWindow stedWindow;
+class FontMapperDesktopTest {
+    private val stedWindow: STEDWindow? = null
 
-    public FontMapperDesktopTest() {
+    //    @Before public void testSTEDWindow ()
+    //    {
+    //        stedWindow = new STEDWindow();
+    //        stedWindow.load();
+    //    }
+    fun testFontMapperDesktop() {
+        val testFrame = JFrame("Testing")
+        testFrame.setSize(300, 300)
+        val tabDesktop = TabDesktop()
+        tabDesktop.init()
+        tabDesktop.createFontMapperDesktopFrame()
+        tabDesktop.isVisible = true
+        testFrame.contentPane.add(tabDesktop)
+        testFrame.isVisible = true
+        //        tabDesktop.init();
     }
 
-//    @Before public void testSTEDWindow ()
-//    {
-//        stedWindow = new STEDWindow();
-//        stedWindow.load();
-//    }
-
-    public void testFontMapperDesktop() {
-        JFrame testFrame = new JFrame("Testing");
-        testFrame.setSize(300, 300);
-        TabDesktop tabDesktop = new TabDesktop();
-        tabDesktop.init();
-        tabDesktop.createFontMapperDesktopFrame();
-        tabDesktop.setVisible(true);
-
-        testFrame.getContentPane().add(tabDesktop);
-        testFrame.setVisible(true);
-//        tabDesktop.init();
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val fontMapperDesktopTest = FontMapperDesktopTest()
+            fontMapperDesktopTest.testFontMapperDesktop()
+        }
     }
-
-    public static void main(String[] args) {
-        FontMapperDesktopTest fontMapperDesktopTest =
-                new FontMapperDesktopTest();
-        fontMapperDesktopTest.testFontMapperDesktop();
-    }
-
 }
