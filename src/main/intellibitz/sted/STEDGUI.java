@@ -23,7 +23,7 @@ public class STEDGUI {
         SplashWindow splashWindow = new SplashWindow(AboutText.getInstance());
         centerComponent(splashWindow);
         splashWindow.setVisible(true);
-        STEDLogManager.getLogmanager().addLogger(logger);
+        Main.getLogmanager().addLogger(logger);
         splashWindow.setProgress(10);
 
         stedWindow = new STEDWindow();

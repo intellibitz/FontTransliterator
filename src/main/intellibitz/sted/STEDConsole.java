@@ -27,7 +27,7 @@ public class STEDConsole
 
     public STEDConsole(List<String> args) {
         logger = Logger.getLogger("sted.STEDConsole");
-        STEDLogManager.getLogmanager().addLogger(logger);
+        Main.getLogmanager().addLogger(logger);
         loadArgs(args);
         if (null == fontMapName || Resources.EMPTY_STRING.equals(fontMapName)) {
             logger.info("Invalid FontMap: " + fontMapName);
