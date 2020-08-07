@@ -184,7 +184,7 @@ public class Resources {
         }
         RESOURCE_PATH_VAL =
                 System.getProperty(Resources.RESOURCE_PATH, "resource");
-        String SETTINGS_FILE_PATH_STED =getResource(Resources.SETTINGS_STED_UI);
+        String SETTINGS_FILE_PATH_STED = getResource(Resources.SETTINGS_STED_UI);
         SETTINGS_FILE_PATH_USER = getResource(Resources.SETTINGS_STED_USER);
         try {
             readSettings(SETTINGS_FILE_PATH_STED);
@@ -327,14 +327,12 @@ public class Resources {
                 if (null != imageIcon) {
                     return imageIcon;
                 }
-                // try with the filename
-                imageIcon = new ImageIcon(iconName);
-                if (null != imageIcon) {
-                    imageIcons.put(iconName, imageIcon);
-                    return imageIcon;
-                }
                 final URL url = ClassLoader.getSystemResource(iconName);
-                if (url != null) {
+                if (url == null) {
+                    // try with the filename
+                    imageIcon = new ImageIcon(iconName);
+                    imageIcons.put(iconName, imageIcon);
+                } else {
                     imageIcon = new ImageIcon(url);
                     imageIcons.put(iconName, imageIcon);
                 }
@@ -342,7 +340,7 @@ public class Resources {
             } catch (NullPointerException e) {
                 logger.warning("No icon found or can be loaded for " + iconName
                         + " " + e.getMessage() +
-                        e.getStackTrace().toString());
+                        Arrays.toString(e.getStackTrace()));
             }
         }
         logger.warning(

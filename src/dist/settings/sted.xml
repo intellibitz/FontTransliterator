@@ -2,56 +2,56 @@
 <settings name="sted.xml" version="0.80">
     <option
             name="icon.sted"
-            value="./images/sted.gif"
+            value="images/sted.gif"
     />
     <option
             name="icon.file.normal.state"
-            value="./images/gflag.png"
+            value="images/gflag.png"
     />
     <option
             name="icon.file.edit.state"
-            value="./images/rflag.png"
+            value="images/rflag.png"
     />
     <option
             name="icon.help"
-            value="./images/help.png"
+            value="images/help.png"
     />
     <option
             name="icon.help.home"
-            value="./images/home.png"
+            value="images/home.png"
     />
     <option
             name="icon.help.back"
-            value="./images/back.png"
+            value="images/back.png"
     />
     <option
             name="icon.help.forward"
-            value="./images/forward.png"
+            value="images/forward.png"
     />
     <option
             name="icon.status.lock"
-            value="./images/lock.png"
+            value="images/lock.png"
     />
     <option
             name="icon.status.unlock"
-            value="./images/unlock.png"
+            value="images/unlock.png"
     />
     <!--    @since 0.62 -->
     <option
             name="icon.gc"
-            value="./images/gc.png"
+            value="images/gc.png"
     />
     <option
             name="icon.gc.rollover"
-            value="./images/gc2.png"
+            value="images/gc2.png"
     />
     <option
             name="icon.file.input"
-            value="./images/input.png"
+            value="images/input.png"
     />
     <option
             name="icon.file.output"
-            value="./images/output.png"
+            value="images/output.png"
     />
     <!--    @since -->
     <option
