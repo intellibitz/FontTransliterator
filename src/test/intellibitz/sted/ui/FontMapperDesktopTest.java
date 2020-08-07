@@ -1,4 +1,4 @@
-package intellibitz.sted.ui;
+package sted.ui;
 
 import javax.swing.*;
 

@@ -1,6 +1,6 @@
-package intellibitz.sted.ui;
+package sted.ui;
 
-import intellibitz.sted.util.Resources;
+import sted.util.Resources;
 
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;

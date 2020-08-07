@@ -1,4 +1,4 @@
-package intellibitz.sted
+package sted
 
 import kotlin.test.Test
 import kotlin.test.assertNotNull

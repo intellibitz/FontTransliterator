@@ -1,11 +1,11 @@
-package intellibitz.sted;
+package sted;
 
-import intellibitz.sted.event.IThreadListener;
-import intellibitz.sted.event.ThreadEvent;
-import intellibitz.sted.fontmap.Converter;
-import intellibitz.sted.fontmap.FontMap;
-import intellibitz.sted.io.FontMapReader;
-import intellibitz.sted.util.Resources;
+import sted.event.IThreadListener;
+import sted.event.ThreadEvent;
+import sted.fontmap.Converter;
+import sted.fontmap.FontMap;
+import sted.io.FontMapReader;
+import sted.util.Resources;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -26,7 +26,7 @@ public class STEDConsole
     private static Logger logger;
 
     public STEDConsole(List<String> args) {
-        logger = Logger.getLogger("intellibitz.sted.STEDConsole");
+        logger = Logger.getLogger("sted.STEDConsole");
         STEDLogManager.getLogmanager().addLogger(logger);
         loadArgs(args);
         if (null == fontMapName || Resources.EMPTY_STRING.equals(fontMapName)) {
@@ -66,19 +66,19 @@ public class STEDConsole
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             logger.severe("Exception : " + e.getMessage());
-            logger.throwing("intellibitz.sted.STEDConsole",
+            logger.throwing("sted.STEDConsole",
                     "Constructor", e);
             System.exit(-1);
         } catch (SAXException e) {
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             logger.severe("Exception : " + e.getMessage());
-            logger.throwing("intellibitz.sted.STEDConsole",
+            logger.throwing("sted.STEDConsole",
                     "Constructor", e);
             System.exit(-1);
         } catch (ParserConfigurationException e) {
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             logger.severe("Exception : " + e.getMessage());
-            logger.throwing("intellibitz.sted.STEDConsole",
+            logger.throwing("sted.STEDConsole",
                     "Constructor", e);
             System.exit(-1);
         }
@@ -90,7 +90,7 @@ public class STEDConsole
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             logger.severe("Exception : " + e.getMessage());
-            logger.throwing("intellibitz.sted.STEDConsole", "main", e);
+            logger.throwing("sted.STEDConsole", "main", e);
             System.exit(-1);
         } finally {
         }
@@ -99,10 +99,10 @@ public class STEDConsole
     private static void printUsage() {
         logger.info("STED Console Usage: ");
         logger.info(
-                "   java -Dfontmap.file='<file>' -Dinput.file='<input>' -Doutput.file='<output>' intellibitz.sted.STEDConsole");
+                "   java -Dfontmap.file='<file>' -Dinput.file='<input>' -Doutput.file='<output>' sted.STEDConsole");
         logger.info(" -OR- ");
         logger.info(
-                "   java intellibitz.sted.STEDConsole -map='<file>' -in='<input>' -out='<output>'");
+                "   java sted.STEDConsole -map='<file>' -in='<input>' -out='<output>'");
     }
 
     private void loadArgs(List<String> args) {

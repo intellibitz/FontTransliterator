@@ -1,4 +1,4 @@
-package intellibitz.sted.fontmap;
+package sted.fontmap;
 
 public class TestFontMapEntry {
 

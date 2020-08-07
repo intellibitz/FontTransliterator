@@ -1,10 +1,10 @@
-package intellibitz.sted.ui;
+package sted.ui;
 
-import intellibitz.sted.event.FontMapChangeEvent;
-import intellibitz.sted.event.FontMapChangeListener;
-import intellibitz.sted.fontmap.FontMap;
-import intellibitz.sted.util.Resources;
-import intellibitz.sted.widgets.FontChangeTextField;
+import sted.event.FontMapChangeEvent;
+import sted.event.FontMapChangeListener;
+import sted.fontmap.FontMap;
+import sted.util.Resources;
+import sted.widgets.FontChangeTextField;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

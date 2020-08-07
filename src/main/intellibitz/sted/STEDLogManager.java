@@ -1,7 +1,7 @@
-package intellibitz.sted;
+package sted;
 
-import intellibitz.sted.util.FileHelper;
-import intellibitz.sted.util.Resources;
+import sted.util.FileHelper;
+import sted.util.Resources;
 
 import java.io.BufferedInputStream;
 import java.io.File;

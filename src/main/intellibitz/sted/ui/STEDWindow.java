@@ -1,14 +1,14 @@
-package intellibitz.sted.ui;
+package sted.ui;
 
-import intellibitz.sted.actions.ExitAction;
-import intellibitz.sted.actions.ItemListenerAction;
-import intellibitz.sted.actions.STEDWindowAction;
-import intellibitz.sted.event.*;
-import intellibitz.sted.fontmap.FontMap;
-import intellibitz.sted.io.FileReaderThread;
-import intellibitz.sted.util.FileHelper;
-import intellibitz.sted.util.MenuHandler;
-import intellibitz.sted.util.Resources;
+import sted.actions.ExitAction;
+import sted.actions.ItemListenerAction;
+import sted.actions.STEDWindowAction;
+import sted.event.*;
+import sted.fontmap.FontMap;
+import sted.io.FileReaderThread;
+import sted.util.FileHelper;
+import sted.util.MenuHandler;
+import sted.util.Resources;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;

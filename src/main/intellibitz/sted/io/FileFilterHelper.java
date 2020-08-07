@@ -1,4 +1,4 @@
-package intellibitz.sted.io;
+package sted.io;
 
 import javax.swing.filechooser.FileFilter;
 import java.io.File;

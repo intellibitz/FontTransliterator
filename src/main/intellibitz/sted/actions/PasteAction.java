@@ -1,13 +1,13 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
-import intellibitz.sted.event.FontMapChangeEvent;
-import intellibitz.sted.event.FontMapChangeListener;
-import intellibitz.sted.fontmap.FontMap;
-import intellibitz.sted.fontmap.FontMapEntries;
-import intellibitz.sted.fontmap.FontMapEntry;
-import intellibitz.sted.ui.MappingTableModel;
-import intellibitz.sted.ui.STEDWindow;
-import intellibitz.sted.util.Resources;
+import sted.event.FontMapChangeEvent;
+import sted.event.FontMapChangeListener;
+import sted.fontmap.FontMap;
+import sted.fontmap.FontMapEntries;
+import sted.fontmap.FontMapEntry;
+import sted.ui.MappingTableModel;
+import sted.ui.STEDWindow;
+import sted.util.Resources;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;

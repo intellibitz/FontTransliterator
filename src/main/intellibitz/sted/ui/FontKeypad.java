@@ -1,10 +1,10 @@
-package intellibitz.sted.ui;
+package sted.ui;
 
-import intellibitz.sted.actions.LoadFontAction;
-import intellibitz.sted.event.*;
-import intellibitz.sted.fontmap.FontInfo;
-import intellibitz.sted.fontmap.FontMap;
-import intellibitz.sted.util.Resources;
+import sted.actions.LoadFontAction;
+import sted.event.*;
+import sted.fontmap.FontInfo;
+import sted.fontmap.FontMap;
+import sted.util.Resources;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -228,7 +228,7 @@ public abstract class FontKeypad
             implements ChangeListener {
         private Map<String, FontInfo> fonts;
         private static final Logger logger = Logger.getLogger(
-                "intellibitz.sted.ui.FontKeypad$FontsListModel");
+                "sted.ui.FontKeypad$FontsListModel");
 
         public FontsListModel() {
             super();

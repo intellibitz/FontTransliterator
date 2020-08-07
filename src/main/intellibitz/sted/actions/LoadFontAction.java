@@ -1,8 +1,8 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
-import intellibitz.sted.ui.FontKeypad;
-import intellibitz.sted.util.FileHelper;
-import intellibitz.sted.util.Resources;
+import sted.ui.FontKeypad;
+import sted.util.FileHelper;
+import sted.util.Resources;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

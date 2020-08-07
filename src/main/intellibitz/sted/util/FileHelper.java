@@ -1,6 +1,6 @@
-package intellibitz.sted.util;
+package sted.util;
 
-import intellibitz.sted.io.FileFilterHelper;
+import sted.io.FileFilterHelper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 public class FileHelper {
     private static final Logger logger =
-            Logger.getLogger("intellibitz.sted.util.FileHelper");
+            Logger.getLogger("sted.util.FileHelper");
 
     private FileHelper() {
     }

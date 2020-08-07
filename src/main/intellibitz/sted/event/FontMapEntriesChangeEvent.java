@@ -1,6 +1,6 @@
-package intellibitz.sted.event;
+package sted.event;
 
-import intellibitz.sted.fontmap.FontMapEntries;
+import sted.fontmap.FontMapEntries;
 
 import javax.swing.event.ChangeEvent;
 

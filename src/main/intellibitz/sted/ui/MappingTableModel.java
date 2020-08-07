@@ -1,12 +1,12 @@
-package intellibitz.sted.ui;
+package sted.ui;
 
-import intellibitz.sted.event.IMessageEventSource;
-import intellibitz.sted.event.IMessageListener;
-import intellibitz.sted.event.MessageEvent;
-import intellibitz.sted.fontmap.FontMap;
-import intellibitz.sted.fontmap.FontMapEntries;
-import intellibitz.sted.fontmap.FontMapEntry;
-import intellibitz.sted.util.Resources;
+import sted.event.IMessageEventSource;
+import sted.event.IMessageListener;
+import sted.event.MessageEvent;
+import sted.fontmap.FontMap;
+import sted.fontmap.FontMapEntries;
+import sted.fontmap.FontMapEntry;
+import sted.util.Resources;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;

@@ -1,10 +1,10 @@
-package intellibitz.sted.ui;
+package sted.ui;
 
-import intellibitz.sted.event.IMessageEventSource;
-import intellibitz.sted.event.IMessageListener;
-import intellibitz.sted.event.MessageEvent;
-import intellibitz.sted.util.FileHelper;
-import intellibitz.sted.util.Resources;
+import sted.event.IMessageEventSource;
+import sted.event.IMessageListener;
+import sted.event.MessageEvent;
+import sted.util.FileHelper;
+import sted.util.Resources;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;

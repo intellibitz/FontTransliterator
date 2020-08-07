@@ -1,6 +1,6 @@
-package intellibitz.sted.event;
+package sted.event;
 
-import intellibitz.sted.fontmap.Converter;
+import sted.fontmap.Converter;
 
 public class TransliterateEvent
         extends ThreadEvent {

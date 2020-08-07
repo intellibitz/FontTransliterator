@@ -1,9 +1,9 @@
-package intellibitz.sted;
+package sted;
 
-import intellibitz.sted.ui.AboutText;
-import intellibitz.sted.ui.STEDWindow;
-import intellibitz.sted.util.Resources;
-import intellibitz.sted.widgets.SplashWindow;
+import sted.ui.AboutText;
+import sted.ui.STEDWindow;
+import sted.util.Resources;
+import sted.widgets.SplashWindow;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,7 +52,7 @@ public class STEDGUI {
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             logger.severe("Exception : " + e.getMessage());
-            logger.throwing("intellibitz.sted.STEDGUI", "main", e);
+            logger.throwing("sted.STEDGUI", "main", e);
             System.exit(-1);
         }
     }

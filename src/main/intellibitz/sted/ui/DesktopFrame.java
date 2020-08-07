@@ -1,12 +1,12 @@
-package intellibitz.sted.ui;
+package sted.ui;
 
-import intellibitz.sted.event.FontMapChangeEvent;
-import intellibitz.sted.event.FontMapChangeListener;
-import intellibitz.sted.event.FontMapEntriesChangeEvent;
-import intellibitz.sted.event.IFontMapEntriesChangeListener;
-import intellibitz.sted.fontmap.FontMap;
-import intellibitz.sted.util.MenuHandler;
-import intellibitz.sted.util.Resources;
+import sted.event.FontMapChangeEvent;
+import sted.event.FontMapChangeListener;
+import sted.event.FontMapEntriesChangeEvent;
+import sted.event.IFontMapEntriesChangeListener;
+import sted.fontmap.FontMap;
+import sted.util.MenuHandler;
+import sted.util.Resources;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
@@ -32,7 +32,7 @@ public class DesktopFrame
     // output editor pane
     private FileViewer outputFileViewer;
     private static final Logger logger =
-            Logger.getLogger("intellibitz.sted.ui.DesktopFrame");
+            Logger.getLogger("sted.ui.DesktopFrame");
     private DesktopModel desktopModel;
 
     public DesktopFrame() {

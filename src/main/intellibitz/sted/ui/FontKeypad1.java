@@ -1,7 +1,7 @@
-package intellibitz.sted.ui;
+package sted.ui;
 
-import intellibitz.sted.event.FontListChangeEvent;
-import intellibitz.sted.fontmap.FontMap;
+import sted.event.FontListChangeEvent;
+import sted.fontmap.FontMap;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;

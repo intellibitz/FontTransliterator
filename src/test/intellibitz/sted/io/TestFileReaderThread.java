@@ -1,4 +1,4 @@
-package intellibitz.sted.io;
+package sted.io;
 
 public class TestFileReaderThread {
 

@@ -1,11 +1,11 @@
-package intellibitz.sted.util;
+package sted.util;
 
-import intellibitz.sted.actions.ItemListenerAction;
-import intellibitz.sted.actions.LAFAction;
-import intellibitz.sted.actions.OpenSampleFontMapAction;
-import intellibitz.sted.actions.ReOpenFontMapAction;
-import intellibitz.sted.fontmap.FontMap;
-import intellibitz.sted.ui.STEDWindow;
+import sted.actions.ItemListenerAction;
+import sted.actions.LAFAction;
+import sted.actions.OpenSampleFontMapAction;
+import sted.actions.ReOpenFontMapAction;
+import sted.fontmap.FontMap;
+import sted.ui.STEDWindow;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -46,7 +46,7 @@ public class MenuHandler
     private JPopupMenu popupMenu;
     private static final Stack<JMenu> stack = new Stack<JMenu>();
     private static final Logger logger =
-            Logger.getLogger("intellibitz.sted.util.MenuHandler");
+            Logger.getLogger("sted.util.MenuHandler");
 
     private static MenuHandler menuHandler;
     private static UIManager.LookAndFeelInfo[] lookAndFeelInfos;
@@ -59,11 +59,11 @@ public class MenuHandler
                         Resources.getResource(Resources.MENU_CONFIG_NAME));
             }
         } catch (ParserConfigurationException e) {
-            logger.throwing("intellibitz.sted.STEDGUI", "main", e);
+            logger.throwing("sted.STEDGUI", "main", e);
         } catch (SAXException e) {
-            logger.throwing("intellibitz.sted.STEDGUI", "main", e);
+            logger.throwing("sted.STEDGUI", "main", e);
         } catch (IOException e) {
-            logger.throwing("intellibitz.sted.STEDGUI", "main", e);
+            logger.throwing("sted.STEDGUI", "main", e);
         }
 
     }

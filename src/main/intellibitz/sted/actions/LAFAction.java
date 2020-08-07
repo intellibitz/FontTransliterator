@@ -1,11 +1,11 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
-import intellibitz.sted.STEDGUI;
-import intellibitz.sted.ui.AboutSTED;
-import intellibitz.sted.ui.HelpWindow;
-import intellibitz.sted.ui.STEDWindow;
-import intellibitz.sted.util.MenuHandler;
-import intellibitz.sted.util.Resources;
+import sted.STEDGUI;
+import sted.ui.AboutSTED;
+import sted.ui.HelpWindow;
+import sted.ui.STEDWindow;
+import sted.util.MenuHandler;
+import sted.util.Resources;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class LAFAction
         extends STEDWindowAction {
     private static final Logger logger =
-            Logger.getLogger("intellibitz.sted.actions.LAFAction");
+            Logger.getLogger("sted.actions.LAFAction");
 
     public LAFAction() {
         super();

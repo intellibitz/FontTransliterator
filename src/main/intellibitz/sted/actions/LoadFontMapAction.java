@@ -1,9 +1,9 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
-import intellibitz.sted.event.FontMapChangeEvent;
-import intellibitz.sted.event.FontMapChangeListener;
-import intellibitz.sted.STEDGUI;
-import intellibitz.sted.ui.STEDWindow;
+import sted.event.FontMapChangeEvent;
+import sted.event.FontMapChangeListener;
+import sted.STEDGUI;
+import sted.ui.STEDWindow;
 
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;

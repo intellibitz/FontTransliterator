@@ -1,4 +1,4 @@
-package intellibitz.sted.event;
+package sted.event;
 
 public interface IStatusEventSource {
     void fireStatusPosted();

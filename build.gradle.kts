@@ -26,7 +26,7 @@ application {
     applicationName = "sted"
     applicationDefaultJvmArgs = listOf("-Dsted.app.home=STED_APP_HOME")
     // Define the main class for the application.
-    mainClass.set("intellibitz.sted.Main")
+    mainClass.set("sted.Main")
 //    copy it at the base of the distribution, NOTE: default is under 'bin'
     executableDir = ""
     java {
@@ -38,11 +38,11 @@ application {
 // if normal source directory convention is not followed, define custom sourcesets
 sourceSets {
     main {
-        java.srcDirs(listOf("src/main"))
+        java.srcDirs(listOf("src/main/intellibitz"))
         resources.srcDirs(listOf("src/main/resources"))
     }
     test {
-        java.srcDirs(listOf("src/test"))
+        java.srcDirs(listOf("src/test/intellibitz"))
         resources.srcDirs(listOf("src/test/resources"))
     }
 }
@@ -77,7 +77,7 @@ tasks {
     jar {
         manifest {
             attributes(
-                "Main-Class" to "intellibitz.sted.main"
+                "Main-Class" to "sted.main"
             )
         }
     }

@@ -1,7 +1,7 @@
-package intellibitz.sted.util;
+package sted.util;
 
-import intellibitz.sted.fontmap.FontInfo;
-import intellibitz.sted.io.SettingsXMLHandler;
+import sted.fontmap.FontInfo;
+import sted.io.SettingsXMLHandler;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
@@ -165,7 +165,7 @@ public class Resources {
 
     private static ResourceBundle resourceBundle;
     private static final Logger logger =
-            Logger.getLogger("intellibitz.sted.util.Resources");
+            Logger.getLogger("sted.util.Resources");
     private static final Map<String, String> settings =
             new HashMap<String, String>();
     public static final String SETTINGS_FILE_PATH_USER;

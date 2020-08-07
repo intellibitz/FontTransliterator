@@ -1,6 +1,6 @@
-package intellibitz.sted.fontmap;
+package sted.fontmap;
 
-import intellibitz.sted.util.Resources;
+import sted.util.Resources;
 
 import java.util.Iterator;
 import java.util.List;

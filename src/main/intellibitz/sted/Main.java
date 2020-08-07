@@ -1,4 +1,4 @@
-package intellibitz.sted;
+package sted;
 
 import java.util.logging.Logger;
 
@@ -16,7 +16,7 @@ public class Main {
      * @param args the command line arguments for the application
      */
     public static void main(String[] args) {
-        Logger logger = Logger.getLogger("intellibitz.sted.Main");
+        Logger logger = Logger.getLogger("sted.Main");
         STEDLogManager.getLogmanager().addLogger(logger);
         if (args != null && args.length > 0) {
             final String param1 = args[0];

@@ -1,7 +1,7 @@
-package intellibitz.sted.widgets;
+package sted.widgets;
 
-import intellibitz.sted.event.IStatusListener;
-import intellibitz.sted.event.StatusEvent;
+import sted.event.IStatusListener;
+import sted.event.StatusEvent;
 
 import javax.swing.*;
 import java.awt.*;

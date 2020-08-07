@@ -1,7 +1,7 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
-import intellibitz.sted.fontmap.FontMapEntry;
-import intellibitz.sted.ui.MappingTableModel;
+import sted.fontmap.FontMapEntry;
+import sted.ui.MappingTableModel;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionListener;

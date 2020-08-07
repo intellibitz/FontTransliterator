@@ -1,9 +1,9 @@
-package intellibitz.sted.ui;
+package sted.ui;
 
-import intellibitz.sted.event.IThreadListener;
-import intellibitz.sted.event.ThreadEvent;
-import intellibitz.sted.io.FileReaderThread;
-import intellibitz.sted.util.Resources;
+import sted.event.IThreadListener;
+import sted.event.ThreadEvent;
+import sted.io.FileReaderThread;
+import sted.util.Resources;
 
 import javax.swing.*;
 import java.awt.*;

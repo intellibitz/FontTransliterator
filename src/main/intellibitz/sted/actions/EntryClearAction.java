@@ -1,6 +1,6 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
-import intellibitz.sted.ui.MappingEntryPanel;
+import sted.ui.MappingEntryPanel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

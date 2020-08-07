@@ -1,18 +1,18 @@
-package intellibitz.sted.ui;
+package sted.ui;
 
-import intellibitz.sted.actions.EntryAction;
-import intellibitz.sted.actions.EntryClearAction;
-import intellibitz.sted.actions.TableModelListenerAction;
-import intellibitz.sted.actions.TableRowsSelectAction;
-import intellibitz.sted.event.FontMapChangeEvent;
-import intellibitz.sted.event.FontMapChangeListener;
-import intellibitz.sted.event.MappingPopupListener;
-import intellibitz.sted.fontmap.FontMap;
-import intellibitz.sted.fontmap.FontMapEntry;
-import intellibitz.sted.util.MenuHandler;
-import intellibitz.sted.util.Resources;
-import intellibitz.sted.widgets.DocumentListenerButton;
-import intellibitz.sted.widgets.FontChangeTextField;
+import sted.actions.EntryAction;
+import sted.actions.EntryClearAction;
+import sted.actions.TableModelListenerAction;
+import sted.actions.TableRowsSelectAction;
+import sted.event.FontMapChangeEvent;
+import sted.event.FontMapChangeListener;
+import sted.event.MappingPopupListener;
+import sted.fontmap.FontMap;
+import sted.fontmap.FontMapEntry;
+import sted.util.MenuHandler;
+import sted.util.Resources;
+import sted.widgets.DocumentListenerButton;
+import sted.widgets.FontChangeTextField;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

@@ -1,12 +1,12 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
-import intellibitz.sted.fontmap.FontMap;
-import intellibitz.sted.fontmap.FontMapEntries;
-import intellibitz.sted.fontmap.FontMapEntry;
-import intellibitz.sted.ui.MappingEntryPanel;
-import intellibitz.sted.ui.STEDWindow;
-import intellibitz.sted.ui.TabDesktop;
-import intellibitz.sted.util.Resources;
+import sted.fontmap.FontMap;
+import sted.fontmap.FontMapEntries;
+import sted.fontmap.FontMapEntry;
+import sted.ui.MappingEntryPanel;
+import sted.ui.STEDWindow;
+import sted.ui.TabDesktop;
+import sted.util.Resources;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

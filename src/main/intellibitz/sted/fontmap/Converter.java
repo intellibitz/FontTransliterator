@@ -1,8 +1,8 @@
-package intellibitz.sted.fontmap;
+package sted.fontmap;
 
-import intellibitz.sted.event.ThreadEventSourceBase;
-import intellibitz.sted.event.TransliterateEvent;
-import intellibitz.sted.util.FileHelper;
+import sted.event.ThreadEventSourceBase;
+import sted.event.TransliterateEvent;
+import sted.util.FileHelper;
 
 import java.io.*;
 import java.util.logging.Logger;
@@ -16,7 +16,7 @@ public class Converter
     private boolean initialized;
     private boolean success;
     private static final Logger logger =
-            Logger.getLogger("intellibitz.sted.fontmap.Converter");
+            Logger.getLogger("sted.fontmap.Converter");
     private ITransliterate transliterate;
 
     public Converter() {

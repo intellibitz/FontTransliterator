@@ -1,4 +1,4 @@
-package intellibitz.sted.event;
+package sted.event;
 
 import java.util.EventListener;
 

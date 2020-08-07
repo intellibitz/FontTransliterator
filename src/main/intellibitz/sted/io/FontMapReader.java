@@ -1,11 +1,11 @@
-package intellibitz.sted.io;
+package sted.io;
 
-import intellibitz.sted.event.FontMapReadEvent;
-import intellibitz.sted.event.ThreadEventSourceBase;
-import intellibitz.sted.fontmap.FontMap;
-import intellibitz.sted.fontmap.FontMapEntry;
-import intellibitz.sted.util.FileHelper;
-import intellibitz.sted.util.Resources;
+import sted.event.FontMapReadEvent;
+import sted.event.ThreadEventSourceBase;
+import sted.fontmap.FontMap;
+import sted.fontmap.FontMapEntry;
+import sted.util.FileHelper;
+import sted.util.Resources;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,7 +33,7 @@ public class FontMapReader
 
     private FontMap fontMap;
     private static final Logger logger =
-            Logger.getLogger("intellibitz.sted.io.FontMapReader");
+            Logger.getLogger("sted.io.FontMapReader");
 
     //
     public FontMapReader(FontMap fontMap) {
@@ -67,25 +67,25 @@ public class FontMapReader
         } catch (IOException e) {
             setMessage("Invalid FontMap " +
                     fontMap.getFontMapFile().getAbsolutePath());
-            logger.throwing("intellibitz.sted.actions.LoadFontMapAction",
+            logger.throwing("sted.actions.LoadFontMapAction",
                     "readFontMap", e);
             fireThreadRunFailed();
         } catch (SAXException e) {
             setMessage("Invalid FontMap " +
                     fontMap.getFontMapFile().getAbsolutePath());
-            logger.throwing("intellibitz.sted.actions.LoadFontMapAction",
+            logger.throwing("sted.actions.LoadFontMapAction",
                     "readFontMap", e);
             fireThreadRunFailed();
         } catch (ParserConfigurationException e) {
             setMessage("Invalid FontMap " +
                     fontMap.getFontMapFile().getAbsolutePath());
-            logger.throwing("intellibitz.sted.actions.LoadFontMapAction",
+            logger.throwing("sted.actions.LoadFontMapAction",
                     "readFontMap", e);
             fireThreadRunFailed();
         } catch (HeadlessException e) {
             setMessage("Invalid FontMap " +
                     fontMap.getFontMapFile().getAbsolutePath());
-            logger.throwing("intellibitz.sted.actions.LoadFontMapAction",
+            logger.throwing("sted.actions.LoadFontMapAction",
                     "readFontMap", e);
             fireThreadRunFailed();
         }

@@ -1,8 +1,8 @@
-package intellibitz.sted.io;
+package sted.io;
 
-import intellibitz.sted.ui.STEDWindow;
-import intellibitz.sted.util.MenuHandler;
-import intellibitz.sted.util.Resources;
+import sted.ui.STEDWindow;
+import sted.util.MenuHandler;
+import sted.util.Resources;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 

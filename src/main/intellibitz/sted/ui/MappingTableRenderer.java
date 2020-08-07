@@ -1,6 +1,6 @@
-package intellibitz.sted.ui;
+package sted.ui;
 
-import intellibitz.sted.fontmap.FontMap;
+import sted.fontmap.FontMap;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;

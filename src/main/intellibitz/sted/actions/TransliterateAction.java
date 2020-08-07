@@ -1,10 +1,10 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
-import intellibitz.sted.fontmap.Converter;
-import intellibitz.sted.ui.STEDWindow;
-import intellibitz.sted.ui.TabDesktop;
-import intellibitz.sted.util.MenuHandler;
-import intellibitz.sted.util.Resources;
+import sted.fontmap.Converter;
+import sted.ui.STEDWindow;
+import sted.ui.TabDesktop;
+import sted.util.MenuHandler;
+import sted.util.Resources;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;

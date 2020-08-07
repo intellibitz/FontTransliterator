@@ -1,9 +1,9 @@
-package intellibitz.sted.io;
+package sted.io;
 
-import intellibitz.sted.event.IStatusEventSource;
-import intellibitz.sted.event.IStatusListener;
-import intellibitz.sted.event.StatusEvent;
-import intellibitz.sted.event.ThreadEventSourceBase;
+import sted.event.IStatusEventSource;
+import sted.event.IStatusListener;
+import sted.event.StatusEvent;
+import sted.event.ThreadEventSourceBase;
 
 import java.io.*;
 import java.util.logging.Logger;
@@ -14,7 +14,7 @@ public class FileReaderThread
     private File file;
 
     private static final Logger logger =
-            Logger.getLogger("intellibitz.sted.io.FileReaderThread");
+            Logger.getLogger("sted.io.FileReaderThread");
     private IStatusListener statusListener;
     private StatusEvent statusEvent;
 

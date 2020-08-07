@@ -1,8 +1,8 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
-import intellibitz.sted.event.*;
-import intellibitz.sted.STEDGUI;
-import intellibitz.sted.ui.STEDWindow;
+import sted.event.*;
+import sted.STEDGUI;
+import sted.ui.STEDWindow;
 
 import javax.swing.*;
 import java.awt.event.*;

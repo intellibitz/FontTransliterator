@@ -1,4 +1,4 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
 import org.junit.Test;
 
@@ -16,10 +16,10 @@ public class TestViewAction {
         Action action2 = null;
         try {
             action = (Action) Class
-                    .forName("intellibitz.sted.actions.ViewAction")
+                    .forName("sted.actions.ViewAction")
                     .newInstance();
             action2 = (Action) Class
-                    .forName("intellibitz.sted.actions.ViewAction$ViewToolBar")
+                    .forName("sted.actions.ViewAction$ViewToolBar")
                     .newInstance();
         } catch (InstantiationException e) {
             e.printStackTrace();

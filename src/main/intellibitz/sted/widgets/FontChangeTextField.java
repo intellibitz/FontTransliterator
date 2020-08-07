@@ -1,8 +1,8 @@
-package intellibitz.sted.widgets;
+package sted.widgets;
 
-import intellibitz.sted.event.IKeypadListener;
-import intellibitz.sted.event.KeypadEvent;
-import intellibitz.sted.ui.FontKeypad;
+import sted.event.IKeypadListener;
+import sted.event.KeypadEvent;
+import sted.ui.FontKeypad;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;

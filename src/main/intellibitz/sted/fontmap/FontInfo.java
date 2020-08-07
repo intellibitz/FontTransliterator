@@ -1,4 +1,4 @@
-package intellibitz.sted.fontmap;
+package sted.fontmap;
 
 import java.awt.*;
 

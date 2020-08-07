@@ -1,4 +1,4 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;

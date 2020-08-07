@@ -1,10 +1,10 @@
-package intellibitz.sted.fontmap;
+package sted.fontmap;
 
-import intellibitz.sted.event.FontListChangeEvent;
-import intellibitz.sted.event.FontMapChangeEvent;
-import intellibitz.sted.event.FontMapChangeListener;
-import intellibitz.sted.util.FileHelper;
-import intellibitz.sted.util.Resources;
+import sted.event.FontListChangeEvent;
+import sted.event.FontMapChangeEvent;
+import sted.event.FontMapChangeListener;
+import sted.util.FileHelper;
+import sted.util.Resources;
 
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
@@ -33,7 +33,7 @@ public class FontMap {
     private boolean console;
 
     private static final Logger logger =
-            Logger.getLogger("intellibitz.sted.fontmap.FontMap");
+            Logger.getLogger("sted.fontmap.FontMap");
 
     public FontMap() {
         changeListeners = new EventListenerList();
@@ -311,7 +311,7 @@ public class FontMap {
                 selectedFile.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
-                logger.throwing("intellibitz.sted.util.FontMapHelper", "saveAsAction", e);
+                logger.throwing("sted.util.FontMapHelper", "saveAsAction", e);
                 result = JFileChooser.ERROR_OPTION;
             }
         }

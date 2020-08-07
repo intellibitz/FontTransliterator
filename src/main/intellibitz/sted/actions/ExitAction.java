@@ -1,7 +1,7 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
-import intellibitz.sted.io.SettingsXMLWriter;
-import intellibitz.sted.ui.STEDWindow;
+import sted.io.SettingsXMLWriter;
+import sted.ui.STEDWindow;
 
 import javax.swing.*;
 import javax.xml.transform.TransformerException;

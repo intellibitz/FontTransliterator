@@ -1,13 +1,13 @@
-package intellibitz.sted.ui;
+package sted.ui;
 
-import intellibitz.sted.event.FontMapChangeEvent;
-import intellibitz.sted.event.FontMapChangeListener;
-import intellibitz.sted.event.IStatusListener;
-import intellibitz.sted.event.StatusEvent;
-import intellibitz.sted.fontmap.FontMap;
-import intellibitz.sted.util.Resources;
-import intellibitz.sted.widgets.GCButton;
-import intellibitz.sted.widgets.MemoryBar;
+import sted.event.FontMapChangeEvent;
+import sted.event.FontMapChangeListener;
+import sted.event.IStatusListener;
+import sted.event.StatusEvent;
+import sted.fontmap.FontMap;
+import sted.util.Resources;
+import sted.widgets.GCButton;
+import sted.widgets.MemoryBar;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;

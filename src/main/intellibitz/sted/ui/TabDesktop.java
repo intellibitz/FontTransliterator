@@ -1,16 +1,16 @@
-package intellibitz.sted.ui;
+package sted.ui;
 
-import intellibitz.sted.actions.RedoAction;
-import intellibitz.sted.actions.UndoAction;
-import intellibitz.sted.event.*;
-import intellibitz.sted.fontmap.FontMap;
-import intellibitz.sted.io.FileFilterHelper;
-import intellibitz.sted.io.FontMapReader;
-import intellibitz.sted.STEDGUI;
-import intellibitz.sted.util.FileHelper;
-import intellibitz.sted.util.MenuHandler;
-import intellibitz.sted.util.Resources;
-import intellibitz.sted.widgets.ButtonTabComponent;
+import sted.actions.RedoAction;
+import sted.actions.UndoAction;
+import sted.event.*;
+import sted.fontmap.FontMap;
+import sted.io.FileFilterHelper;
+import sted.io.FontMapReader;
+import sted.STEDGUI;
+import sted.util.FileHelper;
+import sted.util.MenuHandler;
+import sted.util.Resources;
+import sted.widgets.ButtonTabComponent;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -653,12 +653,12 @@ public class TabDesktop
                 }
 */
         } catch (HeadlessException ex) {
-            logger.throwing("intellibitz.sted.util.FontMapHelper",
+            logger.throwing("sted.util.FontMapHelper",
                     "readFontMap", ex);
             JOptionPane.showMessageDialog(this,
                     "Invalid FontMap " + selectedFile.getAbsolutePath());
         } catch (IllegalArgumentException ex) {
-            logger.throwing("intellibitz.sted.util.FontMapHelper",
+            logger.throwing("sted.util.FontMapHelper",
                     "readFontMap", ex);
             JOptionPane.showMessageDialog(this,
                     "Load Failed: " + ex.getMessage());

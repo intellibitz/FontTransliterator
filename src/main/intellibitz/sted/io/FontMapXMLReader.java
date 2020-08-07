@@ -1,6 +1,6 @@
-package intellibitz.sted.io;
+package sted.io;
 
-import intellibitz.sted.util.Resources;
+import sted.util.Resources;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 

@@ -62,7 +62,7 @@
                     accelerator="control N"
                     tooltip="Create a New FontMap"
                     icon="./images/new.png"
-                    action="intellibitz.sted.actions.NewFontMapAction"
+                    action="sted.actions.NewFontMapAction"
                     actionCommand="New"
             />
             <menuitem
@@ -71,21 +71,21 @@
                     accelerator="control O"
                     tooltip="Open Existing FontMap"
                     icon="./images/load.png"
-                    action="intellibitz.sted.actions.OpenFontMapAction"
+                    action="sted.actions.OpenFontMapAction"
                     actionCommand="Open..."
             />
             <seperator/>
             <menu
                     name="ReOpen"
                     mnemonic="O"
-                    action="intellibitz.sted.actions.ReOpenAction"
+                    action="sted.actions.ReOpenAction"
                     actionEnabled="false"
             >
                 <seperator/>
                 <menuitem
                         name="Clear List"
                         tooltip="Clear the list of ReOpen FontMap"
-                        action="intellibitz.sted.actions.ClearReOpenAction"
+                        action="sted.actions.ClearReOpenAction"
                         actionCommand="ClearList"
                         actionEnabled="true"
                         toolButtonVisible="false"
@@ -98,7 +98,7 @@
                     accelerator="control S"
                     tooltip="Save FontMap"
                     icon="./images/save.png"
-                    action="intellibitz.sted.actions.SaveFontMapAction"
+                    action="sted.actions.SaveFontMapAction"
                     actionCommand="Save"
                     actionEnabled="false"
             />
@@ -107,7 +107,7 @@
                     mnemonic="A"
                     tooltip="Save FontMap As"
                     icon="./images/saveas.png"
-                    action="intellibitz.sted.actions.SaveAsAction"
+                    action="sted.actions.SaveAsAction"
                     actionCommand="Save As..."
                     actionEnabled="false"
                     toolButtonVisible="false"
@@ -119,7 +119,7 @@
                     accelerator="control K"
                     tooltip="ReLoad Existing FontMap"
                     icon="./images/reload.png"
-                    action="intellibitz.sted.actions.LoadFontMapAction"
+                    action="sted.actions.LoadFontMapAction"
                     actionCommand="ReLoad"
                     actionEnabled="false"
                     toolButtonVisible="false"
@@ -131,7 +131,7 @@
                     accelerator="control F4"
                     tooltip="Close FontMap"
                     icon="./images/close.png"
-                    action="intellibitz.sted.actions.CloseAction"
+                    action="sted.actions.CloseAction"
                     actionCommand="Close"
                     actionEnabled="false"
                     toolButtonVisible="false"
@@ -141,7 +141,7 @@
                     name="Exit"
                     mnemonic="X"
                     tooltip="Exit"
-                    action="intellibitz.sted.actions.ExitAction"
+                    action="sted.actions.ExitAction"
                     actionCommand="Exit"
                     toolButtonVisible="false"
             />
@@ -156,7 +156,7 @@
                     accelerator="control Z"
                     tooltip="Undo Edit"
                     icon="./images/undo.png"
-                    action="intellibitz.sted.actions.UndoAction"
+                    action="sted.actions.UndoAction"
                     actionEnabled="false"
                     actionCommand="Undo"
             />
@@ -166,7 +166,7 @@
                     accelerator="control shift Z"
                     tooltip="Redo Edit"
                     icon="./images/redo.png"
-                    action="intellibitz.sted.actions.RedoAction"
+                    action="sted.actions.RedoAction"
                     actionEnabled="false"
                     actionCommand="Redo"
             />
@@ -177,7 +177,7 @@
                     accelerator="control X"
                     tooltip="Cut Selected Mapping"
                     icon="./images/cut.png"
-                    action="intellibitz.sted.actions.CutAction"
+                    action="sted.actions.CutAction"
                     actionCommand="Cut"
                     actionEnabled="false"
             />
@@ -187,7 +187,7 @@
                     accelerator="control C"
                     tooltip="Copy Selected Mapping"
                     icon="./images/copy.png"
-                    action="intellibitz.sted.actions.CopyAction"
+                    action="sted.actions.CopyAction"
                     actionCommand="Copy"
                     actionEnabled="false"
             />
@@ -197,7 +197,7 @@
                     accelerator="control V"
                     tooltip="Paste"
                     icon="./images/paste.png"
-                    action="intellibitz.sted.actions.PasteAction"
+                    action="sted.actions.PasteAction"
                     actionCommand="Paste"
                     actionEnabled="false"
             />
@@ -207,7 +207,7 @@
                     mnemonic="A"
                     accelerator="control A"
                     tooltip="Select All Mapping"
-                    action="intellibitz.sted.actions.SelectAllAction"
+                    action="sted.actions.SelectAllAction"
                     actionCommand="Select All"
                     actionEnabled="false"
                     toolButtonVisible="false"
@@ -219,7 +219,7 @@
                     accelerator="DELETE"
                     tooltip="Delete Selected Mapping"
                     icon="./images/delete.png"
-                    action="intellibitz.sted.actions.DeleteAction"
+                    action="sted.actions.DeleteAction"
                     actionCommand="Delete"
                     actionEnabled="false"
                     toolButtonVisible="false"
@@ -235,7 +235,7 @@
                     accelerator="control alt I"
                     tooltip="Select Input file - source"
                     icon="./images/input.png"
-                    action="intellibitz.sted.actions.FileSelectAction"
+                    action="sted.actions.FileSelectAction"
                     actionEnabled="false"
                     actionCommand="Input"
             />
@@ -245,7 +245,7 @@
                     accelerator="control alt O"
                     tooltip="Select Output file - target"
                     icon="./images/output.png"
-                    action="intellibitz.sted.actions.FileSelectAction"
+                    action="sted.actions.FileSelectAction"
                     actionEnabled="false"
                     actionCommand="Output"
             />
@@ -256,7 +256,7 @@
                     accelerator="control alt C"
                     tooltip="Convert based on the current FontMap"
                     icon="./images/convert.png"
-                    action="intellibitz.sted.actions.TransliterateAction"
+                    action="sted.actions.TransliterateAction"
                     actionCommand="Convert"
                     actionEnabled="false"
             />
@@ -266,7 +266,7 @@
                     accelerator="control alt S"
                     tooltip="Stop Conversion"
                     icon="./images/stop.png"
-                    action="intellibitz.sted.actions.TransliterateStopAction"
+                    action="sted.actions.TransliterateStopAction"
                     actionCommand="Stop"
                     actionEnabled="false"
             />
@@ -281,7 +281,7 @@
                     mnemonic="R"
                     accelerator="control alt R"
                     tooltip="Transliterate in Reverse direction"
-                    action="intellibitz.sted.actions.ItemListenerAction"
+                    action="sted.actions.ItemListenerAction"
                     actionCommand="Reverse"
                     actionMode="off"
                     toolButton="javax.swing.JCheckBox"
@@ -293,7 +293,7 @@
                     mnemonic="P"
                     accelerator="control alt P"
                     tooltip="Dont Transliterate words in tags"
-                    action="intellibitz.sted.actions.ItemListenerAction"
+                    action="sted.actions.ItemListenerAction"
                     actionCommand="Preserve"
                     actionMode="off"
                     toolButton="javax.swing.JCheckBox"
@@ -316,7 +316,7 @@
                     mnemonic="T"
                     accelerator="control shift T"
                     tooltip="Show/Hide Toolbar"
-                    action="intellibitz.sted.actions.ViewAction$ViewToolBar"
+                    action="sted.actions.ViewAction$ViewToolBar"
                     actionCommand="ViewTool"
                     toolButtonVisible="false"
             />
@@ -326,7 +326,7 @@
                     mnemonic="S"
                     accelerator="control shift S"
                     tooltip="Show/Hide Status Bar"
-                    action="intellibitz.sted.actions.ViewAction$ViewStatus"
+                    action="sted.actions.ViewAction$ViewStatus"
                     actionCommand="ViewStatus"
                     toolButtonVisible="false"
             />
@@ -337,7 +337,7 @@
                     mnemonic="M"
                     accelerator="control shift M"
                     tooltip="Show/Hide Mapping Details"
-                    action="intellibitz.sted.actions.ViewAction$ViewMapping"
+                    action="sted.actions.ViewAction$ViewMapping"
                     actionCommand="ViewMapping"
                     actionEnabled="false"
                     toolButtonVisible="false"
@@ -348,7 +348,7 @@
                     mnemonic="A"
                     accelerator="control shift A"
                     tooltip="Show/Hide Sample Text"
-                    action="intellibitz.sted.actions.ViewAction$ViewSample"
+                    action="sted.actions.ViewAction$ViewSample"
                     actionCommand="ViewSample"
                     actionEnabled="false"
                     toolButtonVisible="false"
@@ -369,7 +369,7 @@
                     accelerator="F1"
                     tooltip="Display Help Topics"
                     icon="./images/help.png"
-                    action="intellibitz.sted.actions.HelpAction"
+                    action="sted.actions.HelpAction"
                     actionCommand="Help"
             />
             <seperator/>
@@ -378,7 +378,7 @@
                     mnemonic="A"
                     tooltip="About STED"
                     icon="./images/sted.gif"
-                    action="intellibitz.sted.actions.AboutAction"
+                    action="sted.actions.AboutAction"
                     actionCommand="About"
             />
         </menu>

@@ -1,7 +1,7 @@
-package intellibitz.sted.fontmap;
+package sted.fontmap;
 
-import intellibitz.sted.ui.MapperPanel;
-import intellibitz.sted.util.Resources;
+import sted.ui.MapperPanel;
+import sted.util.Resources;
 
 
 public class SampleTextConverter

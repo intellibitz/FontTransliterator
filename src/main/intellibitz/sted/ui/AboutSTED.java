@@ -1,7 +1,7 @@
-package intellibitz.sted.ui;
+package sted.ui;
 
-import intellibitz.sted.util.Resources;
-import intellibitz.sted.widgets.AboutDialog;
+import sted.util.Resources;
+import sted.widgets.AboutDialog;
 
 /**
  * Displays the About message.

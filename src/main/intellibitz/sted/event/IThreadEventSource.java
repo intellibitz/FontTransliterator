@@ -1,4 +1,4 @@
-package intellibitz.sted.event;
+package sted.event;
 
 public interface IThreadEventSource
         extends Runnable {
@@ -14,7 +14,7 @@ public interface IThreadEventSource
      * registers listeners with this event source
      *
      * @param threadListener IThreadListener interested in ThreadEvent
-     * @see intellibitz.sted.event.IThreadListener
+     * @see sted.event.IThreadListener
      */
     void addThreadListener(IThreadListener threadListener);
 

@@ -1,6 +1,6 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
-import intellibitz.sted.ui.STEDWindow;
+import sted.ui.STEDWindow;
 
 import java.awt.event.ActionEvent;
 

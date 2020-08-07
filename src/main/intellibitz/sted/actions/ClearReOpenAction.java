@@ -1,6 +1,6 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
-import intellibitz.sted.util.MenuHandler;
+import sted.util.MenuHandler;
 
 import java.awt.event.ActionEvent;
 

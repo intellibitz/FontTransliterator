@@ -1,8 +1,8 @@
-package intellibitz.sted.io;
+package sted.io;
 
-import intellibitz.sted.fontmap.FontMap;
-import intellibitz.sted.fontmap.FontMapEntry;
-import intellibitz.sted.util.FileHelper;
+import sted.fontmap.FontMap;
+import sted.fontmap.FontMapEntry;
+import sted.util.FileHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -19,7 +19,7 @@ class FontMapXMLHandler
     private FontMap fontMap;
     private FontMapEntry fontMapEntry;
     private static final Logger logger =
-            Logger.getLogger("intellibitz.sted.io.FontMapXMLHandler");
+            Logger.getLogger("sted.io.FontMapXMLHandler");
     private boolean valid;
 
     FontMapXMLHandler() {

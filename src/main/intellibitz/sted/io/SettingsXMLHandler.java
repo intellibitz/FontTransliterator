@@ -1,6 +1,6 @@
-package intellibitz.sted.io;
+package sted.io;
 
-import intellibitz.sted.util.FileHelper;
+import sted.util.FileHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -25,7 +25,7 @@ public class SettingsXMLHandler
     private String key;
     private String value;
     private static final Logger logger =
-            Logger.getLogger("intellibitz.sted.io.SettingsXMLHandler");
+            Logger.getLogger("sted.io.SettingsXMLHandler");
 
     public SettingsXMLHandler() {
         super();

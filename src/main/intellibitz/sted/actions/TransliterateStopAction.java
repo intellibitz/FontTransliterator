@@ -1,6 +1,6 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
-import intellibitz.sted.fontmap.Converter;
+import sted.fontmap.Converter;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

@@ -1,4 +1,4 @@
-package intellibitz.sted.widgets;
+package sted.widgets;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

@@ -1,6 +1,6 @@
-package intellibitz.sted.fontmap;
+package sted.fontmap;
 
-import intellibitz.sted.util.Resources;
+import sted.util.Resources;
 
 /**
  * Represents a FontMap Entry. All Mappings are transformed to a FontMapEntry.

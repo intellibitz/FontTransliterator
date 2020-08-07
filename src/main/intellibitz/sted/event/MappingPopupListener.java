@@ -1,8 +1,8 @@
-package intellibitz.sted.event;
+package sted.event;
 
-import intellibitz.sted.actions.TableRowsSelectAction;
-import intellibitz.sted.util.MenuHandler;
-import intellibitz.sted.util.Resources;
+import sted.actions.TableRowsSelectAction;
+import sted.util.MenuHandler;
+import sted.util.Resources;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;

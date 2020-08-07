@@ -1,7 +1,7 @@
-package intellibitz.sted.io;
+package sted.io;
 
-import intellibitz.sted.fontmap.FontMap;
-import intellibitz.sted.util.Resources;
+import sted.fontmap.FontMap;
+import sted.util.Resources;
 import org.xml.sax.InputSource;
 
 import javax.xml.transform.Transformer;

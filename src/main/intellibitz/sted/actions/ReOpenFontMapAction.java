@@ -1,8 +1,8 @@
-package intellibitz.sted.actions;
+package sted.actions;
 
-import intellibitz.sted.STEDGUI;
-import intellibitz.sted.ui.STEDWindow;
-import intellibitz.sted.ui.TabDesktop;
+import sted.STEDGUI;
+import sted.ui.STEDWindow;
+import sted.ui.TabDesktop;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
