@@ -1,8 +1,7 @@
 package sted.io;
 
 import sted.ui.STEDWindow;
-import sted.util.MenuHandler;
-import sted.util.Resources;
+import sted.ui.MenuHandler;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 

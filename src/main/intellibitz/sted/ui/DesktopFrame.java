@@ -5,8 +5,7 @@ import sted.event.FontMapChangeListener;
 import sted.event.FontMapEntriesChangeEvent;
 import sted.event.IFontMapEntriesChangeListener;
 import sted.fontmap.FontMap;
-import sted.util.MenuHandler;
-import sted.util.Resources;
+import sted.io.Resources;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;

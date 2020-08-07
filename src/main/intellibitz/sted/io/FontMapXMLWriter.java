@@ -1,7 +1,6 @@
 package sted.io;
 
 import sted.fontmap.FontMap;
-import sted.util.Resources;
 import org.xml.sax.InputSource;
 
 import javax.xml.transform.Transformer;

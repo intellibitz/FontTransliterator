@@ -1,6 +1,6 @@
 package sted.fontmap;
 
-import sted.util.Resources;
+import sted.io.Resources;
 
 import java.util.Iterator;
 import java.util.List;

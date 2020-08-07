@@ -4,8 +4,6 @@ import sted.event.FontMapReadEvent;
 import sted.event.ThreadEventSourceBase;
 import sted.fontmap.FontMap;
 import sted.fontmap.FontMapEntry;
-import sted.util.FileHelper;
-import sted.util.Resources;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;

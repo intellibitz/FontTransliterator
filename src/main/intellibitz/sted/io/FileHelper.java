@@ -1,6 +1,4 @@
-package sted.util;
-
-import sted.io.FileFilterHelper;
+package sted.io;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +7,7 @@ import java.util.logging.Logger;
 
 public class FileHelper {
     private static final Logger logger =
-            Logger.getLogger("sted.util.FileHelper");
+            Logger.getLogger("sted.io.FileHelper");
 
     private FileHelper() {
     }

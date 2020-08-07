@@ -4,8 +4,8 @@ import sted.event.FontMapChangeEvent;
 import sted.event.FontMapChangeListener;
 import sted.fontmap.FontMap;
 import sted.ui.STEDWindow;
-import sted.util.MenuHandler;
-import sted.util.Resources;
+import sted.ui.MenuHandler;
+import sted.io.Resources;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameEvent;

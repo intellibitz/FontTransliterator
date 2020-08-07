@@ -6,7 +6,7 @@ import sted.fontmap.FontMapEntry;
 import sted.ui.MappingEntryPanel;
 import sted.ui.STEDWindow;
 import sted.ui.TabDesktop;
-import sted.util.Resources;
+import sted.io.Resources;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

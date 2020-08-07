@@ -3,7 +3,7 @@ package sted.ui;
 import sted.event.FontMapChangeEvent;
 import sted.event.FontMapChangeListener;
 import sted.fontmap.FontMap;
-import sted.util.Resources;
+import sted.io.Resources;
 import sted.widgets.FontChangeTextField;
 
 import javax.swing.*;

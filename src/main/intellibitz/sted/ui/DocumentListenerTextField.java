@@ -2,8 +2,7 @@ package sted.ui;
 
 import sted.fontmap.FontMap;
 import sted.fontmap.SampleTextConverter;
-import sted.util.MenuHandler;
-import sted.util.Resources;
+import sted.io.Resources;
 import sted.widgets.FontChangeTextField;
 
 import javax.swing.*;

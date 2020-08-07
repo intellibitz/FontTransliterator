@@ -1,6 +1,6 @@
 package sted.fontmap;
 
-import sted.util.Resources;
+import sted.io.Resources;
 
 /**
  * Represents a FontMap Entry. All Mappings are transformed to a FontMapEntry.

@@ -2,7 +2,6 @@ package sted.io;
 
 import sted.fontmap.FontMap;
 import sted.fontmap.FontMapEntry;
-import sted.util.FileHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

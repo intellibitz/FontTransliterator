@@ -9,8 +9,7 @@ import sted.event.FontMapChangeListener;
 import sted.event.MappingPopupListener;
 import sted.fontmap.FontMap;
 import sted.fontmap.FontMapEntry;
-import sted.util.MenuHandler;
-import sted.util.Resources;
+import sted.io.Resources;
 import sted.widgets.DocumentListenerButton;
 import sted.widgets.FontChangeTextField;
 

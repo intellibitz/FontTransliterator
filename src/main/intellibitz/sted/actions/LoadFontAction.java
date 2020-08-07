@@ -1,8 +1,8 @@
 package sted.actions;
 
 import sted.ui.FontKeypad;
-import sted.util.FileHelper;
-import sted.util.Resources;
+import sted.io.FileHelper;
+import sted.io.Resources;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

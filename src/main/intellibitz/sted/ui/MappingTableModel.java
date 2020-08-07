@@ -6,7 +6,7 @@ import sted.event.MessageEvent;
 import sted.fontmap.FontMap;
 import sted.fontmap.FontMapEntries;
 import sted.fontmap.FontMapEntry;
-import sted.util.Resources;
+import sted.io.Resources;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;

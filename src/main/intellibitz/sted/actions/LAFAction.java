@@ -4,8 +4,8 @@ import sted.STEDGUI;
 import sted.ui.AboutSTED;
 import sted.ui.HelpWindow;
 import sted.ui.STEDWindow;
-import sted.util.MenuHandler;
-import sted.util.Resources;
+import sted.ui.MenuHandler;
+import sted.io.Resources;
 
 import javax.swing.*;
 import java.awt.*;

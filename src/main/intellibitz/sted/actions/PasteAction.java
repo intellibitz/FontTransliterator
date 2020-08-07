@@ -7,7 +7,7 @@ import sted.fontmap.FontMapEntries;
 import sted.fontmap.FontMapEntry;
 import sted.ui.MappingTableModel;
 import sted.ui.STEDWindow;
-import sted.util.Resources;
+import sted.io.Resources;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;

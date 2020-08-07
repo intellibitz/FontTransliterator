@@ -4,7 +4,7 @@ import sted.actions.LoadFontAction;
 import sted.event.*;
 import sted.fontmap.FontInfo;
 import sted.fontmap.FontMap;
-import sted.util.Resources;
+import sted.io.Resources;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

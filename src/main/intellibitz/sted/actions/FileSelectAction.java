@@ -2,7 +2,7 @@ package sted.actions;
 
 import sted.STEDGUI;
 import sted.ui.STEDWindow;
-import sted.util.Resources;
+import sted.io.Resources;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

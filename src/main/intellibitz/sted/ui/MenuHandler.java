@@ -1,11 +1,11 @@
-package sted.util;
+package sted.ui;
 
 import sted.actions.ItemListenerAction;
 import sted.actions.LAFAction;
 import sted.actions.OpenSampleFontMapAction;
 import sted.actions.ReOpenFontMapAction;
 import sted.fontmap.FontMap;
-import sted.ui.STEDWindow;
+import sted.io.Resources;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -46,7 +46,7 @@ public class MenuHandler
     private JPopupMenu popupMenu;
     private static final Stack<JMenu> stack = new Stack<JMenu>();
     private static final Logger logger =
-            Logger.getLogger("sted.util.MenuHandler");
+            Logger.getLogger("sted.ui.MenuHandler");
 
     private static MenuHandler menuHandler;
     private static UIManager.LookAndFeelInfo[] lookAndFeelInfos;

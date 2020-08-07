@@ -2,7 +2,7 @@ package sted;
 
 import sted.ui.AboutText;
 import sted.ui.STEDWindow;
-import sted.util.Resources;
+import sted.io.Resources;
 import sted.widgets.SplashWindow;
 
 import javax.swing.*;

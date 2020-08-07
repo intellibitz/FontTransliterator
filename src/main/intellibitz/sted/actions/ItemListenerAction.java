@@ -1,7 +1,7 @@
 package sted.actions;
 
 import sted.ui.STEDWindow;
-import sted.util.MenuHandler;
+import sted.ui.MenuHandler;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

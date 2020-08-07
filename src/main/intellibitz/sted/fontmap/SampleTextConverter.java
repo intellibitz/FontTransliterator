@@ -1,7 +1,7 @@
 package sted.fontmap;
 
 import sted.ui.MapperPanel;
-import sted.util.Resources;
+import sted.io.Resources;
 
 
 public class SampleTextConverter

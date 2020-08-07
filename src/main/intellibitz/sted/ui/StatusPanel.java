@@ -5,7 +5,7 @@ import sted.event.FontMapChangeListener;
 import sted.event.IStatusListener;
 import sted.event.StatusEvent;
 import sted.fontmap.FontMap;
-import sted.util.Resources;
+import sted.io.Resources;
 import sted.widgets.GCButton;
 import sted.widgets.MemoryBar;
 

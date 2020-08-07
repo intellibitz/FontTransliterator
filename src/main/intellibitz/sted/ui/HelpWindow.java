@@ -3,8 +3,8 @@ package sted.ui;
 import sted.event.IMessageEventSource;
 import sted.event.IMessageListener;
 import sted.event.MessageEvent;
-import sted.util.FileHelper;
-import sted.util.Resources;
+import sted.io.FileHelper;
+import sted.io.Resources;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;

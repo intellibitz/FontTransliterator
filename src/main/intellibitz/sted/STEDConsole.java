@@ -5,7 +5,7 @@ import sted.event.ThreadEvent;
 import sted.fontmap.Converter;
 import sted.fontmap.FontMap;
 import sted.io.FontMapReader;
-import sted.util.Resources;
+import sted.io.Resources;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;

@@ -1,6 +1,6 @@
 package sted.ui;
 
-import sted.util.Resources;
+import sted.io.Resources;
 
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;

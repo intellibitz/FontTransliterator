@@ -7,9 +7,8 @@ import sted.fontmap.FontMap;
 import sted.io.FileFilterHelper;
 import sted.io.FontMapReader;
 import sted.STEDGUI;
-import sted.util.FileHelper;
-import sted.util.MenuHandler;
-import sted.util.Resources;
+import sted.io.FileHelper;
+import sted.io.Resources;
 import sted.widgets.ButtonTabComponent;
 
 import javax.swing.*;

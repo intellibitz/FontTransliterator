@@ -2,7 +2,7 @@ package sted.fontmap;
 
 import sted.event.ThreadEventSourceBase;
 import sted.event.TransliterateEvent;
-import sted.util.FileHelper;
+import sted.io.FileHelper;
 
 import java.io.*;
 import java.util.logging.Logger;

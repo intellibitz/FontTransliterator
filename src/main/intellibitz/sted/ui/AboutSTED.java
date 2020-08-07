@@ -1,6 +1,6 @@
 package sted.ui;
 
-import sted.util.Resources;
+import sted.io.Resources;
 import sted.widgets.AboutDialog;
 
 /**

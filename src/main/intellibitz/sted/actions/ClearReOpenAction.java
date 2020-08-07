@@ -1,6 +1,6 @@
 package sted.actions;
 
-import sted.util.MenuHandler;
+import sted.ui.MenuHandler;
 
 import java.awt.event.ActionEvent;
 

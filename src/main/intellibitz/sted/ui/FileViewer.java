@@ -3,7 +3,7 @@ package sted.ui;
 import sted.event.IThreadListener;
 import sted.event.ThreadEvent;
 import sted.io.FileReaderThread;
-import sted.util.Resources;
+import sted.io.Resources;
 
 import javax.swing.*;
 import java.awt.*;

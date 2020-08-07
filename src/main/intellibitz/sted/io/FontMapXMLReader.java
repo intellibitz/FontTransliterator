@@ -1,6 +1,5 @@
 package sted.io;
 
-import sted.util.Resources;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 

@@ -8,7 +8,7 @@ import sted.fontmap.FontMapEntry;
 import sted.ui.DesktopFrame;
 import sted.ui.STEDWindow;
 import sted.ui.TabDesktop;
-import sted.util.Resources;
+import sted.io.Resources;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;

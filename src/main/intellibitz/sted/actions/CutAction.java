@@ -6,7 +6,7 @@ import sted.fontmap.FontMap;
 import sted.fontmap.FontMapEntry;
 import sted.ui.DesktopModel;
 import sted.ui.STEDWindow;
-import sted.util.Resources;
+import sted.io.Resources;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;

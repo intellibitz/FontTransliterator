@@ -1,8 +1,6 @@
 package sted
 
-import sted.util.FileHelper
-import sted.util.Resources
-import java.io.BufferedInputStream
+import sted.io.FileHelper
 import java.io.File
 import java.io.IOException
 import java.util.logging.LogManager
@@ -30,9 +28,8 @@ object Main {
         }
     }
 
-    private var logManager: LogManager? = null//To change body of catch statement use Options | File Templates.
+    private var logManager: LogManager? = null
 
-    //To change body of catch statement use Options | File Templates.
     @JvmStatic
     val logmanager: LogManager?
         get() {
@@ -41,22 +38,7 @@ object Main {
                 try {
                     with(logManager) {
                         this?.readConfiguration(
-                            BufferedInputStream(
-                                FileHelper.getInputStream(
-                                    File(
-                                        FileHelper.suffixFileSeparator(
-                                            System.getProperty(
-                                                Resources.LOG_PATH,
-                                                "log"
-                                            )
-                                        ) +
-                                                Resources
-                                                    .getResource(
-                                                        Resources.LOG_CONFIG_NAME
-                                                    )
-                                    )
-                                )
-                            )
+                            FileHelper.getInputStream(File("log/logging.properties"))
                         )
                     }
                 } catch (e: IOException) {

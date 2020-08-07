@@ -3,8 +3,8 @@ package sted.fontmap;
 import sted.event.FontListChangeEvent;
 import sted.event.FontMapChangeEvent;
 import sted.event.FontMapChangeListener;
-import sted.util.FileHelper;
-import sted.util.Resources;
+import sted.io.FileHelper;
+import sted.io.Resources;
 
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
