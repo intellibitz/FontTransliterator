@@ -20,18 +20,6 @@ distributions {
     }
 }
 
-// if normal source directory convention is not followed, define custom sourcesets
-sourceSets {
-    main {
-        java.srcDirs(listOf("src/main"))
-        resources.srcDirs(listOf("src/main/resources"))
-    }
-    test {
-        java.srcDirs(listOf("src/test"))
-        resources.srcDirs(listOf("src/test/resources"))
-    }
-}
-
 application {
     //    mainModule.set("intellibitz")
 //    the executable batch file name and the jar name
@@ -47,29 +35,15 @@ application {
     }
 }
 
-tasks {
-    startScripts {
-        doLast {
-            var text = windowsScript.absoluteFile.readText()
-            text = text.replace("STED_APP_HOME", "%APP_HOME")
-            text = text.replace("CLASSPATH=", "CLASSPATH=.;")
-            windowsScript.absoluteFile.writeText(text)
-            var text2 = unixScript.absoluteFile.readText()
-            text2 = text2.replace("STED_APP_HOME", "\$APP_HOME")
-            text2 = text2.replace("CLASSPATH=", "CLASSPATH=.:")
-            unixScript.absoluteFile.writeText(text2)
-        }
+// if normal source directory convention is not followed, define custom sourcesets
+sourceSets {
+    main {
+        java.srcDirs(listOf("src/main"))
+        resources.srcDirs(listOf("src/main/resources"))
     }
-    named("run"){
-        doLast{
-        }
-    }
-    jar {
-        manifest {
-            attributes(
-                "Main-Class" to "intellibitz.sted.main"
-            )
-        }
+    test {
+        java.srcDirs(listOf("src/test"))
+        resources.srcDirs(listOf("src/test/resources"))
     }
 }
 
@@ -83,5 +57,28 @@ dependencies {
     testImplementation(kotlin("test"))
     // Use the Kotlin JUnit integration.
     testImplementation(kotlin("test-junit"))
+//    required, to run from command line gradle task
+    runtimeOnly(files("src/dist"))
 }
 
+tasks {
+    startScripts {
+        doLast {
+            var text = windowsScript.absoluteFile.readText()
+            text = text.replace("STED_APP_HOME", "%APP_HOME")
+            text = text.replace("CLASSPATH=", "CLASSPATH=.;")
+            windowsScript.absoluteFile.writeText(text)
+            var text2 = unixScript.absoluteFile.readText()
+            text2 = text2.replace("STED_APP_HOME", "\$APP_HOME")
+            text2 = text2.replace("CLASSPATH=", "CLASSPATH=.:")
+            unixScript.absoluteFile.writeText(text2)
+        }
+    }
+    jar {
+        manifest {
+            attributes(
+                "Main-Class" to "intellibitz.sted.main"
+            )
+        }
+    }
+}
