@@ -62,6 +62,13 @@ tasks {
             unixScript.absoluteFile.writeText(text2)
         }
     }
+    jar {
+        manifest {
+            attributes(
+                "Main-Class" to "intellibitz.sted.main"
+            )
+        }
+    }
 }
 
 dependencies {
