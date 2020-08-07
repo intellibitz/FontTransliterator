@@ -1,4 +1,3 @@
-//version = 0.9
 //group = "intellibitz"
 
 plugins {
@@ -52,7 +51,6 @@ tasks {
     startScripts {
         doLast {
             var text = windowsScript.absoluteFile.readText()
-//            text = text.replace("STED_APP_HOME", "%~dp0")
             text = text.replace("STED_APP_HOME", "%APP_HOME")
             text = text.replace("CLASSPATH=", "CLASSPATH=.;")
             windowsScript.absoluteFile.writeText(text)
@@ -60,6 +58,10 @@ tasks {
             text2 = text2.replace("STED_APP_HOME", "\$APP_HOME")
             text2 = text2.replace("CLASSPATH=", "CLASSPATH=.:")
             unixScript.absoluteFile.writeText(text2)
+        }
+    }
+    named("run"){
+        doLast{
         }
     }
     jar {
