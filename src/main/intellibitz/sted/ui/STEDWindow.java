@@ -36,11 +36,11 @@ public class STEDWindow
     }
 
     public void init() {
-        setTitle(Resources.getSTEDTitle());
         setDefaultLookAndFeelDecorated(true);
         setState(JFrame.MAXIMIZED_BOTH);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        setTitle(Resources.getSTEDTitle());
         setIconImage(Resources.getSTEDImage());
 
         statusEvent = new StatusEvent(this);
@@ -113,7 +113,7 @@ public class STEDWindow
 
         Map<String, Action> actions = MenuHandler.getInstance().getActions();
         for (Action action : actions.values()) {
-            if (STEDWindowAction.class.isInstance(action)) {
+            if (action instanceof STEDWindowAction) {
                 ((STEDWindowAction) action).addStatusListener(statusPanel);
                 ((STEDWindowAction) action).addMessageListener(this);
             }
@@ -158,10 +158,10 @@ public class STEDWindow
         for (String key : menuItems.keySet()) {
             final JMenuItem menuItem = menuItems.get(key);
             final Action action = menuItem.getAction();
-            if (ItemListenerAction.class.isInstance(action)) {
+            if (action instanceof ItemListenerAction) {
                 final String val = Resources.getSetting(key);
                 if (val != null) {
-                    final boolean curr = Boolean.valueOf(val);
+                    final boolean curr = Boolean.parseBoolean(val);
                     // first check for state for disabled menu items
                     if (!action.isEnabled()) {
                         menuItem.setSelected(curr);
