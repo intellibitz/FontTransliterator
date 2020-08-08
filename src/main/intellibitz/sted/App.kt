@@ -13,10 +13,7 @@ object Main {
             // launch Console
             if (param1.toLowerCase().startsWith("-c")) {
                 logger.info("Launching STED Console: ")
-                val len = args.size
-                val args1 = arrayOfNulls<String>(len - 1)
-                System.arraycopy(args, 1, args1, 0, len - 1)
-                STEDConsole.main(args1)
+                STEDConsole(args)
             }
         } else {
             logger.info("Launching STED GUI: ")
