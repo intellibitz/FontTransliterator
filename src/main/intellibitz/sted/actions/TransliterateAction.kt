@@ -3,7 +3,6 @@ package sted.actions
 import sted.fontmap.Converter
 import sted.io.Resources
 import sted.ui.MenuHandler.Companion.instance
-import sted.ui.STEDWindow
 import sted.ui.TabDesktop
 import java.awt.event.ActionEvent
 import javax.swing.JCheckBoxMenuItem
@@ -18,7 +17,7 @@ class TransliterateAction : TableModelListenerAction() {
     override fun tableChanged(e: TableModelEvent) {
         isEnabled = (e.source as TableModel).rowCount > 0 &&
                 stedWindow.desktop
-                    .getFontMapperDesktopFrame()
+                    .fontMapperDesktopFrame
                     .enableConverterIfFilesLoaded()
     }
 
@@ -48,8 +47,8 @@ class TransliterateAction : TableModelListenerAction() {
     fun getConverter(desktop: TabDesktop): Converter {
         val converter = Converter(
             desktop.fontMap,
-            desktop.desktopModel.inputFile,
-            desktop.desktopModel.outputFile
+            desktop.desktopModel.inputFile!!,
+            desktop.desktopModel.outputFile!!
         )
         val preserve = instance.getMenuItem(
             Resources.ACTION_PRESERVE_TAGS

@@ -86,7 +86,7 @@ class RedoAction : TableModelListenerAction(), FontMapChangeListener, ChangeList
             val dframe = desktop.getComponentAt(
                 index
             ) as DesktopFrame
-            setEnabled(dframe.model.fontMap)
+            setEnabled(dframe.model.fontMap!!)
         }
     }
 }

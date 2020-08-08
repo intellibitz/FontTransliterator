@@ -5,7 +5,7 @@ import javax.swing.event.EventListenerList;
 public class ThreadEventSourceBase
         extends Thread
         implements IThreadEventSource {
-    private EventListenerList eventListenerList;
+    private final EventListenerList eventListenerList = new EventListenerList();
     private ThreadEvent threadEvent;
     private Object message;
     private Object result;
@@ -15,7 +15,6 @@ public class ThreadEventSourceBase
     //
     public ThreadEventSourceBase() {
         super();
-        eventListenerList = new EventListenerList();
     }
 
     protected void createThreadEvent() {
