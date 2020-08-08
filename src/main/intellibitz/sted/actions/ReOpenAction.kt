@@ -1,127 +1,110 @@
-package sted.actions;
+package sted.actions
 
-import sted.event.FontMapChangeEvent;
-import sted.event.FontMapChangeListener;
-import sted.fontmap.FontMap;
-import sted.ui.STEDWindow;
-import sted.ui.MenuHandler;
-import sted.io.Resources;
-
-import javax.swing.*;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
-import java.awt.event.ActionEvent;
+import sted.event.FontMapChangeEvent
+import sted.event.FontMapChangeListener
+import sted.io.Resources
+import sted.ui.MenuHandler.Companion.addReOpenItem
+import sted.ui.MenuHandler.Companion.disableMenuItem
+import sted.ui.MenuHandler.Companion.enableItemsInReOpenMenu
+import sted.ui.MenuHandler.Companion.enableReOpenItems
+import sted.ui.MenuHandler.Companion.instance
+import java.awt.event.ActionEvent
+import javax.swing.event.InternalFrameEvent
+import javax.swing.event.InternalFrameListener
 
 /**
  * Listens to STEDWindow for any FontMap change event. Listens to
  * FontMapperDesktop for InternalFrame events.
  */
-public class ReOpenAction
-        extends ReOpenFontMapAction
-        implements FontMapChangeListener,
-        InternalFrameListener {
-    public ReOpenAction() {
-        super();
-    }
-
-    public void actionPerformed(ActionEvent e) {
-    }
-
-    public void stateChanged(FontMapChangeEvent e) {
-        final FontMap fontMap = e.getFontMap();
-        if (fontMap.isNew()) {
-            MenuHandler.enableReOpenItems(MenuHandler.getInstance());
+class ReOpenAction : ReOpenFontMapAction(), FontMapChangeListener, InternalFrameListener {
+    override fun actionPerformed(e: ActionEvent) {}
+    override fun stateChanged(e: FontMapChangeEvent?) {
+        val fontMap = e!!.fontMap
+        if (fontMap.isNew) {
+            enableReOpenItems(instance!!)
         } else {
-            final String fileName = fontMap.getFileName();
-            final STEDWindow stedWindow = getSTEDWindow();
-            stedWindow.getDesktop()
-                    .addItemToReOpenMenu(fileName);
+            val fileName = fontMap.fileName
+            stedWindow.desktop
+                .addItemToReOpenMenu(fileName)
             // needed when opening a new fontmap
-            MenuHandler.disableMenuItem(MenuHandler.getInstance(), fileName);
+            disableMenuItem(instance!!, fileName)
         }
     }
 
     /**
      * Invoked when an internal frame is activated.
      *
-     * @see javax.swing.JInternalFrame#setSelected
+     * @see javax.swing.JInternalFrame.setSelected
      */
-    public void internalFrameActivated(InternalFrameEvent e) {
-        MenuHandler.enableItemsInReOpenMenu(MenuHandler.getInstance(),
-                getSTEDWindow().getDesktop()
-                        .getFontMap());
+    override fun internalFrameActivated(e: InternalFrameEvent) {
+        enableItemsInReOpenMenu(
+            instance!!,
+            stedWindow.getDesktop()
+                .getFontMap()
+        )
     }
 
     /**
      * Invoked when a internal frame has been opened.
      *
-     * @see javax.swing.JInternalFrame#show
+     * @see javax.swing.JInternalFrame.show
      */
-    public void internalFrameOpened(InternalFrameEvent e) {
-        MenuHandler.enableItemsInReOpenMenu(MenuHandler.getInstance(),
-                getSTEDWindow()
-                        .getDesktop()
-                        .getFontMap());
+    override fun internalFrameOpened(e: InternalFrameEvent) {
+        enableItemsInReOpenMenu(
+            instance!!,
+            stedWindow
+                .getDesktop()
+                .getFontMap()
+        )
     }
-
 
     /**
      * Invoked when an internal frame is de-activated.
      *
-     * @see javax.swing.JInternalFrame#setSelected
+     * @see javax.swing.JInternalFrame.setSelected
      */
-    public void internalFrameDeactivated(InternalFrameEvent e) {
-        addItemToReOpenMenu();
+    override fun internalFrameDeactivated(e: InternalFrameEvent) {
+        addItemToReOpenMenu()
     }
 
     /**
      * Invoked when an internal frame is in the process of being closed. The
      * close operation can be overridden at this point.
      *
-     * @see javax.swing.JInternalFrame#setDefaultCloseOperation
+     * @see javax.swing.JInternalFrame.setDefaultCloseOperation
      */
-    public void internalFrameClosing(InternalFrameEvent e) {
-        addItemToReOpenMenu();
+    override fun internalFrameClosing(e: InternalFrameEvent) {
+        addItemToReOpenMenu()
     }
 
     /**
      * Invoked when an internal frame has been closed.
      *
-     * @see javax.swing.JInternalFrame#setClosed
+     * @see javax.swing.JInternalFrame.setClosed
      */
-    public void internalFrameClosed(InternalFrameEvent e) {
-    }
+    override fun internalFrameClosed(e: InternalFrameEvent) {}
 
     /**
      * Invoked when an internal frame is de-iconified.
      *
-     * @see javax.swing.JInternalFrame#setIcon
+     * @see javax.swing.JInternalFrame.setIcon
      */
-    public void internalFrameDeiconified(InternalFrameEvent e) {
-
-    }
+    override fun internalFrameDeiconified(e: InternalFrameEvent) {}
 
     /**
      * Invoked when an internal frame is iconified.
      *
-     * @see javax.swing.JInternalFrame#setIcon
+     * @see javax.swing.JInternalFrame.setIcon
      */
-    public void internalFrameIconified(InternalFrameEvent e) {
-
-    }
-
-    public void addItemToReOpenMenu() {
-        final STEDWindow stedWindow = getSTEDWindow();
-        final MenuHandler menuHandler = MenuHandler.getInstance();
-        final FontMap fontMap = stedWindow.getDesktop()
-                .getFontMap();
-        final JMenu menu =
-                menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND);
-        if (!fontMap.isNew()) {
-            MenuHandler.addReOpenItem(menu, fontMap.getFileName());
+    override fun internalFrameIconified(e: InternalFrameEvent) {}
+    fun addItemToReOpenMenu() {
+        val menuHandler = instance
+        val fontMap = stedWindow.desktop
+            .fontMap
+        val menu = menuHandler!!.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
+        if (!fontMap.isNew) {
+            addReOpenItem(menu!!, fontMap.fileName)
         }
-        MenuHandler.enableReOpenItems(menu);
+        enableReOpenItems(menu)
     }
-
-
 }

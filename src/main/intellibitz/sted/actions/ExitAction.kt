@@ -1,42 +1,37 @@
-package sted.actions;
+package sted.actions
 
-import sted.io.SettingsXMLWriter;
-import sted.ui.STEDWindow;
+import sted.io.SettingsXMLWriter
+import java.awt.event.ActionEvent
+import java.awt.event.WindowEvent
+import javax.swing.JOptionPane
+import javax.xml.transform.TransformerException
+import kotlin.system.exitProcess
 
-import javax.swing.*;
-import javax.xml.transform.TransformerException;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
-
-public class ExitAction
-        extends STEDWindowAction {
-    public ExitAction() {
-        super();
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        exit();
-    }
-
-    private void exit() {
-        STEDWindow stedWindow = getSTEDWindow();
+class ExitAction : STEDWindowAction() {
+    private fun exit() {
         if (JOptionPane.CANCEL_OPTION !=
-                stedWindow.getDesktop().saveDirty()) {
+            stedWindow.desktop.saveDirty()
+        ) {
             try {
-                SettingsXMLWriter.writeUserSettings(stedWindow);
-            } catch (TransformerException ex) {
+                SettingsXMLWriter.writeUserSettings(stedWindow)
+            } catch (ex: TransformerException) {
                 logger.severe(
-                        "Unable to write User Settings - TransformerException " +
-                                ex.getMessage());
-                logger.throwing("ExitAction", "exit", ex);
+                    "Unable to write User Settings - TransformerException " +
+                            ex.message
+                )
+                logger.throwing("ExitAction", "exit", ex)
             }
-            Runtime.getRuntime().gc();
-            System.runFinalization();
-            System.exit(0);
+            Runtime.getRuntime().gc()
+            System.runFinalization()
+            exitProcess(0)
         }
     }
 
-    public void windowClosing(WindowEvent e) {
-        exit();
+    override fun actionPerformed(e: ActionEvent) {
+        exit()
+    }
+
+    override fun windowClosing(e: WindowEvent) {
+        exit()
     }
 }

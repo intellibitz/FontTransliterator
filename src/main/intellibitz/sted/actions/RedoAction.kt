@@ -1,81 +1,65 @@
-package sted.actions;
+package sted.actions
 
-import sted.event.FontMapChangeEvent;
-import sted.event.FontMapChangeListener;
-import sted.fontmap.FontMap;
-import sted.fontmap.FontMapEntries;
-import sted.fontmap.FontMapEntry;
-import sted.ui.DesktopFrame;
-import sted.ui.STEDWindow;
-import sted.ui.TabDesktop;
-import sted.io.Resources;
+import sted.event.FontMapChangeEvent
+import sted.event.FontMapChangeListener
+import sted.fontmap.FontMap
+import sted.io.Resources
+import sted.ui.DesktopFrame
+import sted.ui.STEDWindow
+import sted.ui.TabDesktop
+import java.awt.event.ActionEvent
+import javax.swing.event.ChangeEvent
+import javax.swing.event.ChangeListener
+import javax.swing.event.TableModelEvent
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.TableModelEvent;
-import java.awt.event.ActionEvent;
-import java.util.Stack;
-
-public class RedoAction
-        extends TableModelListenerAction
-        implements FontMapChangeListener,
-        ChangeListener {
-    public RedoAction() {
-        super();
+class RedoAction : TableModelListenerAction(), FontMapChangeListener, ChangeListener {
+    override fun actionPerformed(e: ActionEvent) {
+        redo(stedWindow)
+        val fontMap: FontMap = stedWindow.getDesktop()
+            .getFontMap()
+        fontMap.isDirty = true
+        fireStatusPosted("Redo")
+        fontMap.fireUndoEvent()
+        fontMap.fireRedoEvent()
     }
 
-    public void actionPerformed(ActionEvent e) {
-
-        redo(getSTEDWindow());
-        final FontMap fontMap =
-                getSTEDWindow().getDesktop()
-                        .getFontMap();
-        fontMap.setDirty(true);
-        fireStatusPosted("Redo");
-        fontMap.fireUndoEvent();
-        fontMap.fireRedoEvent();
-    }
-
-    public void redo(STEDWindow stedWindow) {
-        final FontMapEntries fontMapEntries =
-                stedWindow.getDesktop()
-                        .getFontMap().getEntries();
-        final Stack<FontMapEntry> redoEntries = fontMapEntries.getRedo();
+    fun redo(stedWindow: STEDWindow) {
+        val fontMapEntries = stedWindow.desktop
+            .fontMap.entries
+        val redoEntries = fontMapEntries.redo
         if (redoEntries.isEmpty()) {
-            return;
+            return
         }
-        final FontMapEntry fontMapEntry = redoEntries.pop();
-        if (fontMapEntry.isAdded()) {
-            final FontMapEntry current =
-                    fontMapEntries.remove(fontMapEntry.getId());
+        val fontMapEntry = redoEntries.pop()
+        if (fontMapEntry.isAdded) {
+            val current = fontMapEntries.remove(fontMapEntry.id)
             // change the status when pushing to the redo stack
-            current.setStatus(Resources.ENTRY_STATUS_DELETE);
-            fontMapEntries.getUndo().push(current);
-        } else if (fontMapEntry.isEdited()) {
-            final FontMapEntry current =
-                    fontMapEntries.remove(fontMapEntry.getId());
-            fontMapEntries.getUndo().push(current);
-            fontMapEntries.add(fontMapEntry);
-        } else if (fontMapEntry.isDeleted()) {
+            current.setStatus(Resources.ENTRY_STATUS_DELETE)
+            fontMapEntries.undo.push(current)
+        } else if (fontMapEntry.isEdited) {
+            val current = fontMapEntries.remove(fontMapEntry.id)
+            fontMapEntries.undo.push(current)
+            fontMapEntries.add(fontMapEntry)
+        } else if (fontMapEntry.isDeleted) {
             // change the status when pushing to the redo stack
-            fontMapEntry.setStatus(Resources.ENTRY_STATUS_ADD);
-            fontMapEntries.add(fontMapEntry);
-            fontMapEntries.getUndo().push(fontMapEntry);
+            fontMapEntry.setStatus(Resources.ENTRY_STATUS_ADD)
+            fontMapEntries.add(fontMapEntry)
+            fontMapEntries.undo.push(fontMapEntry)
         }
-        stedWindow.getDesktop()
-                .getDesktopModel().fireFontMapChangedEvent();
+        stedWindow.desktop
+            .desktopModel.fireFontMapChangedEvent()
     }
 
-    private boolean setEnabled(FontMap fontMap) {
-        boolean empty = fontMap.getEntries().getRedo().isEmpty();
-        setEnabled(!empty);
-        return !empty;
+    private fun setEnabled(fontMap: FontMap): Boolean {
+        val empty = fontMap.entries.redo.isEmpty()
+        isEnabled = !empty
+        return !empty
     }
 
-    public void stateChanged(FontMapChangeEvent e) {
-        final FontMap fontMap = e.getFontMap();
+    override fun stateChanged(e: FontMapChangeEvent?) {
+        val fontMap = e!!.fontMap
         if (!setEnabled(fontMap)) {
-            fontMap.setDirty(false);
+            fontMap.isDirty = false
         }
     }
 
@@ -83,9 +67,11 @@ public class RedoAction
      * This fine grain notification tells listeners the exact range of cells,
      * rows, or columns that changed.
      */
-    public void tableChanged(TableModelEvent e) {
-        setEnabled(getSTEDWindow().getDesktop()
-                .getFontMap());
+    override fun tableChanged(e: TableModelEvent) {
+        setEnabled(
+            stedWindow.getDesktop()
+                .getFontMap()
+        )
     }
 
     /**
@@ -93,15 +79,14 @@ public class RedoAction
      *
      * @param e
      */
-    public void stateChanged(ChangeEvent e) {
-        TabDesktop desktop = (TabDesktop) e.getSource();
-        int index = desktop.getSelectedIndex();
+    override fun stateChanged(e: ChangeEvent) {
+        val desktop = e.source as TabDesktop
+        val index = desktop.selectedIndex
         if (index > -1) {
-            DesktopFrame dframe =
-                    (DesktopFrame) desktop.getComponentAt(
-                            index);
-            setEnabled(dframe.getModel().getFontMap());
+            val dframe = desktop.getComponentAt(
+                index
+            ) as DesktopFrame
+            setEnabled(dframe.model.fontMap)
         }
-
     }
 }

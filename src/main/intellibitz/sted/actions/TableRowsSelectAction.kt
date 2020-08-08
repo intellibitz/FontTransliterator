@@ -1,53 +1,44 @@
-package sted.actions;
+package sted.actions
 
-import sted.fontmap.FontMapEntry;
-import sted.ui.MappingTableModel;
+import sted.fontmap.FontMapEntry
+import sted.ui.MappingTableModel
+import java.util.*
+import javax.swing.JTable
+import javax.swing.event.ListSelectionListener
+import javax.swing.table.TableModel
 
-import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableModel;
-import java.util.ArrayList;
-import java.util.Collection;
+abstract class TableRowsSelectAction protected constructor() : STEDWindowAction(), ListSelectionListener {
+    private var table: JTable? = null
+    val tableModel: TableModel
+        get() = table!!.model
 
-abstract public class TableRowsSelectAction
-        extends STEDWindowAction
-        implements ListSelectionListener {
-    private JTable table;
-
-    protected TableRowsSelectAction() {
-        super();
+    fun setTable(table: JTable?) {
+        this.table = table
     }
 
-    TableModel getTableModel() {
-        return table.getModel();
+    fun selectAll() {
+        table!!.selectAll()
     }
 
-    public void setTable(JTable table) {
-        this.table = table;
-    }
-
-    void selectAll() {
-        table.selectAll();
-    }
-
-    Collection<FontMapEntry> getSelectedRows() {
-        final int row[] = table.getSelectedRows();
-        final Collection<FontMapEntry> rows =
-                new ArrayList<FontMapEntry>(row.length);
-        for (final int newVar : row) {
-            rows.add(((MappingTableModel) table.getModel()).getValueAt(newVar));
+    val selectedRows: Collection<FontMapEntry>
+        get() {
+            val row = table!!.selectedRows
+            val rows: MutableCollection<FontMapEntry> = ArrayList(row.size)
+            for (newVar in row) {
+                rows.add((table!!.model as MappingTableModel).getValueAt(newVar))
+            }
+            return rows
         }
-        return rows;
-    }
 
-    Collection copySelectedRows() {
-        final int row[] = table.getSelectedRows();
-        final Collection<FontMapEntry> rows =
-                new ArrayList<FontMapEntry>(row.length);
-        for (final int newVar : row) {
-            rows.add((FontMapEntry) ((MappingTableModel) table.getModel())
-                    .getValueAt(newVar).clone());
+    fun copySelectedRows(): Collection<*> {
+        val row = table!!.selectedRows
+        val rows: MutableCollection<FontMapEntry> = ArrayList(row.size)
+        for (newVar in row) {
+            rows.add(
+                (table!!.model as MappingTableModel)
+                    .getValueAt(newVar).clone() as FontMapEntry
+            )
         }
-        return rows;
+        return rows
     }
 }

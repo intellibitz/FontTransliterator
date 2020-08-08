@@ -1,21 +1,12 @@
-package sted.actions;
+package sted.actions
 
-import javax.swing.event.ListSelectionEvent;
-import java.awt.event.ActionEvent;
+import java.awt.event.ActionEvent
+import javax.swing.event.ListSelectionEvent
 
-public class SelectAllAction
-        extends TableModelListenerAction {
-    public SelectAllAction() {
-        super();
+class SelectAllAction : TableModelListenerAction() {
+    override fun valueChanged(e: ListSelectionEvent) {}
+    override fun actionPerformed(e: ActionEvent) {
+        super.selectAll()
+        fireStatusPosted("Selected All")
     }
-
-
-    public void valueChanged(ListSelectionEvent e) {
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        super.selectAll();
-        fireStatusPosted("Selected All");
-    }
-
 }

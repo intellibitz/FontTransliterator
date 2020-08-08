@@ -255,7 +255,7 @@ public class MappingEntryPanel
         entryAction.putValue(Action.SHORT_DESCRIPTION, "Add Mapping");
         entryAction.putValue(Action.MNEMONIC_KEY, (int) 'A');
         entryAction.putValue(Action.ACTION_COMMAND_KEY, sAdd);
-        entryAction.setFontEntryPanel(this);
+        entryAction.setMappingEntryPanel(this);
         addButton.addActionListener(entryAction);
         addButton.addKeyListener(entryAction);
         //
@@ -273,7 +273,7 @@ public class MappingEntryPanel
                 .putValue(Action.MNEMONIC_KEY, (int) 'C');
         clearFontMapEntryInPreviewAction
                 .putValue(Action.ACTION_COMMAND_KEY, sClear);
-        clearFontMapEntryInPreviewAction.setFontPreviewPanel(this);
+        clearFontMapEntryInPreviewAction.setMappingEntryPanel(this);
         clearButton.addActionListener(clearFontMapEntryInPreviewAction);
         //
         jPanel.add(clearButton);

@@ -17,34 +17,17 @@ import javax.swing.UnsupportedLookAndFeelException
 class STEDGUI {
     companion object {
         private val logger = Logger.getLogger(STEDGUI::class.java.name)
-        var sTEDWindow: STEDWindow? = null
+        lateinit var sTEDWindow: STEDWindow
             private set
-
-        fun getSTEDWindow(component: Component?): STEDWindow? {
-            // if STEDWindow is already found.. return from cache
-            if (null != sTEDWindow) {
-                return sTEDWindow
-            }
-            var parent: Component
-            var src = component
-            do {
-                parent = src!!.parent
-                if (parent is STEDWindow) {
-                    sTEDWindow = parent
-                    return sTEDWindow
-                }
-                src = parent
-            } while (true)
-        }
 
         @JvmStatic
         fun busy() {
-            sTEDWindow!!.cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)
+            sTEDWindow.cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)
         }
 
         @JvmStatic
         fun relax() {
-            sTEDWindow!!.cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)
+            sTEDWindow.cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)
         }
 
         @JvmStatic
@@ -88,18 +71,18 @@ class STEDGUI {
         addLogger(logger)
         splashWindow.setProgress(10)
         sTEDWindow = STEDWindow()
-        sTEDWindow!!.addStatusListener(splashWindow)
-        sTEDWindow!!.init()
-        sTEDWindow!!.load()
+        sTEDWindow.addStatusListener(splashWindow)
+        sTEDWindow.init()
+        sTEDWindow.load()
         splashWindow.setProgress(90)
-        sTEDWindow!!.isVisible = true
+        sTEDWindow.isVisible = true
         val fileName = System.getProperty("fontmap.file")
         if (fileName.isNullOrBlank()) {
 //            File file = new File(Resources.getSampleFontMap());
 //            stedWindow.getDesktop().openFontMap(file);
-            sTEDWindow!!.desktop.newFontMap()
+            sTEDWindow.desktop.newFontMap()
         } else {
-            sTEDWindow!!.desktop
+            sTEDWindow.desktop
                 .openFontMap(File(fileName))
         }
         splashWindow.setProgress(100)

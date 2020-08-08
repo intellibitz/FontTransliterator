@@ -1,35 +1,27 @@
-package sted.actions;
+package sted.actions
 
-import sted.fontmap.Converter;
+import javax.swing.AbstractAction
+import sted.fontmap.Converter
+import java.awt.event.ActionEvent
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-
-public class TransliterateStopAction
-        extends AbstractAction {
-    private Converter converter;
-
-    public TransliterateStopAction() {
-        super();
+class TransliterateStopAction : AbstractAction() {
+    private var converter: Converter? = null
+    override fun actionPerformed(e: ActionEvent) {
+        stop()
+        isEnabled = false
     }
 
-    public void actionPerformed(ActionEvent e) {
-        stop();
-        setEnabled(false);
+    fun setConverter(converter: Converter?) {
+        this.converter = converter
     }
 
-    public void setConverter(Converter converter) {
-        this.converter = converter;
-    }
-
-    private void stop() {
-        if (converter != null && converter.isAlive()) {
-            converter.setStopRequested(true);
-            converter.interrupt();
-            converter.setSuccess(false);
-            converter.setMessage("Stopped Conversion");
-            converter.fireThreadRunFinished();
+    private fun stop() {
+        if (converter != null && converter!!.isAlive) {
+            converter!!.setStopRequested(true)
+            converter!!.interrupt()
+            converter!!.setSuccess(false)
+            converter!!.message = "Stopped Conversion"
+            converter!!.fireThreadRunFinished()
         }
     }
-
 }

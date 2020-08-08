@@ -1,66 +1,50 @@
-package sted.actions;
+package sted.actions
 
-import sted.fontmap.FontMap;
-import sted.fontmap.FontMapEntries;
-import sted.fontmap.FontMapEntry;
-import sted.ui.MappingEntryPanel;
-import sted.ui.STEDWindow;
-import sted.ui.TabDesktop;
-import sted.io.Resources;
+import sted.fontmap.FontMapEntry
+import sted.io.Resources
+import sted.ui.MappingEntryPanel
+import java.awt.event.ActionEvent
+import java.awt.event.KeyEvent
 
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
+class EntryAction : STEDWindowAction() {
+    lateinit var mappingEntryPanel: MappingEntryPanel
 
-public class EntryAction
-        extends STEDWindowAction {
-    private MappingEntryPanel mappingEntryPanel;
-
-    public EntryAction() {
-        super();
-    }
-
-    public void setFontEntryPanel(MappingEntryPanel mappingEntryPanel) {
-        this.mappingEntryPanel = mappingEntryPanel;
-    }
-
-    public void keyReleased(KeyEvent e) {
-        if (KeyEvent.VK_ENTER == e.getKeyCode()) {
-            addFontMapEntry();
+    override fun keyReleased(e: KeyEvent) {
+        if (KeyEvent.VK_ENTER == e.keyCode) {
+            addFontMapEntry()
         }
     }
 
-    public void actionPerformed(ActionEvent e) {
-        addFontMapEntry();
+    override fun actionPerformed(e: ActionEvent) {
+        addFontMapEntry()
     }
 
-    private void addFontMapEntry() {
-        final String key1 = mappingEntryPanel.getWord1().getText();
-        final String key2 = mappingEntryPanel.getWord2().getText();
-        final STEDWindow stedWindow = getSTEDWindow();
-        if (key1 != null && key2 != null && key1.length() > 0 &&
-                key2.length() > 0) {
-            final TabDesktop tabDesktop =
-                    stedWindow.getDesktop();
-            final FontMap fontMap = tabDesktop.getFontMap();
-            final FontMapEntries entries = fontMap.getEntries();
-            final FontMapEntry fontMapEntry = new FontMapEntry(key1, key2);
+    private fun addFontMapEntry() {
+        val key1 = mappingEntryPanel.word1.text
+        val key2 = mappingEntryPanel.word2.text
+        if (!key1.isNullOrEmpty() && !key2.isNullOrBlank()) {
+            val tabDesktop = stedWindow.desktop
+            val fontMap = tabDesktop.fontMap
+            val entries = fontMap.entries
+            val fontMapEntry = FontMapEntry(key1, key2)
             if (entries.add(fontMapEntry)) {
                 // add it to the undo list too
-                fontMapEntry.setStatus(Resources.ENTRY_STATUS_ADD);
-                entries.getUndo().push(fontMapEntry);
-                fontMap.setDirty(true);
-                fontMap.fireUndoEvent();
-                tabDesktop.getDesktopModel()
-                        .fireFontMapChangedEvent();
+                fontMapEntry.setStatus(Resources.ENTRY_STATUS_ADD)
+                entries.undo.push(fontMapEntry)
+                fontMap.isDirty = true
+                fontMap.fireUndoEvent()
+                tabDesktop.desktopModel
+                    .fireFontMapChangedEvent()
                 fireStatusPosted(
-                        "New FontMap Entry Added");
+                    "New FontMap Entry Added"
+                )
             } else {
-                fireMessagePosted("Already mapped.. Invalid Add");
+                fireMessagePosted("Already mapped.. Invalid Add")
             }
         } else {
             fireMessagePosted(
-                    "Insufficient data.. Please use both keypads to map characters ");
+                "Insufficient data.. Please use both keypads to map characters "
+            )
         }
     }
-
 }

@@ -1,76 +1,48 @@
-package sted.actions;
+package sted.actions
 
-import sted.ui.MenuHandler;
-import sted.io.Resources;
+import sted.io.Resources
+import sted.ui.MenuHandler.Companion.instance
+import java.awt.event.ItemEvent
+import javax.swing.JPanel
+import javax.swing.JSplitPane
 
-import javax.swing.*;
-import java.awt.event.ItemEvent;
-
-public class ViewAction
-        extends ItemListenerAction {
-    public ViewAction() {
-        super();
-    }
-
-    static public class ViewSample
-            extends ViewAction {
-        public ViewSample() {
-            super();
-        }
-
-        public void itemStateChanged(ItemEvent e) {
-            final JPanel sampleText = getSTEDWindow().getDesktop()
-
-                    .getFontMapperDesktopFrame()
-                    .getMapperPanel()
-                    .getPreviewPanel();
-            sampleText.setVisible(ItemEvent.SELECTED == e.getStateChange());
-            sampleText.validate();
+open class ViewAction : ItemListenerAction() {
+    class ViewSample : ViewAction() {
+        override fun itemStateChanged(e: ItemEvent) {
+            val sampleText: JPanel = stedWindow.getDesktop()
+                .getFontMapperDesktopFrame()
+                .getMapperPanel()
+                .getPreviewPanel()
+            sampleText.isVisible = ItemEvent.SELECTED == e.stateChange
+            sampleText.validate()
         }
     }
 
-    static public class ViewToolBar
-            extends ViewAction {
-        public ViewToolBar() {
-            super();
-        }
-
-        public void itemStateChanged(ItemEvent e) {
-            MenuHandler.getInstance().getToolBar(Resources.MENUBAR_STED)
-                    .setVisible(
-                            ItemEvent.SELECTED == e.getStateChange());
+    class ViewToolBar : ViewAction() {
+        override fun itemStateChanged(e: ItemEvent) {
+            instance!!.getToolBar(Resources.MENUBAR_STED)
+                ?.setVisible(
+                    ItemEvent.SELECTED == e.stateChange
+                )
         }
     }
 
-    static public class ViewStatus
-            extends ViewAction {
-        public ViewStatus() {
-            super();
-        }
-
-        public void itemStateChanged(ItemEvent e) {
-            getSTEDWindow().getStatusPanel()
-                    .setVisible(ItemEvent.SELECTED == e.getStateChange());
+    class ViewStatus : ViewAction() {
+        override fun itemStateChanged(e: ItemEvent) {
+            stedWindow.getStatusPanel()
+                .setVisible(ItemEvent.SELECTED == e.stateChange)
         }
     }
 
-    static public class ViewMapping
-            extends ViewAction {
-        public ViewMapping() {
-            super();
-        }
-
-        public void itemStateChanged(ItemEvent e) {
-            final JSplitPane splitPane = getSTEDWindow()
-                    .getDesktop()
-                    .getFontMapperDesktopFrame()
-                    .getMapperPanel
-                            ().getMappingEntryPanel().getSplitPane();
-            splitPane.getBottomComponent().setVisible
-                    (ItemEvent.SELECTED == e.getStateChange());
-            splitPane.resetToPreferredSizes();
-            splitPane.validate();
+    class ViewMapping : ViewAction() {
+        override fun itemStateChanged(e: ItemEvent) {
+            val splitPane: JSplitPane = stedWindow
+                .getDesktop()
+                .getFontMapperDesktopFrame()
+                .getMapperPanel().getMappingEntryPanel().getSplitPane()
+            splitPane.bottomComponent.isVisible = ItemEvent.SELECTED == e.stateChange
+            splitPane.resetToPreferredSizes()
+            splitPane.validate()
         }
     }
-
 }

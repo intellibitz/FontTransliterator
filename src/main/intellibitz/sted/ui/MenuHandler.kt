@@ -535,7 +535,7 @@ class MenuHandler private constructor() : DefaultHandler() {
             }
 
         @JvmStatic
-        fun loadLookAndFeelMenu(stedWindow: STEDWindow?) {
+        fun loadLookAndFeelMenu() {
             val menuHandler = instance
             val lookAndFeelInfos = UIManager.getInstalledLookAndFeels()
             val buttonGroup = ButtonGroup()
@@ -543,7 +543,6 @@ class MenuHandler private constructor() : DefaultHandler() {
             for (lookAndFeelInfo in lookAndFeelInfos) {
                 val menuItem = JRadioButtonMenuItem()
                 val lafAction = LAFAction()
-                lafAction.sTEDWindow = stedWindow
                 lafAction.putValue(Action.NAME, lookAndFeelInfo.name)
                 lafAction.putValue(
                     Action.ACTION_COMMAND_KEY,

@@ -23,7 +23,6 @@ class CopyAction : TableModelListenerAction(), FontMapChangeListener {
     }
 
     override fun actionPerformed(e: ActionEvent) {
-        val stedWindow = sTEDWindow!!
         stedWindow.desktop.addToClipboard(Resources.ENTRIES, copySelectedRows())
     }
 

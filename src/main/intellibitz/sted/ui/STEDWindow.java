@@ -48,7 +48,7 @@ public class STEDWindow
         statusEvent = new StatusEvent(this);
 
         final JMenuBar menuBar = MenuHandler.getInstance().getMenuBar("STED-MenuBar");
-        MenuHandler.loadLookAndFeelMenu(this);
+        MenuHandler.loadLookAndFeelMenu();
 
         // load the menubar for the application
         setJMenuBar(menuBar);
@@ -100,7 +100,7 @@ public class STEDWindow
         addMouseListener(AboutSTED.Companion.getInstance());
 
         ExitAction exitAction = new ExitAction();
-        exitAction.setSTEDWindow(STEDWindow.this);
+//        exitAction.setSTEDWindow(STEDWindow.this);
         addWindowListener(exitAction);
 
         pack();

@@ -1,30 +1,14 @@
-package sted.actions;
+package sted.actions
 
-import sted.ui.MappingEntryPanel;
+import sted.ui.MappingEntryPanel
+import java.awt.event.ActionEvent
+import javax.swing.AbstractAction
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
+class EntryClearAction : AbstractAction() {
+    lateinit var mappingEntryPanel: MappingEntryPanel
 
-public class EntryClearAction
-        extends AbstractAction {
-    private MappingEntryPanel mappingPreviewPanel;
-
-    public EntryClearAction() {
-        super();
+    override fun actionPerformed(e: ActionEvent) {
+        mappingEntryPanel.clearPreviewDisplay()
+        mappingEntryPanel.clearButton?.isEnabled = false
     }
-
-    public void setFontPreviewPanel(MappingEntryPanel mappingPreviewPanel) {
-        this.mappingPreviewPanel = mappingPreviewPanel;
-    }
-
-    private MappingEntryPanel getFontPreviewPanel() {
-        return mappingPreviewPanel;
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        final MappingEntryPanel mappingPreviewPanel = getFontPreviewPanel();
-        mappingPreviewPanel.clearPreviewDisplay();
-        mappingPreviewPanel.getClearButton().setEnabled(false);
-    }
-
 }

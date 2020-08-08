@@ -1,69 +1,63 @@
-package sted.actions;
+package sted.actions
 
-import sted.STEDGUI;
-import sted.ui.AboutSTED;
-import sted.ui.HelpWindow;
-import sted.ui.STEDWindow;
-import sted.ui.MenuHandler;
-import sted.io.Resources;
+import sted.STEDGUI.Companion.updateUIWithLAF
+import sted.io.Resources
+import sted.ui.AboutSTED
+import sted.ui.HelpWindow
+import sted.ui.MenuHandler
+import java.awt.Component
+import java.awt.event.ActionEvent
+import java.util.*
+import javax.swing.UnsupportedLookAndFeelException
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.logging.Logger;
-
-public class LAFAction
-        extends STEDWindowAction {
-    private static final Logger logger =
-            Logger.getLogger("sted.actions.LAFAction");
-
-    public LAFAction() {
-        super();
-    }
-
-    public void actionPerformed(ActionEvent e) {
+class LAFAction : STEDWindowAction() {
+    override fun actionPerformed(e: ActionEvent) {
         try {
-            final Collection<Component> collection = new ArrayList<Component>();
-            final STEDWindow stedWindow = getSTEDWindow();
-            collection.add(stedWindow);
-            final HelpWindow help = HelpWindow.getInstance();
+            val collection: MutableCollection<Component> = ArrayList()
+            collection.add(stedWindow)
+            val help = HelpWindow.getInstance()
             if (null != help) {
-                collection.add(help);
+                collection.add(help)
             }
-            final AboutSTED aboutDialog = AboutSTED.Companion.getInstance();
-            if (null != aboutDialog) {
-                collection.add(aboutDialog);
-            }
-            final Component component = MenuHandler.getInstance()
-                    .getPopupMenu(Resources.MENU_POPUP_MAPPING);
+            val aboutDialog = AboutSTED.instance
+            collection.add(aboutDialog)
+            val component: Component? = MenuHandler.instance
+                ?.getPopupMenu(Resources.MENU_POPUP_MAPPING)
             if (null != component) {
-                collection.add(component);
+                collection.add(component)
             }
-            STEDGUI.updateUIWithLAF(e.getActionCommand(),
-                    collection.iterator());
-        } catch (ClassNotFoundException e1) {
-            logger.throwing(getClass().getName(), "actionPerformed", e1);
-            fireMessagePosted("Unable to Set LookAndFeel - Class Not Found: " +
-                    e1.getMessage());
-            e1.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        } catch (InstantiationException e1) {
-            logger.throwing(getClass().getName(), "actionPerformed", e1);
+            updateUIWithLAF(
+                e.actionCommand,
+                collection.iterator()
+            )
+        } catch (e1: ClassNotFoundException) {
+            logger.throwing(javaClass.name, "actionPerformed", e1)
             fireMessagePosted(
-                    "Unable to Set LookAndFeel - Cannot Instantiate: " +
-                            e1.getMessage());
-            e1.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        } catch (IllegalAccessException e1) {
-            logger.throwing(getClass().getName(), "actionPerformed", e1);
-            fireMessagePosted("Unable to Set LookAndFeel - IllegalAccess: " +
-                    e1.getMessage());
-            e1.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        } catch (UnsupportedLookAndFeelException e1) {
-            logger.throwing(getClass().getName(), "actionPerformed", e1);
-            fireMessagePosted("Unable to Set LookAndFeel - Unsupported: " +
-                    e1.getMessage());
-            e1.printStackTrace();  //To change body of catch statement use Options | File Templates.
+                "Unable to Set LookAndFeel - Class Not Found: " +
+                        e1.message
+            )
+            e1.printStackTrace() //To change body of catch statement use Options | File Templates.
+        } catch (e1: InstantiationException) {
+            logger.throwing(javaClass.name, "actionPerformed", e1)
+            fireMessagePosted(
+                "Unable to Set LookAndFeel - Cannot Instantiate: " +
+                        e1.message
+            )
+            e1.printStackTrace() //To change body of catch statement use Options | File Templates.
+        } catch (e1: IllegalAccessException) {
+            logger.throwing(javaClass.name, "actionPerformed", e1)
+            fireMessagePosted(
+                "Unable to Set LookAndFeel - IllegalAccess: " +
+                        e1.message
+            )
+            e1.printStackTrace() //To change body of catch statement use Options | File Templates.
+        } catch (e1: UnsupportedLookAndFeelException) {
+            logger.throwing(javaClass.name, "actionPerformed", e1)
+            fireMessagePosted(
+                "Unable to Set LookAndFeel - Unsupported: " +
+                        e1.message
+            )
+            e1.printStackTrace() //To change body of catch statement use Options | File Templates.
         }
     }
 

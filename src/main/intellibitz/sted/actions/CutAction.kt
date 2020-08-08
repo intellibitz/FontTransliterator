@@ -23,11 +23,8 @@ open class CutAction : TableModelListenerAction(), FontMapChangeListener {
 
     override fun actionPerformed(e: ActionEvent) {
         val entries = cut()
-        val stedWindow = sTEDWindow!!
-        stedWindow.desktop
-            .addToClipboard(Resources.ENTRIES, entries)
-        val fontMap = stedWindow.desktop
-            .fontMap
+        stedWindow.desktop.addToClipboard(Resources.ENTRIES, entries)
+        val fontMap = stedWindow.desktop.fontMap
         pushUndo(entries, fontMap.entries.undo)
         fontMap.isDirty = !entries.isEmpty()
         fontMap.fireUndoEvent()
@@ -43,9 +40,7 @@ open class CutAction : TableModelListenerAction(), FontMapChangeListener {
     }
 
     fun cut(): Collection<*> {
-        val stedWindow = sTEDWindow!!
-        val desktopModel = stedWindow.desktop
-            .desktopModel
+        val desktopModel = stedWindow.desktop.desktopModel
         val fontMap = desktopModel.fontMap
         //        stedWindow.addListenersToDesktopFrame(fontMap);
 //        desktopModel.fireFontMapChangedEvent();

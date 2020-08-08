@@ -1,61 +1,36 @@
-package sted.actions;
+package sted.actions
 
-import sted.fontmap.FontMap;
-import sted.ui.STEDWindow;
+import java.awt.event.ActionEvent
+import javax.swing.JFileChooser
+import javax.swing.event.InternalFrameEvent
+import javax.swing.event.InternalFrameListener
 
-import javax.swing.*;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
-import java.awt.event.ActionEvent;
-
-public class SaveAsAction
-        extends TableModelListenerAction
-        implements InternalFrameListener {
-    public SaveAsAction() {
-        super();
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        final STEDWindow stedWindow = getSTEDWindow();
+class SaveAsAction : TableModelListenerAction(), InternalFrameListener {
+    override fun actionPerformed(e: ActionEvent) {
         if (JFileChooser.ERROR_OPTION ==
-                stedWindow.getDesktop().saveAsAction()) {
-            fireMessagePosted("Cannot Save.. Error" +
-                    JFileChooser.ERROR_OPTION);
-            return;
+            stedWindow.desktop.saveAsAction()
+        ) {
+            fireMessagePosted(
+                "Cannot Save.. Error" +
+                        JFileChooser.ERROR_OPTION
+            )
+            return
         }
-        final FontMap fontMap = stedWindow.getDesktop()
-                .getFontMap();
-        fontMap.fireUndoEvent();
-        fontMap.fireRedoEvent();
-        fireStatusPosted("Saved");
+        val fontMap = stedWindow.desktop
+            .fontMap
+        fontMap.fireUndoEvent()
+        fontMap.fireRedoEvent()
+        fireStatusPosted("Saved")
     }
 
-    public void internalFrameActivated(InternalFrameEvent e) {
-
+    override fun internalFrameActivated(e: InternalFrameEvent) {}
+    override fun internalFrameClosed(e: InternalFrameEvent) {}
+    override fun internalFrameClosing(e: InternalFrameEvent) {
+        isEnabled = false
     }
 
-    public void internalFrameClosed(InternalFrameEvent e) {
-
-    }
-
-    public void internalFrameClosing(InternalFrameEvent e) {
-        setEnabled(false);
-    }
-
-    public void internalFrameDeactivated(InternalFrameEvent e) {
-
-    }
-
-    public void internalFrameDeiconified(InternalFrameEvent e) {
-
-    }
-
-    public void internalFrameIconified(InternalFrameEvent e) {
-
-    }
-
-    public void internalFrameOpened(InternalFrameEvent e) {
-
-    }
-
+    override fun internalFrameDeactivated(e: InternalFrameEvent) {}
+    override fun internalFrameDeiconified(e: InternalFrameEvent) {}
+    override fun internalFrameIconified(e: InternalFrameEvent) {}
+    override fun internalFrameOpened(e: InternalFrameEvent) {}
 }

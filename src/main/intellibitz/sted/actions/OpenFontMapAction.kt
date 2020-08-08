@@ -1,24 +1,15 @@
-package sted.actions;
+package sted.actions
 
-import sted.ui.STEDWindow;
+import java.awt.event.ActionEvent
 
-import java.awt.event.ActionEvent;
-
-public class OpenFontMapAction
-        extends STEDWindowAction {
-    public OpenFontMapAction() {
-        super();
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        final STEDWindow stedWindow = getSTEDWindow();
-//        STEDGUI.busy();
+open class OpenFontMapAction : STEDWindowAction() {
+    override fun actionPerformed(e: ActionEvent) {
+        //        STEDGUI.busy();
 //        if (JOptionPane.CANCEL_OPTION !=
 //                stedWindow.getDesktop().saveDirty())
 //        {
-        stedWindow.getDesktop().openFontMap();
-//        }
+        stedWindow.desktop.openFontMap()
+        //        }
 //        STEDGUI.relax();
     }
-
 }

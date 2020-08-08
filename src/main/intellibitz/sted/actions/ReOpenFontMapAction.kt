@@ -1,29 +1,18 @@
-package sted.actions;
+package sted.actions
 
-import sted.STEDGUI;
-import sted.ui.STEDWindow;
-import sted.ui.TabDesktop;
+import sted.STEDGUI.Companion.busy
+import sted.STEDGUI.Companion.relax
+import java.awt.event.ActionEvent
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-
-public class ReOpenFontMapAction
-        extends OpenFontMapAction {
-    public ReOpenFontMapAction() {
-        super();
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        final STEDWindow stedWindow = getSTEDWindow();
-        STEDGUI.busy();
-        final TabDesktop tabDesktop =
-                stedWindow.getDesktop();
-//        if (JOptionPane.CANCEL_OPTION != tabDesktop.saveDirty())
+open class ReOpenFontMapAction : OpenFontMapAction() {
+    override fun actionPerformed(e: ActionEvent) {
+        busy()
+        val tabDesktop = stedWindow.desktop
+        //        if (JOptionPane.CANCEL_OPTION != tabDesktop.saveDirty())
 //        {
-        final String fileName = (String) getValue(Action.NAME);
-        tabDesktop.reopenFontMap(fileName);
-//        }
-        STEDGUI.relax();
+        val fileName = getValue(NAME) as String
+        tabDesktop.reopenFontMap(fileName)
+        //        }
+        relax()
     }
-
 }

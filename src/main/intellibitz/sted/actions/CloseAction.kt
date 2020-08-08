@@ -6,7 +6,7 @@ import javax.swing.event.InternalFrameListener
 
 class CloseAction : STEDWindowAction(), InternalFrameListener {
     override fun actionPerformed(e: ActionEvent) {
-        sTEDWindow!!.desktop.closeFontMap()
+        stedWindow.desktop.closeFontMap()
         fireStatusPosted("FontMap closed")
     }
 

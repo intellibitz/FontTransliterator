@@ -11,9 +11,13 @@ open class STEDWindowAction : AbstractAction(), WindowListener, KeyListener, Win
     IStatusEventSource, IMessageEventSource {
     private val statusEvent: StatusEvent
     private val messageEvent: MessageEvent
+    //    private var stedWindow: STEDWindow? = null
+    val stedWindow: STEDWindow by lazy {
+        STEDGUI.sTEDWindow
+    }
+
     @JvmField
     protected var logger = Logger.getLogger(javaClass.name)
-    private var stedWindow: STEDWindow? = null
     private var statusListener: IStatusListener? = null
     private var messageListener: IMessageListener? = null
     fun fireMessagePosted(message: String?) {
@@ -43,16 +47,6 @@ open class STEDWindowAction : AbstractAction(), WindowListener, KeyListener, Win
     }
 
     override fun actionPerformed(e: ActionEvent) {}
-    var sTEDWindow: STEDWindow?
-        get() {
-            if (null == stedWindow) {
-                stedWindow = STEDGUI.sTEDWindow
-            }
-            return stedWindow
-        }
-        set(stedWindow) {
-            this.stedWindow = stedWindow
-        }
 
     /**
      * Invoked when a window has been opened.

@@ -1,64 +1,56 @@
-package sted.actions;
+package sted.actions
 
-import sted.STEDGUI;
-import sted.ui.STEDWindow;
-import sted.io.Resources;
+import sted.STEDGUI.Companion.busy
+import sted.STEDGUI.Companion.relax
+import sted.io.Resources
+import java.awt.event.ActionEvent
+import java.io.File
+import javax.swing.JFileChooser
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.io.File;
-
-public class FileSelectAction
-        extends TableModelListenerAction {
-    public FileSelectAction() {
-        super();
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        final String cmd = e.getActionCommand();
-        boolean isInput = true;
-        if (Resources.ACTION_SELECT_INPUT_FILE_COMMAND.equalsIgnoreCase(cmd)) {
-            isInput = true;
-        } else if (Resources.ACTION_SELECT_OUTPUT_FILE_COMMAND.equalsIgnoreCase(cmd)) {
-            isInput = false;
+class FileSelectAction : TableModelListenerAction() {
+    override fun actionPerformed(e: ActionEvent) {
+        val cmd = e.actionCommand
+        var isInput = true
+        if (Resources.ACTION_SELECT_INPUT_FILE_COMMAND.equals(cmd, ignoreCase = true)) {
+            isInput = true
+        } else if (Resources.ACTION_SELECT_OUTPUT_FILE_COMMAND.equals(cmd, ignoreCase = true)) {
+            isInput = false
         }
-        File file;
-        final STEDWindow stedWindow = getSTEDWindow();
-        if (isInput) {
-            file = stedWindow.getDesktop()
-                    .getDesktopModel()
-                    .getInputFile();
+        var file: File?
+        file = if (isInput) {
+            stedWindow.desktop
+                .desktopModel
+                .inputFile
         } else {
-            file = stedWindow.getDesktop()
-                    .getDesktopModel()
-                    .getOutputFile();
+            stedWindow.desktop
+                .desktopModel
+                .outputFile
         }
-        final JFileChooser jFileChooser;
-        final int result;
+        val jFileChooser: JFileChooser
+        val result: Int
         if (file == null) {
-            jFileChooser = new JFileChooser(System.getProperty("user.dir"));
-            result = jFileChooser.showOpenDialog(stedWindow);
+            jFileChooser = JFileChooser(System.getProperty("user.dir"))
+            result = jFileChooser.showOpenDialog(stedWindow)
         } else {
-            jFileChooser = new JFileChooser(file.getParent());
-            result = jFileChooser.showSaveDialog(stedWindow);
+            jFileChooser = JFileChooser(file.parent)
+            result = jFileChooser.showSaveDialog(stedWindow)
         }
         if (result == JFileChooser.APPROVE_OPTION) {
-            file = jFileChooser.getSelectedFile();
+            file = jFileChooser.selectedFile
             if (file != null) {
-                STEDGUI.busy();
+                busy()
                 if (isInput) {
-                    stedWindow.getDesktop()
-                            .getFontMapperDesktopFrame().setInputFile(file);
+                    stedWindow.desktop
+                        .fontMapperDesktopFrame.setInputFile(file)
                 } else {
-                    stedWindow.getDesktop()
-                            .getFontMapperDesktopFrame().setOutputFile(file);
+                    stedWindow.desktop
+                        .fontMapperDesktopFrame.setOutputFile(file)
                 }
-                stedWindow.getDesktop()
-                        .getFontMapperDesktopFrame()
-                        .enableConverterIfFilesLoaded();
-                STEDGUI.relax();
+                stedWindow.desktop
+                    .fontMapperDesktopFrame
+                    .enableConverterIfFilesLoaded()
+                relax()
             }
         }
     }
-
 }

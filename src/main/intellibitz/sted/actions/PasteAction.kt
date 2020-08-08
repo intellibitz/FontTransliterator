@@ -1,82 +1,66 @@
-package sted.actions;
+package sted.actions
 
-import sted.event.FontMapChangeEvent;
-import sted.event.FontMapChangeListener;
-import sted.fontmap.FontMap;
-import sted.fontmap.FontMapEntries;
-import sted.fontmap.FontMapEntry;
-import sted.ui.MappingTableModel;
-import sted.ui.STEDWindow;
-import sted.io.Resources;
+import sted.event.FontMapChangeEvent
+import sted.event.FontMapChangeListener
+import sted.fontmap.FontMapEntry
+import sted.io.Resources
+import sted.ui.MappingTableModel
+import java.awt.event.ActionEvent
+import javax.swing.event.ListSelectionEvent
+import javax.swing.event.TableModelEvent
 
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableModelEvent;
-import java.awt.event.ActionEvent;
-import java.util.Collection;
-
-public class PasteAction
-        extends TableModelListenerAction
-        implements FontMapChangeListener {
-    public PasteAction() {
-        super();
-    }
-
-
+class PasteAction : TableModelListenerAction(), FontMapChangeListener {
     /**
      * This fine grain notification tells listeners the exact range of cells,
      * rows, or columns that changed.
      */
-    public void tableChanged(TableModelEvent e) {
-        setEnabled(!getSTEDWindow().getDesktop()
-                .getClipboard()
-                .isEmpty());
+    override fun tableChanged(e: TableModelEvent) {
+        isEnabled = !stedWindow.getDesktop()
+            .getClipboard()
+            .isEmpty()
     }
 
-    public void valueChanged(ListSelectionEvent e) {
-        setEnabled(!getSTEDWindow().getDesktop()
-                .getClipboard()
-                .isEmpty());
+    override fun valueChanged(e: ListSelectionEvent) {
+        isEnabled = !stedWindow.getDesktop()
+            .getClipboard()
+            .isEmpty()
     }
 
-    public void actionPerformed(ActionEvent e) {
-        paste();
-        fireStatusPosted(Resources.ACTION_PASTE_COMMAND);
+    override fun actionPerformed(e: ActionEvent) {
+        paste()
+        fireStatusPosted(Resources.ACTION_PASTE_COMMAND)
     }
 
-    public void stateChanged(FontMapChangeEvent e) {
-        setEnabled(!getSTEDWindow().getDesktop()
-                .getClipboard()
-                .isEmpty());
+    override fun stateChanged(e: FontMapChangeEvent?) {
+        isEnabled = !stedWindow.getDesktop()
+            .getClipboard()
+            .isEmpty()
     }
 
-    private void paste() {
-        final STEDWindow stedWindow = getSTEDWindow();
-        final Collection entries = stedWindow
-                .getDesktop().getClipboard()
-                .get(Resources.ENTRIES);
+    private fun paste() {
+        val entries = stedWindow
+            .desktop.clipboard[Resources.ENTRIES]
         if (entries != null && !entries.isEmpty()) {
-            final FontMap fontMap =
-                    stedWindow.getDesktop()
-                            .getFontMap();
-            final FontMapEntries fontMapEntries = fontMap.getEntries();
-            boolean flag = false;
-            for (final Object newVar : entries) {
-                final FontMapEntry entry = (FontMapEntry) newVar;
+            val fontMap = stedWindow.desktop
+                .fontMap
+            val fontMapEntries = fontMap.entries
+            var flag = false
+            for (newVar in entries) {
+                val entry = newVar as FontMapEntry
                 if (entry != null &&
-                        fontMapEntries.add((FontMapEntry) entry.clone())) {
-                    flag = true;
+                    fontMapEntries.add(entry.clone() as FontMapEntry)
+                ) {
+                    flag = true
                 }
             }
-            fontMap.setDirty(flag);
-            if (fontMap.isNew()) {
-                stedWindow.getDesktop()
-                        .getFontMapperDesktopFrame()
-                        .getMapperPanel().getMappingEntryPanel
-                        ().setFontMap(fontMap);
+            fontMap.isDirty = flag
+            if (fontMap.isNew) {
+                stedWindow.desktop
+                    .fontMapperDesktopFrame
+                    .mapperPanel.mappingEntryPanel.setFontMap(fontMap)
             } else {
-                ((MappingTableModel) getTableModel()).setFontMap(fontMap);
+                (tableModel as MappingTableModel).fontMap = fontMap
             }
         }
     }
-
 }

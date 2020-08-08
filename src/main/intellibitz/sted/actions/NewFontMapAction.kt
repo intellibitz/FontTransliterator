@@ -1,26 +1,16 @@
-package sted.actions;
+package sted.actions
 
-import sted.event.FontMapChangeEvent;
-import sted.event.FontMapChangeListener;
-import sted.fontmap.FontMap;
-import sted.ui.TabDesktop;
+import sted.event.FontMapChangeEvent
+import sted.event.FontMapChangeListener
+import sted.ui.TabDesktop
+import java.awt.event.ActionEvent
+import javax.swing.event.InternalFrameEvent
+import javax.swing.event.InternalFrameListener
 
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
-import java.awt.event.ActionEvent;
-
-public class NewFontMapAction
-        extends STEDWindowAction
-        implements FontMapChangeListener,
-        InternalFrameListener {
-    public NewFontMapAction() {
-        super();
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        final TabDesktop tabDesktop =
-                getSTEDWindow().getDesktop();
-        tabDesktop.newFontMap();
+class NewFontMapAction : STEDWindowAction(), FontMapChangeListener, InternalFrameListener {
+    override fun actionPerformed(e: ActionEvent) {
+        val tabDesktop: TabDesktop = stedWindow.getDesktop()
+        tabDesktop.newFontMap()
     }
 
     /**
@@ -28,50 +18,36 @@ public class NewFontMapAction
      *
      * @param fontMapChangeEvent a ChangeEvent object
      */
-    public void stateChanged(FontMapChangeEvent fontMapChangeEvent) {
-        final FontMap fontMap = fontMapChangeEvent.getFontMap();
-        if (fontMap == null) {
-            setEnabled(true);
+    override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent?) {
+        val fontMap = fontMapChangeEvent!!.fontMap
+        isEnabled = if (fontMap == null) {
+            true
         } else {
             // if fontmap is new, enable new only when the new fontmap had been changed
             // logic is, no need to show 'New' when already a new fontmap open
-            if (fontMap.isNew()) {
-                setEnabled(fontMap.isDirty());
+            if (fontMap.isNew) {
+                fontMap.isDirty
             } else {
-                setEnabled(true);
+                true
             }
         }
 
         //todo: fix-me! reevaluate this logic
         // New action will always be enabled..
-        setEnabled(true);
+        isEnabled = true
     }
 
-    public void internalFrameActivated(InternalFrameEvent e) {
+    override fun internalFrameActivated(e: InternalFrameEvent) {}
+    override fun internalFrameClosed(e: InternalFrameEvent) {}
+    override fun internalFrameClosing(e: InternalFrameEvent) {
+        isEnabled = true
     }
 
-    public void internalFrameClosed(InternalFrameEvent e) {
-
+    override fun internalFrameDeactivated(e: InternalFrameEvent) {
+        isEnabled = true
     }
 
-    public void internalFrameClosing(InternalFrameEvent e) {
-        setEnabled(true);
-    }
-
-    public void internalFrameDeactivated(InternalFrameEvent e) {
-        setEnabled(true);
-    }
-
-    public void internalFrameDeiconified(InternalFrameEvent e) {
-
-    }
-
-    public void internalFrameIconified(InternalFrameEvent e) {
-
-    }
-
-    public void internalFrameOpened(InternalFrameEvent e) {
-    }
-
-
+    override fun internalFrameDeiconified(e: InternalFrameEvent) {}
+    override fun internalFrameIconified(e: InternalFrameEvent) {}
+    override fun internalFrameOpened(e: InternalFrameEvent) {}
 }

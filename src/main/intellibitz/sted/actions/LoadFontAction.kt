@@ -1,37 +1,30 @@
-package sted.actions;
+package sted.actions
 
-import sted.ui.FontKeypad;
-import sted.io.FileHelper;
-import sted.io.Resources;
+import sted.io.FileHelper.openFont
+import sted.io.Resources
+import sted.io.Resources.getSetting
+import sted.ui.FontKeypad
+import java.awt.event.ActionEvent
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.io.File;
-
-public class LoadFontAction
-        extends STEDWindowAction {
-    private FontKeypad fontKeypad;
-
-    public LoadFontAction(FontKeypad fontSelectPanel) {
-        super();
-        putValue(Action.NAME, Resources.getSetting(Resources.LABEL_FONT_LOAD));
-        fontKeypad = fontSelectPanel;
-    }
+class LoadFontAction(fontSelectPanel: FontKeypad) : STEDWindowAction() {
+    private val fontKeypad: FontKeypad
 
     /**
      * Invoked when an action occurs.
      */
-    public void actionPerformed(ActionEvent e) {
-        loadFont();
+    override fun actionPerformed(e: ActionEvent) {
+        loadFont()
     }
 
-    private void loadFont() {
-        final File file = FileHelper.openFont(getSTEDWindow());
+    private fun loadFont() {
+        val file = openFont(stedWindow)
         if (file != null) {
-            fontKeypad.loadFont(file);
+            fontKeypad.loadFont(file)
         }
     }
 
-
+    init {
+        putValue(NAME, getSetting(Resources.LABEL_FONT_LOAD))
+        fontKeypad = fontSelectPanel
+    }
 }
-

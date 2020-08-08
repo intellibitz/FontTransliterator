@@ -13,8 +13,7 @@ class DeleteAction : CutAction() {
     }
 
     override fun actionPerformed(e: ActionEvent) {
-        val fontMap = sTEDWindow!!.desktop
-            .fontMap
+        val fontMap = stedWindow.desktop.fontMap
         val entries = delete()
         pushUndo(entries!!, fontMap.entries.undo)
         fontMap.isDirty = !entries.isEmpty()
@@ -23,7 +22,6 @@ class DeleteAction : CutAction() {
     }
 
     private fun delete(): Collection<*>? {
-        val stedWindow = sTEDWindow!!
         val result = JOptionPane.showConfirmDialog(
             stedWindow, "Do you want to delete selected row(s)", "confirm",
             JOptionPane.OK_CANCEL_OPTION
