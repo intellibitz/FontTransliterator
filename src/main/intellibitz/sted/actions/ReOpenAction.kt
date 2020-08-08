@@ -39,7 +39,7 @@ class ReOpenAction : ReOpenFontMapAction(), FontMapChangeListener, InternalFrame
     override fun internalFrameActivated(e: InternalFrameEvent) {
         enableItemsInReOpenMenu(
             instance!!,
-            stedWindow.getDesktop()
+            stedWindow.desktop
                 .getFontMap()
         )
     }
@@ -53,7 +53,7 @@ class ReOpenAction : ReOpenFontMapAction(), FontMapChangeListener, InternalFrame
         enableItemsInReOpenMenu(
             instance!!,
             stedWindow
-                .getDesktop()
+                .desktop
                 .getFontMap()
         )
     }

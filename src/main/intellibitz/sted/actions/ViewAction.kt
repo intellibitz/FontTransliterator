@@ -9,7 +9,7 @@ import javax.swing.JSplitPane
 open class ViewAction : ItemListenerAction() {
     class ViewSample : ViewAction() {
         override fun itemStateChanged(e: ItemEvent) {
-            val sampleText: JPanel = stedWindow.getDesktop()
+            val sampleText: JPanel = stedWindow.desktop
                 .getFontMapperDesktopFrame()
                 .getMapperPanel()
                 .getPreviewPanel()
@@ -29,7 +29,7 @@ open class ViewAction : ItemListenerAction() {
 
     class ViewStatus : ViewAction() {
         override fun itemStateChanged(e: ItemEvent) {
-            stedWindow.getStatusPanel()
+            stedWindow.statusPanel
                 .setVisible(ItemEvent.SELECTED == e.stateChange)
         }
     }
@@ -37,7 +37,7 @@ open class ViewAction : ItemListenerAction() {
     class ViewMapping : ViewAction() {
         override fun itemStateChanged(e: ItemEvent) {
             val splitPane: JSplitPane = stedWindow
-                .getDesktop()
+                .desktop
                 .getFontMapperDesktopFrame()
                 .getMapperPanel().getMappingEntryPanel().getSplitPane()
             splitPane.bottomComponent.isVisible = ItemEvent.SELECTED == e.stateChange

@@ -15,7 +15,7 @@ import javax.swing.event.TableModelEvent
 class RedoAction : TableModelListenerAction(), FontMapChangeListener, ChangeListener {
     override fun actionPerformed(e: ActionEvent) {
         redo(stedWindow)
-        val fontMap: FontMap = stedWindow.getDesktop()
+        val fontMap: FontMap = stedWindow.desktop
             .getFontMap()
         fontMap.isDirty = true
         fireStatusPosted("Redo")
@@ -69,7 +69,7 @@ class RedoAction : TableModelListenerAction(), FontMapChangeListener, ChangeList
      */
     override fun tableChanged(e: TableModelEvent) {
         setEnabled(
-            stedWindow.getDesktop()
+            stedWindow.desktop
                 .getFontMap()
         )
     }

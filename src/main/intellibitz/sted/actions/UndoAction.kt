@@ -16,7 +16,7 @@ class UndoAction : TableModelListenerAction(), FontMapChangeListener, ChangeList
     override fun actionPerformed(e: ActionEvent) {
         undo(stedWindow)
         fireStatusPosted("Undo")
-        val fontMap: FontMap = stedWindow.getDesktop()
+        val fontMap: FontMap = stedWindow.desktop
             .getFontMap()
         fontMap.fireUndoEvent()
         fontMap.fireRedoEvent()
@@ -69,7 +69,7 @@ class UndoAction : TableModelListenerAction(), FontMapChangeListener, ChangeList
      */
     override fun tableChanged(e: TableModelEvent) {
         setEnabled(
-            stedWindow.getDesktop()
+            stedWindow.desktop
                 .getFontMap()
         )
     }

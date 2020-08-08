@@ -15,13 +15,13 @@ class PasteAction : TableModelListenerAction(), FontMapChangeListener {
      * rows, or columns that changed.
      */
     override fun tableChanged(e: TableModelEvent) {
-        isEnabled = !stedWindow.getDesktop()
+        isEnabled = !stedWindow.desktop
             .getClipboard()
             .isEmpty()
     }
 
     override fun valueChanged(e: ListSelectionEvent) {
-        isEnabled = !stedWindow.getDesktop()
+        isEnabled = !stedWindow.desktop
             .getClipboard()
             .isEmpty()
     }
@@ -32,7 +32,7 @@ class PasteAction : TableModelListenerAction(), FontMapChangeListener {
     }
 
     override fun stateChanged(e: FontMapChangeEvent?) {
-        isEnabled = !stedWindow.getDesktop()
+        isEnabled = !stedWindow.desktop
             .getClipboard()
             .isEmpty()
     }

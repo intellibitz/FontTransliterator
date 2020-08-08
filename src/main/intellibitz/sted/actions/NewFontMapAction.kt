@@ -9,7 +9,7 @@ import javax.swing.event.InternalFrameListener
 
 class NewFontMapAction : STEDWindowAction(), FontMapChangeListener, InternalFrameListener {
     override fun actionPerformed(e: ActionEvent) {
-        val tabDesktop: TabDesktop = stedWindow.getDesktop()
+        val tabDesktop: TabDesktop = stedWindow.desktop!!
         tabDesktop.newFontMap()
     }
 

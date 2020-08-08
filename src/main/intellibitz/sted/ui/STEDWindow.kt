@@ -1,283 +1,243 @@
-package sted.ui;
+package sted.ui
 
-import sted.actions.ExitAction;
-import sted.actions.ItemListenerAction;
-import sted.actions.STEDWindowAction;
-import sted.event.*;
-import sted.fontmap.FontMap;
-import sted.io.FileHelper;
-import sted.io.FileReaderThread;
-import sted.io.Resources;
+import sted.actions.ExitAction
+import sted.actions.ItemListenerAction
+import sted.actions.STEDWindowAction
+import sted.event.*
+import sted.io.FileHelper.getSampleFontMapPaths
+import sted.io.FileReaderThread
+import sted.io.Resources
+import sted.io.Resources.getResource
+import sted.io.Resources.getSetting
+import sted.io.Resources.getSettingBeginsWith
+import sted.io.Resources.getSystemResourceIcon
+import sted.ui.MenuHandler.Companion.addReOpenItem
+import sted.ui.MenuHandler.Companion.addSampleFontMapMenuItem
+import sted.ui.MenuHandler.Companion.loadLookAndFeelMenu
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
+import java.util.logging.Logger
+import javax.swing.JFrame
+import javax.swing.JOptionPane
+import javax.swing.event.ChangeEvent
+import javax.swing.event.ChangeListener
 
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.logging.Logger;
-
-public class STEDWindow
-        extends JFrame
-        implements IThreadListener,
-        ChangeListener,
-        IMessageListener,
-        IStatusEventSource {
-    private static final Logger logger =
-            Logger.getLogger(STEDWindow.class.getName());
+class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, IStatusEventSource {
     // desktop to show fontmap
-    private TabDesktop tabDesktop;
-    private StatusPanel statusPanel;
-    private IStatusListener statusListener;
-    private StatusEvent statusEvent;
-
-    public STEDWindow() {
-        super();
-    }
-
-    public void init() {
-        setDefaultLookAndFeelDecorated(true);
-        setState(JFrame.MAXIMIZED_BOTH);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        setTitle(Resources.getResource("title"));
-        ImageIcon imageIcon = Resources.getSystemResourceIcon(Resources.getSetting("icon.sted"));
-        if (imageIcon != null)
-            setIconImage(imageIcon.getImage());
-
-        statusEvent = new StatusEvent(this);
-
-        final JMenuBar menuBar = MenuHandler.getInstance().getMenuBar("STED-MenuBar");
-        MenuHandler.loadLookAndFeelMenu();
+    lateinit var desktop: TabDesktop
+        private set
+    lateinit var statusPanel: StatusPanel
+        private set
+    private var statusListener: IStatusListener? = null
+    private var statusEvent: StatusEvent? = null
+    val logger: Logger = Logger.getLogger(STEDWindow::class.java.name)
+    fun init() {
+        setDefaultLookAndFeelDecorated(true)
+        state = MAXIMIZED_BOTH
+        extendedState = MAXIMIZED_BOTH
+        defaultCloseOperation = DO_NOTHING_ON_CLOSE
+        title = getResource("title")
+        val imageIcon = getSystemResourceIcon(getSetting("icon.sted"))
+        if (imageIcon != null) iconImage = imageIcon.image
+        statusEvent = StatusEvent(this)
+        val menuBar = MenuHandler.instance!!.getMenuBar("STED-MenuBar")
+        loadLookAndFeelMenu()
 
         // load the menubar for the application
-        setJMenuBar(menuBar);
-        fireStatusPosted("20");
-
-        final Container container = getContentPane();
-        final GridBagLayout gridBagLayout = new GridBagLayout();
-        container.setLayout(gridBagLayout);
-        final GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridwidth = 1;
-        gridBagConstraints.gridheight = 1;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.0;
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        fireStatusPosted("30");
-
-        final JToolBar toolBar =
-                MenuHandler.getInstance().getToolBar(Resources.MENUBAR_STED);
-        gridBagLayout.setConstraints(toolBar, gridBagConstraints);
+        jMenuBar = menuBar
+        fireStatusPosted("20")
+        val container = contentPane
+        val gridBagLayout = GridBagLayout()
+        container.layout = gridBagLayout
+        val gridBagConstraints = GridBagConstraints()
+        gridBagConstraints.gridwidth = 1
+        gridBagConstraints.gridheight = 1
+        gridBagConstraints.weightx = 1.0
+        gridBagConstraints.weighty = 0.0
+        gridBagConstraints.gridx = 0
+        gridBagConstraints.gridy = 0
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL
+        fireStatusPosted("30")
+        val toolBar = MenuHandler.instance!!.getToolBar(Resources.MENUBAR_STED)
+        gridBagLayout.setConstraints(toolBar, gridBagConstraints)
 
         // adds the toolbar for the app
-        container.add(toolBar);
-        fireStatusPosted("40");
-
-        tabDesktop = new TabDesktop();
-        tabDesktop.init();
-        fireStatusPosted("50");
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        container.add(toolBar)
+        fireStatusPosted("40")
+        desktop = TabDesktop()
+        desktop.init()
+        fireStatusPosted("50")
+        gridBagConstraints.weighty = 1.0
+        gridBagConstraints.gridy = 1
+        gridBagConstraints.fill = GridBagConstraints.BOTH
         // adds the desktop directly
-        gridBagLayout.setConstraints(tabDesktop, gridBagConstraints);
-
-        container.add(tabDesktop);
-        fireStatusPosted("60");
-
-        statusPanel = new StatusPanel(this);
-        gridBagConstraints.weighty = 0.0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagLayout.setConstraints(statusPanel, gridBagConstraints);
+        gridBagLayout.setConstraints(desktop, gridBagConstraints)
+        container.add(desktop)
+        fireStatusPosted("60")
+        statusPanel = StatusPanel(this)
+        gridBagConstraints.weighty = 0.0
+        gridBagConstraints.gridy = 2
+        gridBagConstraints.fill = GridBagConstraints.BOTH
+        gridBagLayout.setConstraints(statusPanel, gridBagConstraints)
 
         // adds the status bar
-        container.add(statusPanel);
-        fireStatusPosted("70");
-        setUserOptions();
-        addMouseListener(AboutSTED.Companion.getInstance());
-
-        ExitAction exitAction = new ExitAction();
-//        exitAction.setSTEDWindow(STEDWindow.this);
-        addWindowListener(exitAction);
-
-        pack();
-        logger.finest("successfully intialized STEDWindow");
-        fireStatusPosted("80");
+        container.add(statusPanel)
+        fireStatusPosted("70")
+        setUserOptions()
+        addMouseListener(AboutSTED.instance)
+        val exitAction = ExitAction()
+        //        exitAction.setSTEDWindow(STEDWindow.this);
+        addWindowListener(exitAction)
+        pack()
+        logger.finest("successfully intialized STEDWindow")
+        fireStatusPosted("80")
     }
 
-    public void load() {
+    fun load() {
         // status panel added as status listener to recieve status messages
-        tabDesktop.addStatusListener(statusPanel);
-
-        Map<String, Action> actions = MenuHandler.getInstance().getActions();
-        for (Action action : actions.values()) {
-            if (action instanceof STEDWindowAction) {
-                ((STEDWindowAction) action).addStatusListener(statusPanel);
-                ((STEDWindowAction) action).addMessageListener(this);
+        desktop.addStatusListener(statusPanel)
+        val actions = MenuHandler.instance!!.actions
+        for (action in actions.values) {
+            if (action is STEDWindowAction) {
+                action.addStatusListener(statusPanel)
+                action.addMessageListener(this)
             }
         }
-
-        tabDesktop.load();
-        tabDesktop.addChangeListener(this);
-
-        setState(JFrame.MAXIMIZED_HORIZ);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        desktop.load()
+        desktop.addChangeListener(this)
+        state = MAXIMIZED_HORIZ
+        extendedState = MAXIMIZED_BOTH
     }
 
-    public void fireStatusPosted(String message) {
-        statusEvent.setStatus(message);
-        statusListener.statusPosted(statusEvent);
+    fun fireStatusPosted(message: String?) {
+        statusEvent!!.status = message
+        statusListener!!.statusPosted(statusEvent)
     }
 
-    public void fireStatusPosted() {
-        statusListener.statusPosted(statusEvent);
+    override fun fireStatusPosted() {
+        statusListener!!.statusPosted(statusEvent)
     }
 
-    public void addStatusListener(IStatusListener statusListener) {
-        this.statusListener = statusListener;
+    override fun addStatusListener(statusListener: IStatusListener?) {
+        this.statusListener = statusListener
     }
 
-    public void setVisible() {
-        super.setVisible(true);
-        statusPanel.runMemoryBar();
+    fun setVisible() {
+        super.setVisible(true)
+        statusPanel.runMemoryBar()
     }
 
-    public StatusPanel getStatusPanel() {
-        return statusPanel;
-    }
-
-    public TabDesktop getDesktop() {
-        return tabDesktop;
-    }
-
-    private void setUserOptions() {
-        final Map<String, JMenuItem> menuItems =
-                MenuHandler.getInstance().getMenuItems();
-        for (String key : menuItems.keySet()) {
-            final JMenuItem menuItem = menuItems.get(key);
-            final Action action = menuItem.getAction();
-            if (action instanceof ItemListenerAction) {
-                final String val = Resources.getSetting(key);
-                if (val != null) {
-                    final boolean curr = Boolean.parseBoolean(val);
+    private fun setUserOptions() {
+        val menuItems = MenuHandler.instance!!.menuItems
+        for (key in menuItems.keys) {
+            val menuItem = menuItems[key]
+            val action = menuItem!!.action
+            if (action is ItemListenerAction) {
+                val `val` = getSetting(key)
+                if (`val` != null) {
+                    val curr = `val`.toBoolean()
                     // first check for state for disabled menu items
                     if (!action.isEnabled()) {
-                        menuItem.setSelected(curr);
-                    } else if (curr && !menuItem.isSelected()) {
+                        menuItem.isSelected = curr
+                    } else if (curr && !menuItem.isSelected) {
                         // if user option is set, and the menu item is already not selected
-                        menuItem.doClick();
-                    } else if (menuItem.isSelected() && !curr) {
-                        menuItem.doClick();
+                        menuItem.doClick()
+                    } else if (menuItem.isSelected && !curr) {
+                        menuItem.doClick()
                     }
                 }
             }
         }
-        final ArrayList<String> reopenItems = Resources
-                .getSettingBeginsWith(Resources.ACTION_FILE_REOPEN_COMMAND);
-        if (!reopenItems.isEmpty()) {
-            final JMenu menu =
-                    MenuHandler.getInstance()
-                            .getMenu(Resources.ACTION_FILE_REOPEN_COMMAND);
-            for (String reopenItem : reopenItems) {
-                MenuHandler.addReOpenItem(menu, reopenItem);
+        val reopenItems = getSettingBeginsWith(Resources.ACTION_FILE_REOPEN_COMMAND)
+        if (reopenItems.isNotEmpty()) {
+            val menu = MenuHandler.instance
+                ?.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
+            for (reopenItem in reopenItems) {
+                addReOpenItem(menu!!, reopenItem)
             }
-            menu.setEnabled(menu.getItemCount() > Resources.DEFAULT_MENU_COUNT);
+            menu!!.isEnabled = menu.itemCount > Resources.DEFAULT_MENU_COUNT
         }
 
         // set the sample fontmap action
-        String[] sampleFontMapPaths = FileHelper
-                .getSampleFontMapPaths("resource");
-        if ((sampleFontMapPaths != null ? sampleFontMapPaths.length : 0) > 0) {
-            final JMenu menu =
-                    MenuHandler.getInstance()
-                            .getMenu(Resources.MENU_SAMPLES_NAME);
-            for (String reopenItem : sampleFontMapPaths) {
-                MenuHandler.addSampleFontMapMenuItem(menu, reopenItem);
+        val sampleFontMapPaths = getSampleFontMapPaths("resource")
+        if (sampleFontMapPaths?.size ?: 0 > 0) {
+            val menu = MenuHandler.instance
+                ?.getMenu(Resources.MENU_SAMPLES_NAME)
+            for (reopenItem in sampleFontMapPaths!!) {
+                addSampleFontMapMenuItem(menu!!, reopenItem)
             }
         }
     }
 
-    public void threadRunStarted(ThreadEvent e) {
-        JProgressBar progressBar = statusPanel.getProgressBar();
-        progressBar.setMinimum(0);
-        progressBar.setIndeterminate(true);
+    override fun threadRunStarted(threadEvent: ThreadEvent?) {
+        val progressBar = statusPanel.progressBar
+        progressBar.minimum = 0
+        progressBar.isIndeterminate = true
     }
 
-    public void threadRunning(ThreadEvent e) {
+    override fun threadRunning(threadEvent: ThreadEvent?) {
         //TODO: set the progress bar maximum only once, typically when the thread starts
-        JProgressBar progressBar = statusPanel.getProgressBar();
-        progressBar.setMaximum(e.getEventSource().getProgressMaximum());
-        progressBar.setValue(e.getEventSource().getProgress());
+        val progressBar = statusPanel.progressBar
+        progressBar.maximum = threadEvent!!.eventSource!!.progressMaximum
+        progressBar.value = threadEvent.eventSource!!.progress
     }
 
-    public void threadRunFailed(ThreadEvent e) {
-        JOptionPane.showMessageDialog(this, e.getEventSource().getMessage());
-        JProgressBar progressBar = statusPanel.getProgressBar();
-        progressBar.setValue(0);
-        progressBar.setIndeterminate(false);
+    override fun threadRunFailed(threadEvent: ThreadEvent?) {
+        JOptionPane.showMessageDialog(this, threadEvent!!.eventSource!!.message)
+        val progressBar = statusPanel.progressBar
+        progressBar.value = 0
+        progressBar.isIndeterminate = false
     }
 
-    public void threadRunFinished(ThreadEvent e) {
-        JProgressBar progressBar = statusPanel.getProgressBar();
-        progressBar.setValue(0);
-        progressBar.setIndeterminate(false);
-        FileReaderThread source = (FileReaderThread) e.getEventSource();
-        statusPanel.setStatus("Read File: " + source.getFile());
+    override fun threadRunFinished(threadEvent: ThreadEvent?) {
+        val progressBar = statusPanel.progressBar
+        progressBar.value = 0
+        progressBar.isIndeterminate = false
+        val source = threadEvent!!.eventSource as FileReaderThread?
+        statusPanel.setStatus("Read File: " + source!!.file)
     }
 
     /**
      * @param e ChangeEvent published by TabDesktop
      */
-    public void stateChanged(ChangeEvent e) {
-        TabDesktop desktop = (TabDesktop) e.getSource();
-        int index = desktop.getSelectedIndex();
+    override fun stateChanged(e: ChangeEvent) {
+        val desktop = e.source as TabDesktop
+        val index = desktop.selectedIndex
         if (index > -1) {
-            DesktopFrame dframe =
-                    (DesktopFrame) desktop.getComponentAt(
-                            index);
-            dframe.getInputFileViewer().addThreadListener(this);
-            dframe.getOutputFileViewer().addThreadListener(this);
+            val dframe = desktop.getComponentAt(
+                index
+            ) as DesktopFrame
+            dframe.inputFileViewer.addThreadListener(this)
+            dframe.outputFileViewer.addThreadListener(this)
 
             // update the lock icon
-            DesktopModel desktopModel =
-                    dframe.getModel();
-            final FontMap fontMap = desktopModel.getFontMap();
-
-            fontMap.removeFontMapChangeListener(statusPanel);
-            fontMap.addFontMapChangeListener(statusPanel);
-
-            statusPanel.setLockFlag(!fontMap.isFileWritable());
+            val desktopModel = dframe.model
+            val fontMap = desktopModel.fontMap
+            fontMap.removeFontMapChangeListener(statusPanel)
+            fontMap.addFontMapChangeListener(statusPanel)
+            statusPanel.setLockFlag(!fontMap.isFileWritable)
             // update the clean/dirty flag
-            statusPanel.setNeatness(fontMap);
-            dframe.getMapperPanel().getMappingEntryPanel().getEntryAction()
-                    .addStatusListener(statusPanel);
-
-            dframe.getMapperPanel().getMappingEntryPanel().getEntryAction()
-                    .addMessageListener(this);
-            dframe.getMapperPanel().getMappingEntryPanel()
-                    .getMappingTableModel().addMessageListener(this);
+            statusPanel.setNeatness(fontMap)
+            dframe.mapperPanel.mappingEntryPanel.entryAction
+                .addStatusListener(statusPanel)
+            dframe.mapperPanel.mappingEntryPanel.entryAction
+                .addMessageListener(this)
+            dframe.mapperPanel.mappingEntryPanel
+                .mappingTableModel.addMessageListener(this)
 
             // remove and add.. so getting added only once
-            dframe.getMapperPanel().getMappingEntryPanel().
-                    getMappingTableModel()
-                    .removeTableModelListener(statusPanel);
-            dframe.getMapperPanel().getMappingEntryPanel().
-                    getListSelectionModel()
-                    .removeListSelectionListener(statusPanel);
-            dframe.getMapperPanel().getMappingEntryPanel().
-                    getMappingTableModel().addTableModelListener(statusPanel);
-            dframe.getMapperPanel().getMappingEntryPanel().
-                    getListSelectionModel()
-                    .addListSelectionListener(statusPanel);
+            dframe.mapperPanel.mappingEntryPanel.mappingTableModel
+                .removeTableModelListener(statusPanel)
+            dframe.mapperPanel.mappingEntryPanel.listSelectionModel
+                .removeListSelectionListener(statusPanel)
+            dframe.mapperPanel.mappingEntryPanel.mappingTableModel.addTableModelListener(statusPanel)
+            dframe.mapperPanel.mappingEntryPanel.listSelectionModel
+                .addListSelectionListener(statusPanel)
         }
     }
 
-    public void messagePosted(MessageEvent event) {
-        JOptionPane.showMessageDialog(this, event.getMessage());
+    override fun messagePosted(event: MessageEvent?) {
+        JOptionPane.showMessageDialog(this, event!!.message)
     }
+
 }
-
-

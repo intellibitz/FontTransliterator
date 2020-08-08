@@ -17,7 +17,7 @@ class TransliterateAction : TableModelListenerAction() {
      */
     override fun tableChanged(e: TableModelEvent) {
         isEnabled = (e.source as TableModel).rowCount > 0 &&
-                stedWindow.getDesktop()
+                stedWindow.desktop
                     .getFontMapperDesktopFrame()
                     .enableConverterIfFilesLoaded()
     }

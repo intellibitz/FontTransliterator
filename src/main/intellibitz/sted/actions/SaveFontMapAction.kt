@@ -31,7 +31,7 @@ class SaveFontMapAction : TableModelListenerAction(), FontMapChangeListener {
      * rows, or columns that changed.
      */
     override fun tableChanged(e: TableModelEvent) {
-        val fontMap: FontMap = stedWindow.getDesktop()
+        val fontMap: FontMap = stedWindow.desktop
             .getFontMap()
         //        setEnabled(!fontMap.isNew() && fontMap.isDirty());
         isEnabled = isSaveable(fontMap)
