@@ -1,27 +1,21 @@
-package sted.ui;
+package sted.ui
 
-import sted.fontmap.FontMap;
-import sted.fontmap.SampleTextConverter;
-import sted.io.Resources;
-import sted.widgets.FontChangeTextField;
+import sted.fontmap.FontMap
+import sted.fontmap.SampleTextConverter
+import sted.io.Resources
+import sted.ui.MenuHandler.Companion.instance
+import sted.widgets.FontChangeTextField
+import javax.swing.JCheckBoxMenuItem
+import javax.swing.SwingUtilities
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+class DocumentListenerTextField : FontChangeTextField(), DocumentListener {
+    private var converter: SampleTextConverter? = null
+    private var fontMap: FontMap? = null
+    private var mapperPanel: MapperPanel? = null
 
-public class DocumentListenerTextField
-        extends FontChangeTextField
-        implements DocumentListener {
-    private SampleTextConverter converter;
-    private FontMap fontMap;
-    private MapperPanel mapperPanel;
-//    private STEDWindow stedWindow;
-
-    public DocumentListenerTextField() {
-        super();
-    }
-
-/*
+    /*
     public DocumentListenerTextField(MapperPanel mapperPanel,
             STEDWindow stedWindow)
     {
@@ -30,49 +24,39 @@ public class DocumentListenerTextField
         this.stedWindow = stedWindow;
     }
 */
-
-    public void load() {
-
+    fun load() {}
+    override fun insertUpdate(e: DocumentEvent) {
+        convertSampleText(e)
     }
 
-    public void insertUpdate(DocumentEvent e) {
-        convertSampleText(e);
+    override fun removeUpdate(e: DocumentEvent) {
+        convertSampleText(e)
     }
 
-    public void removeUpdate(DocumentEvent e) {
-        convertSampleText(e);
+    override fun changedUpdate(e: DocumentEvent) {
+        convertSampleText(e)
     }
 
-    public void changedUpdate(DocumentEvent e) {
-        convertSampleText(e);
-    }
-
-    private void convertSampleText(DocumentEvent e) {
-        if (e.getDocument().getLength() > 0) {
+    private fun convertSampleText(e: DocumentEvent) {
+        if (e.document.length > 0) {
             if (converter == null) {
-                converter = new SampleTextConverter(mapperPanel);
+                converter = SampleTextConverter(mapperPanel!!)
             }
-            converter.setFontMap(fontMap);
-            final MenuHandler menuHandler = MenuHandler.getInstance();
-            final JCheckBoxMenuItem preserve =
-                    (JCheckBoxMenuItem) menuHandler.getMenuItem
-                            (Resources.ACTION_PRESERVE_TAGS);
-            converter.setHTMLAware(preserve.isSelected());
-            final JCheckBoxMenuItem reverse =
-                    (JCheckBoxMenuItem) menuHandler.getMenuItem
-                            (Resources.ACTION_TRANSLITERATE_REVERSE);
-            converter.setReverseTransliterate(reverse.isSelected());
-            SwingUtilities.invokeLater(converter);
+            converter!!.setFontMap(fontMap)
+            val menuHandler = instance
+            val preserve = menuHandler.getMenuItem(Resources.ACTION_PRESERVE_TAGS) as JCheckBoxMenuItem?
+            converter!!.setHTMLAware(preserve!!.isSelected)
+            val reverse = menuHandler.getMenuItem(Resources.ACTION_TRANSLITERATE_REVERSE) as JCheckBoxMenuItem?
+            converter!!.setReverseTransliterate(reverse!!.isSelected)
+            SwingUtilities.invokeLater(converter)
         }
     }
 
-    public void setFontMap(FontMap fontMap) {
-        this.fontMap = fontMap;
+    fun setFontMap(fontMap: FontMap?) {
+        this.fontMap = fontMap
     }
 
-    public void setFontMapperPanel(MapperPanel mapperPanel) {
-        this.mapperPanel = mapperPanel;
+    fun setFontMapperPanel(mapperPanel: MapperPanel?) {
+        this.mapperPanel = mapperPanel
     }
-
 }
-

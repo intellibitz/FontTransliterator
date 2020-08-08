@@ -1,121 +1,76 @@
-package sted.ui;
+package sted.ui
 
-import sted.event.FontMapChangeEvent;
-import sted.event.FontMapChangeListener;
-import sted.fontmap.FontMap;
-import sted.io.FontMapXMLWriter;
-
-import javax.swing.event.EventListenerList;
-import javax.xml.transform.TransformerException;
-import java.io.File;
-import java.util.logging.Logger;
-
+import sted.event.FontMapChangeEvent
+import sted.event.FontMapChangeListener
+import sted.fontmap.FontMap
+import sted.io.FontMapXMLWriter
+import java.io.File
+import javax.swing.event.EventListenerList
+import javax.xml.transform.TransformerException
 
 /**
  * Contains FontMap and all its related Entities.
  */
-public class DesktopModel {
-    private File inputFile;
-    private File outputFile;
-    private FontMap fontMap;
+class DesktopModel {
+    private val eventListenerList = EventListenerList()
+    var inputFile: File? = null
+    var outputFile: File? = null
+    var fontMap: FontMap? = null
 
     // the fontmap related events.. the model when change will fire these
-    private FontMapChangeEvent fontMapChangeEvent;
-    private EventListenerList eventListenerList;
-    private static final Logger logger =
-            Logger.getLogger(DesktopModel.class.getName());
-
-    public DesktopModel() {
-        super();
-        eventListenerList = new EventListenerList();
-    }
-
-
-    public void clear() {
-        fontMapChangeEvent = null;
+    private var fontMapChangeEvent: FontMapChangeEvent? = null
+    fun clear() {
+        fontMapChangeEvent = null
     }
 
     // Notify all listeners that have registered interest for
     // notification on this event type.  The event instance
     // is lazily created using the parameters passed into
     // the fire method.
-    public void fireFontMapChangedEvent() {
+    fun fireFontMapChangedEvent() {
         // Guaranteed to return a non-null array
-        final Object[] listeners = eventListenerList.getListenerList();
+        val listeners = eventListenerList.listenerList
         // Process the listeners last to first, notifying
         // those that are interested in this event
-        for (int i = listeners.length - 2; i >= 0; i -= 2) {
-            if (listeners[i] == FontMapChangeListener.class) {
+        var i = listeners.size - 2
+        while (i >= 0) {
+            if (listeners[i] === FontMapChangeListener::class.java) {
                 // Lazily create the event:
                 if (fontMapChangeEvent == null) {
-                    fontMapChangeEvent = new FontMapChangeEvent(getFontMap());
+                    fontMapChangeEvent = FontMapChangeEvent(fontMap)
                 }
-                ((FontMapChangeListener) listeners[i + 1])
-                        .stateChanged(fontMapChangeEvent);
+                (listeners[i + 1] as FontMapChangeListener)
+                    .stateChanged(fontMapChangeEvent)
             }
+            i -= 2
         }
     }
 
-    public FontMap getFontMap() {
-        return fontMap;
-    }
-
-    public void setFontMap(FontMap fontMap) {
-        this.fontMap = fontMap;
-    }
-
-    public boolean isReadyForTransliteration
-            () {
-        boolean flag = false;
-        if (getInputFile() != null
-                && getOutputFile() != null
-                && getFontMap().getFontMapFile() != null) {
-            flag = true;
+    val isReadyForTransliteration: Boolean
+        get() {
+            var flag = false
+            if (inputFile != null && outputFile != null && fontMap!!.fontMapFile != null) {
+                flag = true
+            }
+            return flag
         }
-        return flag;
-    }
 
-
-    public File getInputFile
-            () {
-        return inputFile;
-    }
-
-    public File getOutputFile
-            () {
-        return outputFile;
-    }
-
-    public void setInputFile
-            (File file) {
-        inputFile = file;
-    }
-
-
-    public void setOutputFile(File file) {
-        outputFile = file;
-    }
-
-    public void addFontMapChangeListener
-            (FontMapChangeListener fontMapChangeListener) {
+    fun addFontMapChangeListener(fontMapChangeListener: FontMapChangeListener?) {
         eventListenerList
-                .add(FontMapChangeListener.class, fontMapChangeListener);
+            .add(FontMapChangeListener::class.java, fontMapChangeListener)
     }
 
-    public void removeFontMapChangeListener
-            (FontMapChangeListener fontMapChangeListener) {
+    fun removeFontMapChangeListener(fontMapChangeListener: FontMapChangeListener?) {
         eventListenerList
-                .remove(FontMapChangeListener.class, fontMapChangeListener);
+            .remove(FontMapChangeListener::class.java, fontMapChangeListener)
     }
 
-
-    public FontMap saveFontMap()
-            throws TransformerException {
-        FontMapXMLWriter.write(fontMap);
-        fontMap.getEntries().clearUndoRedo();
-        fontMap.setDirty(false);
-        fireFontMapChangedEvent();
-        return fontMap;
+    @Throws(TransformerException::class)
+    fun saveFontMap(): FontMap? {
+        FontMapXMLWriter.write(fontMap)
+        fontMap!!.entries.clearUndoRedo()
+        fontMap!!.isDirty = false
+        fireFontMapChangedEvent()
+        return fontMap
     }
-
 }

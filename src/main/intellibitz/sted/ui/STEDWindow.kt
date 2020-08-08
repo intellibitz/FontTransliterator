@@ -211,9 +211,9 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
             // update the lock icon
             val desktopModel = dframe.model
             val fontMap = desktopModel.fontMap
-            fontMap.removeFontMapChangeListener(statusPanel)
-            fontMap.addFontMapChangeListener(statusPanel)
-            statusPanel.setLockFlag(!fontMap.isFileWritable)
+            fontMap?.removeFontMapChangeListener(statusPanel)
+            fontMap?.addFontMapChangeListener(statusPanel)
+            statusPanel.setLockFlag(!fontMap?.isFileWritable!!)
             // update the clean/dirty flag
             statusPanel.setNeatness(fontMap)
             dframe.mapperPanel.mappingEntryPanel.entryAction
