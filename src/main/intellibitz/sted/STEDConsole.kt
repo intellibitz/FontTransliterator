@@ -92,15 +92,15 @@ class STEDConsole(args: Array<String>) : IThreadListener {
         }
     }
 
-    override fun threadRunStarted(threadEvent: ThreadEvent?) {}
-    override fun threadRunning(threadEvent: ThreadEvent?) {}
-    override fun threadRunFailed(threadEvent: ThreadEvent?) {
-        logger.severe(threadEvent!!.eventSource!!.message.toString())
+    override fun threadRunStarted(threadEvent: ThreadEvent) {}
+    override fun threadRunning(threadEvent: ThreadEvent) {}
+    override fun threadRunFailed(threadEvent: ThreadEvent) {
+        logger.severe(threadEvent.eventSource.message.toString())
         exitProcess(-1)
     }
 
-    override fun threadRunFinished(threadEvent: ThreadEvent?) {
-        logger.info(threadEvent!!.eventSource!!.message.toString())
+    override fun threadRunFinished(threadEvent: ThreadEvent) {
+        logger.info(threadEvent.eventSource.message.toString())
         exitProcess(0)
     }
 

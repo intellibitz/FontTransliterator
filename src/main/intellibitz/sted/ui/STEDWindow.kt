@@ -167,31 +167,31 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         }
     }
 
-    override fun threadRunStarted(threadEvent: ThreadEvent?) {
+    override fun threadRunStarted(threadEvent: ThreadEvent) {
         val progressBar = statusPanel.progressBar
         progressBar.minimum = 0
         progressBar.isIndeterminate = true
     }
 
-    override fun threadRunning(threadEvent: ThreadEvent?) {
+    override fun threadRunning(threadEvent: ThreadEvent) {
         //TODO: set the progress bar maximum only once, typically when the thread starts
         val progressBar = statusPanel.progressBar
-        progressBar.maximum = threadEvent!!.eventSource!!.progressMaximum
-        progressBar.value = threadEvent.eventSource!!.progress
+        progressBar.maximum = threadEvent.eventSource.progressMaximum
+        progressBar.value = threadEvent.eventSource.progress
     }
 
-    override fun threadRunFailed(threadEvent: ThreadEvent?) {
-        JOptionPane.showMessageDialog(this, threadEvent!!.eventSource!!.message)
+    override fun threadRunFailed(threadEvent: ThreadEvent) {
+        JOptionPane.showMessageDialog(this, threadEvent.eventSource.message)
         val progressBar = statusPanel.progressBar
         progressBar.value = 0
         progressBar.isIndeterminate = false
     }
 
-    override fun threadRunFinished(threadEvent: ThreadEvent?) {
+    override fun threadRunFinished(threadEvent: ThreadEvent) {
         val progressBar = statusPanel.progressBar
         progressBar.value = 0
         progressBar.isIndeterminate = false
-        val source = threadEvent!!.eventSource as FileReaderThread?
+        val source = threadEvent.eventSource as FileReaderThread?
         statusPanel.setStatus("Read File: " + source!!.file)
     }
 
