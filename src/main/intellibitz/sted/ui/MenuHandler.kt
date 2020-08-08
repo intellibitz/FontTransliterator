@@ -3,10 +3,7 @@ package sted.ui
 import org.xml.sax.Attributes
 import org.xml.sax.SAXException
 import org.xml.sax.helpers.DefaultHandler
-import sted.actions.ItemListenerAction
-import sted.actions.LAFAction
-import sted.actions.OpenSampleFontMapAction
-import sted.actions.ReOpenFontMapAction
+import sted.actions.*
 import sted.fontmap.FontMap
 import sted.io.Resources
 import sted.io.Resources.getResource
@@ -162,11 +159,11 @@ class MenuHandler private constructor() : DefaultHandler() {
         menu.setMnemonic(mnemonic[0])
         val actionName = attributes.getValue("action")
         if (null != actionName) {
-            val action = Class.forName(actionName).newInstance() as Action
-            action.putValue(Action.NAME, name)
-            action.putValue(Action.MNEMONIC_KEY, mnemonic[0].toInt())
+            val action = newActionInstance(name)
+            action?.putValue(Action.NAME, name)
+            action?.putValue(Action.MNEMONIC_KEY, mnemonic[0].toInt())
             menu.action = action
-            Companion.actions[name] = action
+            Companion.actions[name] = action!!
         }
         menu.isEnabled = java.lang.Boolean.parseBoolean(attributes.getValue("actionEnabled"))
         return menu
@@ -203,24 +200,24 @@ class MenuHandler private constructor() : DefaultHandler() {
             val tooltip = attributes.getValue("tooltip")
             val shortcut = attributes.getValue("mnemonic")
             toolTips[name] = tooltip
-            val action = Class
-                .forName(attributes.getValue("action")).newInstance() as Action
-            action.putValue(Action.NAME, name)
+            val value = attributes.getValue("action")
+            val action = newActionInstance(name)
+            action?.putValue(Action.NAME, name)
             if (ic != null) {
                 val icon: Icon? = getSystemResourceIcon(ic)
                 //                imageIcons.put(name, icon);
-                action.putValue(Action.SMALL_ICON, icon)
+                action?.putValue(Action.SMALL_ICON, icon)
             }
-            action.putValue(Action.SHORT_DESCRIPTION, tooltip)
+            action?.putValue(Action.SHORT_DESCRIPTION, tooltip)
             if (null != shortcut && shortcut.length > 0) {
-                action.putValue(Action.MNEMONIC_KEY, shortcut[0].toInt())
+                action?.putValue(Action.MNEMONIC_KEY, shortcut[0].toInt())
             }
-            action.putValue(
+            action?.putValue(
                 Action.ACCELERATOR_KEY,
                 getAccelerator(attributes.getValue("accelerator"))
             )
             val cmd = attributes.getValue("actionCommand")
-            action.putValue(Action.ACTION_COMMAND_KEY, cmd)
+            action?.putValue(Action.ACTION_COMMAND_KEY, cmd)
             val listener = attributes.getValue("listener")
             /*
             if (listener != null) {
@@ -229,13 +226,13 @@ class MenuHandler private constructor() : DefaultHandler() {
 */
             val enabled = attributes.getValue("actionEnabled")
             if (enabled != null) {
-                action.isEnabled = java.lang.Boolean.parseBoolean(enabled)
+                action?.isEnabled = java.lang.Boolean.parseBoolean(enabled)
             }
             menuItem = Class.forName(type).newInstance() as JMenuItem
             menuItem!!.horizontalTextPosition = JMenuItem.RIGHT
             menuItem.action = action
             menuItem.isSelected = "on".equals(attributes.getValue("actionMode"), ignoreCase = true)
-            Companion.actions[name] = action
+            Companion.actions[name] = action!!
             Companion.menuItems[name] = menuItem
             val button = attributes.getValue("toolButton")
             val buttonVisible = attributes.getValue("toolButtonVisible")
@@ -266,6 +263,39 @@ class MenuHandler private constructor() : DefaultHandler() {
             e.printStackTrace() //To change body of catch statement use Options | File Templates.
         }
         return menuItem
+    }
+
+    private fun newActionInstance(name: String): Action? {
+        var action: Action? = null
+        when (name){
+            "New" -> { action = NewFontMapAction()}
+            "Open..." -> { action = OpenFontMapAction()}
+            "ReOpen" -> { action = ReOpenAction()}
+            "Clear List" -> { action = ClearReOpenAction()}
+            "Save" -> { action = SaveFontMapAction()}
+            "Save As..." -> { action = SaveAsAction()}
+            "ReLoad from Disk" -> { action = LoadFontMapAction()}
+            "Close" -> { action = CloseAction()}
+            "Exit" -> { action = ExitAction()}
+            "Undo" -> { action = UndoAction()}
+            "Redo" -> { action = RedoAction()}
+            "Cut" -> { action = CutAction()}
+            "Copy" -> { action = CopyAction()}
+            "Paste" -> { action = PasteAction()}
+            "Select All" -> { action = SelectAllAction()}
+            "Delete" -> { action = DeleteAction()}
+            "Input", "Output" -> { action = FileSelectAction()}
+            "Convert" -> { action = TransliterateAction()}
+            "Stop" -> { action = TransliterateStopAction()}
+            "Reverse Transliterate", "Preserve <Tags>" -> { action = ItemListenerAction()}
+            "Toolbar" -> { action = ViewAction.ViewToolBar()}
+            "Status Bar" -> { action = ViewAction.ViewStatus()}
+            "Mapping Rules" -> { action = ViewAction.ViewMapping()}
+            "Mapping Preview" -> { action = ViewAction.ViewSample()}
+            "Help Topics" -> { action = HelpAction()}
+            "About" -> { action = AboutAction()}
+        }
+        return action
     }
 
     companion object {
