@@ -150,8 +150,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         }
         val reopenItems = getSettingBeginsWith(Resources.ACTION_FILE_REOPEN_COMMAND)
         if (reopenItems.isNotEmpty()) {
-            val menu = MenuHandler.instance
-                ?.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
+            val menu = MenuHandler.instance.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
             for (reopenItem in reopenItems) {
                 addReOpenItem(menu!!, reopenItem)
             }
@@ -161,8 +160,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         // set the sample fontmap action
         val sampleFontMapPaths = getSampleFontMapPaths("resource")
         if (sampleFontMapPaths?.size ?: 0 > 0) {
-            val menu = MenuHandler.instance
-                ?.getMenu(Resources.MENU_SAMPLES_NAME)
+            val menu = MenuHandler.instance.getMenu(Resources.MENU_SAMPLES_NAME)
             for (reopenItem in sampleFontMapPaths!!) {
                 addSampleFontMapMenuItem(menu!!, reopenItem)
             }
