@@ -51,16 +51,16 @@ class TransliterateAction : TableModelListenerAction() {
             desktop.desktopModel.inputFile,
             desktop.desktopModel.outputFile
         )
-        val preserve = instance!!.getMenuItem(
+        val preserve = instance.getMenuItem(
             Resources.ACTION_PRESERVE_TAGS
         ) as JCheckBoxMenuItem?
         converter.setHTMLAware(preserve!!.isSelected)
-        val reverse = instance!!.getMenuItem(
+        val reverse = instance.getMenuItem(
             Resources.ACTION_TRANSLITERATE_REVERSE
         ) as JCheckBoxMenuItem?
         converter.setReverseTransliterate(reverse!!.isSelected)
         converter.addThreadListener(desktop)
-        val stop = instance!!.getAction(
+        val stop = instance.getAction(
             Resources.ACTION_STOP_NAME
         ) as TransliterateStopAction?
         stop!!.setConverter(converter)

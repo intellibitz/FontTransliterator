@@ -20,7 +20,7 @@ open class ViewAction : ItemListenerAction() {
 
     class ViewToolBar : ViewAction() {
         override fun itemStateChanged(e: ItemEvent) {
-            instance!!.getToolBar(Resources.MENUBAR_STED)
+            instance.getToolBar(Resources.MENUBAR_STED)
                 ?.setVisible(
                     ItemEvent.SELECTED == e.stateChange
                 )

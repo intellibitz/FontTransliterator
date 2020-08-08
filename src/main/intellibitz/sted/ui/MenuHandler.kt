@@ -228,8 +228,8 @@ class MenuHandler private constructor() : DefaultHandler() {
             if (enabled != null) {
                 action?.isEnabled = java.lang.Boolean.parseBoolean(enabled)
             }
-            menuItem = Class.forName(type).newInstance() as JMenuItem
-            menuItem!!.horizontalTextPosition = JMenuItem.RIGHT
+            menuItem = Class.forName(type).getDeclaredConstructor().newInstance() as JMenuItem
+            menuItem.horizontalTextPosition = JMenuItem.RIGHT
             menuItem.action = action
             menuItem.isSelected = "on".equals(attributes.getValue("actionMode"), ignoreCase = true)
             Companion.actions[name] = action!!
@@ -362,21 +362,6 @@ class MenuHandler private constructor() : DefaultHandler() {
         private val stack = Stack<JMenu>()
         private val logger = Logger.getLogger("sted.ui.MenuHandler")
 
-        //        private var lookAndFeelInfos: Array<LookAndFeelInfo>
-        @JvmStatic
-        var instance: MenuHandler? = null
-            get() {
-                if (null == field) {
-                    try {
-                        field = MenuHandler()
-                        field!!.loadMenu(getResource("config.menu"))
-                    } catch (e: Exception) {
-                        logger.throwing("sted.STEDGUI", "main", e)
-                    }
-                }
-                return field
-            }
-            private set
 
         @JvmStatic
         fun getToolTips(): Map<String, String> {
@@ -439,7 +424,7 @@ class MenuHandler private constructor() : DefaultHandler() {
         ) {
             val menuHandler = instance
             require(!fileName.isNullOrBlank()) { "Invalid File name: $fileName" }
-            var menuItem = menuHandler!!.getMenuItem(fileName)
+            var menuItem = menuHandler.getMenuItem(fileName)
             // check if the menu item already exists.. if not add new
             // this check is done only if cachecheck is enabled.. opensamplefontmap does not require this
             if (!checkInCache || menuItem == null) {
@@ -512,7 +497,7 @@ class MenuHandler private constructor() : DefaultHandler() {
         @JvmStatic
         val userOptions: String
             get() {
-                val menuItems = instance!!.menuItems
+                val menuItems = instance.menuItems
                 val keys = menuItems.keys.iterator()
                 val userOptions = StringBuilder()
                 while (keys.hasNext()) {
@@ -550,7 +535,7 @@ class MenuHandler private constructor() : DefaultHandler() {
                 )
                 menuItem.name = lookAndFeelInfo.name
                 menuItem.action = lafAction
-                menuHandler!!.addMenuItem(menuItem)
+                menuHandler.addMenuItem(menuItem)
                 if (menuItem.name == curLookAndFeel.name) {
                     menuItem.isSelected = true
                 }
@@ -560,5 +545,18 @@ class MenuHandler private constructor() : DefaultHandler() {
             }
         }
 
+        //        private var lookAndFeelInfos: Array<LookAndFeelInfo>
+        @JvmStatic
+        val instance: MenuHandler by lazy {
+            MenuHandler()
+        }
+    }
+
+    init {
+        try {
+            loadMenu(getResource("config.menu"))
+        } catch (e: Exception) {
+            logger.throwing("sted.ui.MenuHandler", "loadMenu", e)
+        }
     }
 }

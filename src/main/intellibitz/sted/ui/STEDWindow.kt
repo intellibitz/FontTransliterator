@@ -40,7 +40,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         val imageIcon = getSystemResourceIcon(getSetting("icon.sted"))
         if (imageIcon != null) iconImage = imageIcon.image
         statusEvent = StatusEvent(this)
-        val menuBar = MenuHandler.instance!!.getMenuBar("STED-MenuBar")
+        val menuBar = MenuHandler.instance.getMenuBar("STED-MenuBar")
         loadLookAndFeelMenu()
 
         // load the menubar for the application
@@ -58,7 +58,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         gridBagConstraints.gridy = 0
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL
         fireStatusPosted("30")
-        val toolBar = MenuHandler.instance!!.getToolBar(Resources.MENUBAR_STED)
+        val toolBar = MenuHandler.instance.getToolBar(Resources.MENUBAR_STED)
         gridBagLayout.setConstraints(toolBar, gridBagConstraints)
 
         // adds the toolbar for the app
@@ -96,7 +96,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
     fun load() {
         // status panel added as status listener to recieve status messages
         desktop.addStatusListener(statusPanel)
-        val actions = MenuHandler.instance!!.actions
+        val actions = MenuHandler.instance.actions
         for (action in actions.values) {
             if (action is STEDWindowAction) {
                 action.addStatusListener(statusPanel)
@@ -128,7 +128,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
     }
 
     private fun setUserOptions() {
-        val menuItems = MenuHandler.instance!!.menuItems
+        val menuItems = MenuHandler.instance.menuItems
         for (key in menuItems.keys) {
             val menuItem = menuItems[key]
             val action = menuItem!!.action

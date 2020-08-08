@@ -18,8 +18,8 @@ open class ItemListenerAction : STEDWindowAction(), ItemListener {
         if (e.source is AbstractButton) {
             val name = (e.source as AbstractButton).action?.getValue(NAME) as String
             val state = !(ItemEvent.DESELECTED == e.stateChange)
-            instance?.getMenuItem(name)?.isSelected = state
-            instance?.getToolButton(name)?.isSelected = state
+            instance.getMenuItem(name)?.isSelected = state
+            instance.getToolButton(name)?.isSelected = state
 //            val stedWindow = sTEDWindow!!
             //            getSTEDWindow().convertSampleText();
         }
