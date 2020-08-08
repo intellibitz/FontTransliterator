@@ -1,17 +1,11 @@
-package sted.actions;
+package sted.actions
 
-import sted.ui.MenuHandler;
+import sted.ui.MenuHandler.Companion.clearReOpenItems
+import sted.ui.MenuHandler.Companion.instance
+import java.awt.event.ActionEvent
 
-import java.awt.event.ActionEvent;
-
-public class ClearReOpenAction
-        extends STEDWindowAction {
-    public ClearReOpenAction() {
-        super();
+class ClearReOpenAction : STEDWindowAction() {
+    override fun actionPerformed(e: ActionEvent) {
+        clearReOpenItems(instance!!)
     }
-
-    public void actionPerformed(ActionEvent e) {
-        MenuHandler.clearReOpenItems(MenuHandler.getInstance());
-    }
-
 }

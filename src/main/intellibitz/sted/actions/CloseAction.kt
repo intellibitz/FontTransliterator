@@ -1,46 +1,26 @@
-package sted.actions;
+package sted.actions
 
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
-import java.awt.event.ActionEvent;
+import java.awt.event.ActionEvent
+import javax.swing.event.InternalFrameEvent
+import javax.swing.event.InternalFrameListener
 
-public class CloseAction
-        extends STEDWindowAction
-        implements InternalFrameListener {
-    public CloseAction() {
-        super();
+class CloseAction : STEDWindowAction(), InternalFrameListener {
+    override fun actionPerformed(e: ActionEvent) {
+        sTEDWindow!!.desktop.closeFontMap()
+        fireStatusPosted("FontMap closed")
     }
 
-    public void actionPerformed(ActionEvent e) {
-        getSTEDWindow().getDesktop().closeFontMap();
-        fireStatusPosted("FontMap closed");
+    override fun internalFrameActivated(e: InternalFrameEvent) {
+        isEnabled = true
     }
 
-    public void internalFrameActivated(InternalFrameEvent e) {
-        setEnabled(true);
+    override fun internalFrameClosed(e: InternalFrameEvent) {}
+    override fun internalFrameClosing(e: InternalFrameEvent) {
+        isEnabled = false
     }
 
-    public void internalFrameClosed(InternalFrameEvent e) {
-
-    }
-
-    public void internalFrameClosing(InternalFrameEvent e) {
-        setEnabled(false);
-    }
-
-    public void internalFrameDeactivated(InternalFrameEvent e) {
-
-    }
-
-    public void internalFrameDeiconified(InternalFrameEvent e) {
-
-    }
-
-    public void internalFrameIconified(InternalFrameEvent e) {
-
-    }
-
-    public void internalFrameOpened(InternalFrameEvent e) {
-    }
-
+    override fun internalFrameDeactivated(e: InternalFrameEvent) {}
+    override fun internalFrameDeiconified(e: InternalFrameEvent) {}
+    override fun internalFrameIconified(e: InternalFrameEvent) {}
+    override fun internalFrameOpened(e: InternalFrameEvent) {}
 }

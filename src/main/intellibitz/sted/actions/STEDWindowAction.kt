@@ -1,131 +1,101 @@
-package sted.actions;
+package sted.actions
 
-import sted.event.*;
-import sted.STEDGUI;
-import sted.ui.STEDWindow;
+import sted.STEDGUI
+import sted.event.*
+import sted.ui.STEDWindow
+import java.awt.event.*
+import java.util.logging.Logger
+import javax.swing.AbstractAction
 
-import javax.swing.*;
-import java.awt.event.*;
-import java.util.logging.Logger;
-
-public class STEDWindowAction
-        extends AbstractAction
-        implements WindowListener,
-        KeyListener,
-        WindowStateListener,
-        WindowFocusListener,
-        IStatusEventSource,
-        IMessageEventSource {
-
-    private STEDWindow stedWindow;
-    protected Logger logger;
-    private StatusEvent statusEvent;
-    private IStatusListener statusListener;
-    private MessageEvent messageEvent;
-    private IMessageListener messageListener;
-
-    public STEDWindowAction() {
-        super();
-        logger = Logger.getLogger(getClass().getName());
-        statusEvent = new StatusEvent(this);
-        messageEvent = new MessageEvent(this);
+open class STEDWindowAction : AbstractAction(), WindowListener, KeyListener, WindowStateListener, WindowFocusListener,
+    IStatusEventSource, IMessageEventSource {
+    private val statusEvent: StatusEvent
+    private val messageEvent: MessageEvent
+    @JvmField
+    protected var logger = Logger.getLogger(javaClass.name)
+    private var stedWindow: STEDWindow? = null
+    private var statusListener: IStatusListener? = null
+    private var messageListener: IMessageListener? = null
+    fun fireMessagePosted(message: String?) {
+        messageEvent.message = message
+        messageListener!!.messagePosted(messageEvent)
     }
 
-    public void fireMessagePosted(String message) {
-        messageEvent.setMessage(message);
-        messageListener.messagePosted(messageEvent);
+    override fun fireMessagePosted() {
+        messageListener!!.messagePosted(messageEvent)
     }
 
-    public void fireMessagePosted() {
-        messageListener.messagePosted(messageEvent);
+    override fun addMessageListener(messageListener: IMessageListener?) {
+        this.messageListener = messageListener
     }
 
-    public void addMessageListener(IMessageListener messageListener) {
-        this.messageListener = messageListener;
+    fun fireStatusPosted(message: String?) {
+        statusEvent.status = message
+        statusListener!!.statusPosted(statusEvent)
     }
 
-    public void fireStatusPosted(String message) {
-        statusEvent.setStatus(message);
-        statusListener.statusPosted(statusEvent);
+    override fun fireStatusPosted() {
+        statusListener!!.statusPosted(statusEvent)
     }
 
-    public void fireStatusPosted() {
-        statusListener.statusPosted(statusEvent);
+    override fun addStatusListener(statusListener: IStatusListener?) {
+        this.statusListener = statusListener
     }
 
-    public void addStatusListener(IStatusListener statusListener) {
-        this.statusListener = statusListener;
-    }
-
-    public void actionPerformed(ActionEvent e) {
-
-    }
-
-    public STEDWindow getSTEDWindow() {
-        if (null == stedWindow) {
-            stedWindow = STEDGUI.Companion.getSTEDWindow();
+    override fun actionPerformed(e: ActionEvent) {}
+    var sTEDWindow: STEDWindow?
+        get() {
+            if (null == stedWindow) {
+                stedWindow = STEDGUI.sTEDWindow
+            }
+            return stedWindow
         }
-        return stedWindow;
-    }
-
-    public void setSTEDWindow(STEDWindow stedWindow) {
-        this.stedWindow = stedWindow;
-    }
-
-    protected void showMessageDialog(String message) {
-        fireMessagePosted(message);
-    }
+        set(stedWindow) {
+            this.stedWindow = stedWindow
+        }
 
     /**
      * Invoked when a window has been opened.
      */
-    public void windowOpened(WindowEvent e) {
-    }
+    override fun windowOpened(e: WindowEvent) {}
 
     /**
      * Invoked when a window is in the process of being closed. The close
      * operation can be overridden at this point.
      */
-    public void windowClosing(WindowEvent e) {
-    }
+    override fun windowClosing(e: WindowEvent) {}
 
     /**
      * Invoked when a window has been closed.
      */
-    public void windowClosed(WindowEvent e) {
-    }
+    override fun windowClosed(e: WindowEvent) {}
 
     /**
      * Invoked when a window is iconified.
      */
-    public void windowIconified(WindowEvent e) {
-    }
+    override fun windowIconified(e: WindowEvent) {}
 
     /**
      * Invoked when a window is de-iconified.
      */
-    public void windowDeiconified(WindowEvent e) {
-    }
+    override fun windowDeiconified(e: WindowEvent) {}
 
     /**
      * Invoked when a window is activated.
      */
-    public void windowActivated(WindowEvent e) {
-    }
+    override fun windowActivated(e: WindowEvent) {}
 
     /**
      * Invoked when a window is de-activated.
      */
-    public void windowDeactivated(WindowEvent e) {
-    }
+    override fun windowDeactivated(e: WindowEvent) {}
 
     /**
      * Invoked when a window state is changed.
      *
      * @since 1.4
      */
-    public void windowStateChanged(WindowEvent e) {
-    }
+    override fun windowStateChanged(e: WindowEvent) {}
 
     /**
      * Invoked when the Window is set to be the focused Window, which means that
@@ -133,8 +103,7 @@ public class STEDWindowAction
      *
      * @since 1.4
      */
-    public void windowGainedFocus(WindowEvent e) {
-    }
+    override fun windowGainedFocus(e: WindowEvent) {}
 
     /**
      * Invoked when the Window is no longer the focused Window, which means that
@@ -143,18 +112,21 @@ public class STEDWindowAction
      *
      * @since 1.4
      */
-    public void windowLostFocus(WindowEvent e) {
-    }
-
-    public void keyTyped(KeyEvent e) {
+    override fun windowLostFocus(e: WindowEvent) {}
+    override fun keyTyped(e: KeyEvent) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void keyPressed(KeyEvent e) {
+    override fun keyPressed(e: KeyEvent) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void keyReleased(KeyEvent e) {
+    override fun keyReleased(e: KeyEvent) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    init {
+        statusEvent = StatusEvent(this)
+        messageEvent = MessageEvent(this)
     }
 }

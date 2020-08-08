@@ -1,52 +1,39 @@
-package sted.actions;
+package sted.actions
 
-import sted.event.FontMapChangeEvent;
-import sted.fontmap.FontMap;
-import sted.ui.STEDWindow;
+import sted.event.FontMapChangeEvent
+import java.awt.event.ActionEvent
+import javax.swing.JOptionPane
+import javax.swing.ListSelectionModel
+import javax.swing.event.ListSelectionEvent
 
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import java.awt.event.ActionEvent;
-import java.util.Collection;
-
-public class DeleteAction
-        extends CutAction {
-    public DeleteAction() {
-        super();
+class DeleteAction : CutAction() {
+    override fun valueChanged(e: ListSelectionEvent) {
+        val listSelectionModel = e.source as ListSelectionModel
+        isEnabled = listSelectionModel.minSelectionIndex >= 0
     }
 
-
-    public void valueChanged(ListSelectionEvent e) {
-        final ListSelectionModel listSelectionModel =
-                (ListSelectionModel) e.getSource();
-        setEnabled(listSelectionModel.getMinSelectionIndex() >= 0);
+    override fun actionPerformed(e: ActionEvent) {
+        val fontMap = sTEDWindow!!.desktop
+            .fontMap
+        val entries = delete()
+        pushUndo(entries!!, fontMap.entries.undo)
+        fontMap.isDirty = !entries.isEmpty()
+        fontMap.fireUndoEvent()
+        fireStatusPosted("Deleted")
     }
 
-    public void actionPerformed(ActionEvent e) {
-        final FontMap fontMap =
-                getSTEDWindow().getDesktop()
-                        .getFontMap();
-        final Collection entries = delete();
-        pushUndo(entries, fontMap.getEntries().getUndo());
-        fontMap.setDirty(!entries.isEmpty());
-        fontMap.fireUndoEvent();
-        fireStatusPosted("Deleted");
+    private fun delete(): Collection<*>? {
+        val stedWindow = sTEDWindow!!
+        val result = JOptionPane.showConfirmDialog(
+            stedWindow, "Do you want to delete selected row(s)", "confirm",
+            JOptionPane.OK_CANCEL_OPTION
+        )
+        return if (result == JOptionPane.OK_OPTION) {
+            cut()
+        } else null
     }
 
-    private Collection delete() {
-        final STEDWindow stedWindow = getSTEDWindow();
-        final int result = JOptionPane.showConfirmDialog
-                (stedWindow, "Do you want to delete selected row(s)", "confirm",
-                        JOptionPane.OK_CANCEL_OPTION);
-        if (result == JOptionPane.OK_OPTION) {
-            return cut();
-        }
-        return null;
+    override fun stateChanged(e: FontMapChangeEvent?) {
+        isEnabled = !selectedRows.isEmpty()
     }
-
-
-    public void stateChanged(FontMapChangeEvent e) {
-        setEnabled(!getSelectedRows().isEmpty());
-    }
-
 }

@@ -267,33 +267,85 @@ class MenuHandler private constructor() : DefaultHandler() {
 
     private fun newActionInstance(name: String): Action? {
         var action: Action? = null
-        when (name){
-            "New" -> { action = NewFontMapAction()}
-            "Open..." -> { action = OpenFontMapAction()}
-            "ReOpen" -> { action = ReOpenAction()}
-            "Clear List" -> { action = ClearReOpenAction()}
-            "Save" -> { action = SaveFontMapAction()}
-            "Save As..." -> { action = SaveAsAction()}
-            "ReLoad from Disk" -> { action = LoadFontMapAction()}
-            "Close" -> { action = CloseAction()}
-            "Exit" -> { action = ExitAction()}
-            "Undo" -> { action = UndoAction()}
-            "Redo" -> { action = RedoAction()}
-            "Cut" -> { action = CutAction()}
-            "Copy" -> { action = CopyAction()}
-            "Paste" -> { action = PasteAction()}
-            "Select All" -> { action = SelectAllAction()}
-            "Delete" -> { action = DeleteAction()}
-            "Input", "Output" -> { action = FileSelectAction()}
-            "Convert" -> { action = TransliterateAction()}
-            "Stop" -> { action = TransliterateStopAction()}
-            "Reverse Transliterate", "Preserve <Tags>" -> { action = ItemListenerAction()}
-            "Toolbar" -> { action = ViewAction.ViewToolBar()}
-            "Status Bar" -> { action = ViewAction.ViewStatus()}
-            "Mapping Rules" -> { action = ViewAction.ViewMapping()}
-            "Mapping Preview" -> { action = ViewAction.ViewSample()}
-            "Help Topics" -> { action = HelpAction()}
-            "About" -> { action = AboutAction()}
+        when (name) {
+            "New" -> {
+                action = NewFontMapAction()
+            }
+            "Open..." -> {
+                action = OpenFontMapAction()
+            }
+            "ReOpen" -> {
+                action = ReOpenAction()
+            }
+            "Clear List" -> {
+                action = ClearReOpenAction()
+            }
+            "Save" -> {
+                action = SaveFontMapAction()
+            }
+            "Save As..." -> {
+                action = SaveAsAction()
+            }
+            "ReLoad from Disk" -> {
+                action = LoadFontMapAction()
+            }
+            "Close" -> {
+                action = CloseAction()
+            }
+            "Exit" -> {
+                action = ExitAction()
+            }
+            "Undo" -> {
+                action = UndoAction()
+            }
+            "Redo" -> {
+                action = RedoAction()
+            }
+            "Cut" -> {
+                action = CutAction()
+            }
+            "Copy" -> {
+                action = CopyAction()
+            }
+            "Paste" -> {
+                action = PasteAction()
+            }
+            "Select All" -> {
+                action = SelectAllAction()
+            }
+            "Delete" -> {
+                action = DeleteAction()
+            }
+            "Input", "Output" -> {
+                action = FileSelectAction()
+            }
+            "Convert" -> {
+                action = TransliterateAction()
+            }
+            "Stop" -> {
+                action = TransliterateStopAction()
+            }
+            "Reverse Transliterate", "Preserve <Tags>" -> {
+                action = ItemListenerAction()
+            }
+            "Toolbar" -> {
+                action = ViewAction.ViewToolBar()
+            }
+            "Status Bar" -> {
+                action = ViewAction.ViewStatus()
+            }
+            "Mapping Rules" -> {
+                action = ViewAction.ViewMapping()
+            }
+            "Mapping Preview" -> {
+                action = ViewAction.ViewSample()
+            }
+            "Help Topics" -> {
+                action = HelpAction()
+            }
+            "About" -> {
+                action = AboutAction()
+            }
         }
         return action
     }
@@ -491,7 +543,7 @@ class MenuHandler private constructor() : DefaultHandler() {
             for (lookAndFeelInfo in lookAndFeelInfos) {
                 val menuItem = JRadioButtonMenuItem()
                 val lafAction = LAFAction()
-                lafAction.stedWindow = stedWindow
+                lafAction.sTEDWindow = stedWindow
                 lafAction.putValue(Action.NAME, lookAndFeelInfo.name)
                 lafAction.putValue(
                     Action.ACTION_COMMAND_KEY,
