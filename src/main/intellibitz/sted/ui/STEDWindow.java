@@ -97,7 +97,7 @@ public class STEDWindow
         container.add(statusPanel);
         fireStatusPosted("70");
         setUserOptions();
-        addMouseListener(AboutSTED.getInstance());
+        addMouseListener(AboutSTED.Companion.getInstance());
 
         ExitAction exitAction = new ExitAction();
         exitAction.setSTEDWindow(STEDWindow.this);

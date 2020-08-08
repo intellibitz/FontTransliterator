@@ -32,7 +32,7 @@ public class LAFAction
             if (null != help) {
                 collection.add(help);
             }
-            final AboutSTED aboutDialog = AboutSTED.getInstance();
+            final AboutSTED aboutDialog = AboutSTED.Companion.getInstance();
             if (null != aboutDialog) {
                 collection.add(aboutDialog);
             }

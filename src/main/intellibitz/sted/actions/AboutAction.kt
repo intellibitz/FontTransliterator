@@ -1,18 +1,11 @@
-package sted.actions;
+package sted.actions
 
-import sted.ui.AboutSTED;
+import sted.ui.AboutSTED.Companion.instance
+import java.awt.event.ActionEvent
+import javax.swing.AbstractAction
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-
-public class AboutAction
-        extends AbstractAction {
-    public AboutAction() {
-        super();
+class AboutAction : AbstractAction() {
+    override fun actionPerformed(e: ActionEvent) {
+        instance.isVisible = true
     }
-
-    public void actionPerformed(ActionEvent e) {
-        AboutSTED.getInstance().setVisible(true);
-    }
-
 }
