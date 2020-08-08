@@ -1,503 +1,483 @@
-package sted.ui;
+package sted.ui
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-import sted.actions.ItemListenerAction;
-import sted.actions.LAFAction;
-import sted.actions.OpenSampleFontMapAction;
-import sted.actions.ReOpenFontMapAction;
-import sted.fontmap.FontMap;
-import sted.io.Resources;
+import org.xml.sax.Attributes
+import org.xml.sax.SAXException
+import org.xml.sax.helpers.DefaultHandler
+import sted.actions.ItemListenerAction
+import sted.actions.LAFAction
+import sted.actions.OpenSampleFontMapAction
+import sted.actions.ReOpenFontMapAction
+import sted.fontmap.FontMap
+import sted.io.Resources
+import sted.io.Resources.getResource
+import sted.io.Resources.getSystemResourceIcon
+import java.awt.event.ItemListener
+import java.io.IOException
+import java.util.*
+import java.util.logging.Logger
+import javax.swing.*
+import javax.xml.parsers.ParserConfigurationException
+import javax.xml.parsers.SAXParserFactory
 
-import javax.swing.*;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.awt.*;
-import java.awt.event.ItemListener;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Stack;
-import java.util.logging.Logger;
+class MenuHandler private constructor() : DefaultHandler() {
+    private var menuBar: JMenuBar? = null
+    private var toolBar: JToolBar? = null
+    private var popupMenu: JPopupMenu? = null
 
-public class MenuHandler
-        extends DefaultHandler {
-    private static final Map<String, Action> actions = new HashMap<String, Action>();
-    private static final Map<String, String> toolTips = new HashMap<String, String>();
-    private static final Map<String, AbstractButton> toolButtons = new HashMap<String, AbstractButton>();
-    private static final Map<String, JMenuItem> menuItems = new HashMap<String, JMenuItem>();
-    private static final Map<String, JMenu> menus = new HashMap<String, JMenu>();
-    private static final Map<String, JPopupMenu> popupMenus = new HashMap<String, JPopupMenu>();
-    private static final Map<String, JMenuBar> menuBars = new HashMap<String, JMenuBar>();
-    private static final Map<String, JToolBar> toolBars = new HashMap<String, JToolBar>();
-    private static final Stack<JMenu> stack = new Stack<JMenu>();
-    private static final Logger logger = Logger.getLogger("sted.ui.MenuHandler");
-    private static MenuHandler menuHandler;
-    private static UIManager.LookAndFeelInfo[] lookAndFeelInfos;
-
-    static {
-        try {
-            synchronized (MenuHandler.class) {
-                menuHandler = new MenuHandler();
-                menuHandler.loadMenu(Resources.getResource("config.menu"));
-            }
-        } catch (Exception e) {
-            logger.throwing("sted.STEDGUI", "main", e);
-        }
-
+    @Throws(SAXException::class, ParserConfigurationException::class, IOException::class)
+    private fun loadMenu(xml: String?) {
+        val saxParserFactory = SAXParserFactory.newInstance()
+        saxParserFactory.isValidating = true
+        val saxParser = saxParserFactory.newSAXParser()
+        saxParser.parse(ClassLoader.getSystemResourceAsStream(xml), this)
     }
 
-    private JMenuBar menuBar;
-    private JToolBar toolBar;
-    private JPopupMenu popupMenu;
-
-    private MenuHandler() {
-        super();
+    fun getMenuBar(name: String): JMenuBar? {
+        return menuBars[name]
     }
 
-    public static Map<String, String> getToolTips() {
-        return toolTips;
+    fun getToolBar(name: String): JToolBar? {
+        return toolBars[name]
     }
 
-    public static Map<String, AbstractButton> getToolButtons() {
-        return toolButtons;
+    val menuItems: Map<String, JMenuItem?>
+        get() = Companion.menuItems
+    val tooltips: Map<String, String>
+        get() = toolTips
+    val actions: Map<String, Action>
+        get() = Companion.actions
+    val imageIcons: Map<String, ImageIcon?>
+        get() = Resources.imageIcons
+
+    fun getAction(name: String): Action? {
+        return Companion.actions[name]
     }
 
-    public static Map<String, JMenu> getMenus() {
-        return menus;
+    fun getToolButton(name: String): AbstractButton? {
+        return toolButtons[name]
     }
 
-    public static Map<String, JPopupMenu> getPopupMenus() {
-        return popupMenus;
+    fun getMenu(name: String): JMenu? {
+        return menus[name]
     }
 
-    public static Map<String, JMenuBar> getMenuBars() {
-        return menuBars;
+    fun getMenuItem(name: String): JMenuItem? {
+        return Companion.menuItems[name]
     }
 
-    public static Map<String, JToolBar> getToolBars() {
-        return toolBars;
+    fun removeMenuItem(name: String) {
+        Companion.menuItems.remove(name)
     }
 
-    public static MenuHandler getInstance() {
-        return menuHandler;
-    }
-
-    private static KeyStroke getAccelerator(String key) {
-        if (key != null && key.length() > 0) {
-            return KeyStroke.getKeyStroke(key);
-        }
-        return null;
-    }
-
-    public static void clearReOpenItems(MenuHandler menuHandler) {
-        final JMenu menu =
-                menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND);
-        final int sz = menu.getMenuComponentCount();
-        int i = sz - 2;
-        while (i > 0) {
-            final Component menuItem = menu.getMenuComponent(0);
-            menu.remove(0);
-            menuHandler.removeMenuItem(menuItem.getName());
-            i--;
-        }
-        menu.setEnabled(false);
-    }
-
-    public static void addReOpenItem(JMenu menu,
-                                     String fileName) {
-        addReOpenItem(menu, fileName, new ReOpenFontMapAction(), true);
-    }
-
-    public static void addSampleFontMapMenuItem(JMenu menu,
-                                                String fileName) {
-        addReOpenItem(menu, fileName, new OpenSampleFontMapAction(), false);
-    }
-
-    public static void addReOpenItem(JMenu menu,
-                                     String fileName, Action action, boolean checkInCache) {
-        final MenuHandler menuHandler = getInstance();
-        if (null == fileName || Resources.EMPTY_STRING.equals(fileName)) {
-            throw new IllegalArgumentException(
-                    "Invalid File name: " + fileName);
-        }
-        JMenuItem menuItem = menuHandler.getMenuItem(fileName);
-        // check if the menu item already exists.. if not add new
-        // this check is done only if cachecheck is enabled.. opensamplefontmap does not require this
-        if (!checkInCache || menuItem == null) {
-            menuItem = new JMenuItem(fileName);
-            action.putValue(Action.NAME, fileName);
-            action.putValue(Action.ACTION_COMMAND_KEY,
-                    Resources.ACTION_FILE_REOPEN_COMMAND);
-            menuItem.setName(fileName);
-            menuItem.setAction(action);
-            menuHandler.addMenuItem(menuItem);
-            // always insert as the first item
-            menu.insert(menuItem, 0);
-            menu.setEnabled(true);
+    fun addMenuItem(menuItem: JMenuItem) {
+        if (!Companion.menuItems.containsKey(menuItem.name)) {
+            Companion.menuItems[menuItem.name] = menuItem
         }
     }
 
-    public static void disableMenuItem(MenuHandler menuHandler, String fileName) {
-        disableMenuItem(
-                menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND),
-                fileName);
+    fun getPopupMenu(name: String): JPopupMenu? {
+        return popupMenus[name]
     }
 
-    private static void disableMenuItem(JMenu menu, String name) {
-        int count = menu.getItemCount();
-        int i = 0;
-        while (count > Resources.DEFAULT_MENU_COUNT) {
-            final JMenuItem menuItem = menu.getItem(i++);
-            menuItem.setEnabled(!name.equals(menuItem.getName()));
-            count--;
-        }
-        menu.setEnabled(menu.getItemCount() > Resources.DEFAULT_MENU_COUNT);
-    }
-
-    public static void enableReOpenItems(MenuHandler menuHandler) {
-        enableReOpenItems(
-                menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND));
-    }
-
-    public static void enableReOpenItems(JMenu menu) {
-        int count = menu.getItemCount();
-        int i = 0;
-        while (count > Resources.DEFAULT_MENU_COUNT) {
-            final JMenuItem menuItem = menu.getItem(i++);
-            menuItem.setEnabled(true);
-            count--;
-        }
-        menu.setEnabled(menu.getItemCount() > Resources.DEFAULT_MENU_COUNT);
-    }
-
-    public static void enableItemsInReOpenMenu(MenuHandler menuHandler,
-                                               FontMap fontMap) {
-        final JMenu menu =
-                menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND);
-        if (fontMap.isNew()) {
-            enableReOpenItems(menu);
-        } else {
-            disableMenuItem(menu, fontMap.getFileName());
-        }
-    }
-
-    public static String getUserOptions() {
-        final Map<String, JMenuItem> menuItems =
-                getInstance().getMenuItems();
-        final Iterator<String> keys = menuItems.keySet().iterator();
-        final StringBuffer userOptions = new StringBuffer();
-        while (keys.hasNext()) {
-            final String name = keys.next();
-            final JMenuItem menuItem = menuItems.get(name);
-            final Action action = menuItem.getAction();
-            if (ItemListenerAction.class.isInstance(action)) {
-                userOptions.append(name);
-                userOptions.append(Resources.SYMBOL_ASTERISK);
-                userOptions.append(menuItem.isSelected());
-                userOptions.append(Resources.NEWLINE_DELIMITER);
-            } else if (ReOpenFontMapAction.class.isInstance(action)) {
-                userOptions.append(
-                        Resources.ACTION_FILE_REOPEN_COMMAND + name.hashCode());
-                userOptions.append(Resources.SYMBOL_ASTERISK);
-                userOptions.append(name);
-                userOptions.append(Resources.NEWLINE_DELIMITER);
-            }
-        }
-        return userOptions.toString();
-    }
-
-    public static void loadLookAndFeelMenu(STEDWindow stedWindow) {
-        final MenuHandler menuHandler = getInstance();
-        lookAndFeelInfos = UIManager.getInstalledLookAndFeels();
-        final ButtonGroup buttonGroup = new ButtonGroup();
-        final LookAndFeel curLookAndFeel = UIManager.getLookAndFeel();
-        for (final UIManager.LookAndFeelInfo lookAndFeelInfo : lookAndFeelInfos) {
-            final JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem();
-            final LAFAction lafAction = new LAFAction();
-            lafAction.setSTEDWindow(stedWindow);
-            lafAction.putValue(Action.NAME, lookAndFeelInfo.getName());
-            lafAction.putValue(Action.ACTION_COMMAND_KEY,
-                    lookAndFeelInfo.getClassName());
-            menuItem.setName(lookAndFeelInfo.getName());
-            menuItem.setAction(lafAction);
-            menuHandler.addMenuItem(menuItem);
-            if (menuItem.getName().equals(curLookAndFeel.getName())) {
-                menuItem.setSelected(true);
-            }
-            buttonGroup.add(menuItem);
-            final JMenu menu = menuHandler.getMenu(Resources.ACTION_VIEW_LAF);
-            menu.add(menuItem);
-        }
-    }
-
-    public static boolean isLAF(String name) {
-        for (final UIManager.LookAndFeelInfo lookAndFeelInfo : lookAndFeelInfos) {
-            if (lookAndFeelInfo.getName().equals(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void loadMenu(String xml)
-            throws SAXException, ParserConfigurationException, IOException {
-        final SAXParserFactory saxParserFactory =
-                SAXParserFactory.newInstance();
-        saxParserFactory.setValidating(true);
-        final SAXParser saxParser = saxParserFactory.newSAXParser();
-        saxParser.parse(ClassLoader.getSystemResourceAsStream(xml), this);
-    }
-
-    public JMenuBar getMenuBar(String name) {
-        return menuBars.get(name);
-    }
-
-    public JToolBar getToolBar(String name) {
-        return toolBars.get(name);
-    }
-
-    public Map<String, JMenuItem> getMenuItems() {
-        return menuItems;
-    }
-
-    public Map<String, String> getTooltips() {
-        return toolTips;
-    }
-
-    public Map<String, Action> getActions() {
-        return actions;
-    }
-
-    public Map<String, ImageIcon> getImageIcons() {
-        return Resources.imageIcons;
-    }
-
-    public Action getAction(String name) {
-        return actions.get(name);
-    }
-
-    public AbstractButton getToolButton(String name) {
-        return toolButtons.get(name);
-    }
-
-    public JMenu getMenu(String name) {
-        return menus.get(name);
-    }
-
-    public JMenuItem getMenuItem(String name) {
-        return menuItems.get(name);
-    }
-
-    public void removeMenuItem(String name) {
-        menuItems.remove(name);
-    }
-
-    public void addMenuItem(JMenuItem menuItem) {
-        if (!menuItems.containsKey(menuItem.getName())) {
-            menuItems.put(menuItem.getName(), menuItem);
-        }
-    }
-
-    public JPopupMenu getPopupMenu(String name) {
-        return popupMenus.get(name);
-    }
-
-    public void startElement(String uri, String localName,
-                             String qName, Attributes attributes)
-            throws SAXException {
-        if ("menubar".equals(qName)) {
-            menuBar = new JMenuBar();
-            menuBar.setName(attributes.getValue("name"));
-            final String toolBarName = attributes.getValue("toolBarName");
-            toolBar = toolBars.get(toolBarName);
+    @Throws(SAXException::class)
+    override fun startElement(
+        uri: String, localName: String,
+        qName: String, attributes: Attributes
+    ) {
+        if ("menubar" == qName) {
+            menuBar = JMenuBar()
+            menuBar!!.name = attributes.getValue("name")
+            val toolBarName = attributes.getValue("toolBarName")
+            toolBar = toolBars[toolBarName]
             if (toolBar == null) {
-                toolBar = new JToolBar(JToolBar.HORIZONTAL);
-                toolBar.setName(toolBarName);
+                toolBar = JToolBar(JToolBar.HORIZONTAL)
+                toolBar!!.name = toolBarName
             }
-        } else if ("menu".equals(qName)) {
+        } else if ("menu" == qName) {
             try {
-                stack.push(createMenu(attributes));
-            } catch (Exception e) {
-                logger.severe("Unable to create Menu Item: " + e.getMessage());
-                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+                stack.push(createMenu(attributes))
+            } catch (e: Exception) {
+                logger.severe("Unable to create Menu Item: " + e.message)
+                e.printStackTrace() //To change body of catch statement use Options | File Templates.
             }
-        } else if ("popup_menu".equals(qName)) {
-            popupMenu = createPopupMenu(attributes);
-        } else if ("menuitem".equals(qName)) {
+        } else if ("popup_menu" == qName) {
+            popupMenu = createPopupMenu(attributes)
+        } else if ("menuitem" == qName) {
             if (popupMenu == null) {
-                final JMenu menu = stack.peek();
-                menu.add(createMenuItem(attributes));
+                val menu = stack.peek()
+                menu.add(createMenuItem(attributes))
             } else {
-                popupMenu.add(createMenuItem(attributes));
+                popupMenu!!.add(createMenuItem(attributes))
             }
-        } else if ("menuitemref".equals(qName)) {
+        } else if ("menuitemref" == qName) {
             if (popupMenu == null) {
-                final JMenu menu = stack.peek();
-                menu.add(createMenuItemRef(attributes));
+                val menu = stack.peek()
+                menu.add(createMenuItemRef(attributes))
             } else {
-                popupMenu.add(createMenuItemRef(attributes));
+                popupMenu!!.add(createMenuItemRef(attributes))
             }
-        } else if ("seperator".equals(qName)) {
+        } else if ("seperator" == qName) {
             if (popupMenu == null) {
-                final JMenu menu = stack.peek();
-                menu.addSeparator();
+                val menu = stack.peek()
+                menu.addSeparator()
             } else {
-                popupMenu.addSeparator();
+                popupMenu!!.addSeparator()
             }
         }
     }
 
-    public void endElement(String uri, String localName, String qName)
-            throws SAXException {
-        if ("menubar".equals(qName)) {
-            menuBars.put(menuBar.getName(), menuBar);
+    @Throws(SAXException::class)
+    override fun endElement(uri: String, localName: String, qName: String) {
+        if ("menubar" == qName) {
+            menuBars[menuBar!!.name] = menuBar
             // moved from getToolBar block
-            toolBar.setOrientation(JToolBar.HORIZONTAL);
-            toolBar.setFloatable(false);
-            toolBar.setRollover(true);
-            toolBar.add(Box.createVerticalGlue());
+            toolBar!!.orientation = JToolBar.HORIZONTAL
+            toolBar!!.isFloatable = false
+            toolBar!!.isRollover = true
+            toolBar!!.add(Box.createVerticalGlue())
             //
-            toolBars.put(toolBar.getName(), toolBar);
-        } else if ("menu".equals(qName)) {
-            final JMenu menu = stack.pop();
+            toolBars[toolBar!!.name] = toolBar
+        } else if ("menu" == qName) {
+            val menu = stack.pop()
             if (stack.isEmpty()) {
-                toolBar.add(Box.createHorizontalStrut(5));
-                menuBar.add(menu);
+                toolBar!!.add(Box.createHorizontalStrut(5))
+                menuBar!!.add(menu)
             } else {
-                final JMenu parent = stack.peek();
-                parent.add(menu);
+                val parent = stack.peek()
+                parent.add(menu)
             }
-            menus.put(menu.getName(), menu);
-        } else if ("popup_menu".equals(qName)) {
-            popupMenus.put(popupMenu.getName(), popupMenu);
+            menus[menu.name] = menu
+        } else if ("popup_menu" == qName) {
+            popupMenus[popupMenu!!.name] = popupMenu
         }
     }
 
-    private JMenu createMenu(Attributes attributes)
-            throws ClassNotFoundException, IllegalAccessException,
-            InstantiationException {
-        final JMenu menu = new JMenu();
-        final String name = attributes.getValue("name");
-        menu.setName(name);
-        menu.setText(name);
-        final String mnemonic = attributes.getValue("mnemonic");
-        menu.setMnemonic(mnemonic.charAt(0));
-        final String actionName = attributes.getValue("action");
+    @Throws(ClassNotFoundException::class, IllegalAccessException::class, InstantiationException::class)
+    private fun createMenu(attributes: Attributes): JMenu {
+        val menu = JMenu()
+        val name = attributes.getValue("name")
+        menu.name = name
+        menu.text = name
+        val mnemonic = attributes.getValue("mnemonic")
+        menu.setMnemonic(mnemonic[0])
+        val actionName = attributes.getValue("action")
         if (null != actionName) {
-            final Action action =
-                    (Action) Class.forName(actionName).newInstance();
-            action.putValue(Action.NAME, name);
-            action.putValue(Action.MNEMONIC_KEY, (int) mnemonic.charAt(0));
-            menu.setAction(action);
-            actions.put(name, action);
+            val action = Class.forName(actionName).newInstance() as Action
+            action.putValue(Action.NAME, name)
+            action.putValue(Action.MNEMONIC_KEY, mnemonic[0].toInt())
+            menu.action = action
+            Companion.actions[name] = action
         }
-        menu.setEnabled(Boolean.valueOf(attributes.getValue("actionEnabled")));
-        return menu;
+        menu.isEnabled = java.lang.Boolean.parseBoolean(attributes.getValue("actionEnabled"))
+        return menu
     }
 
-    private JPopupMenu createPopupMenu(Attributes attributes) {
-        final JPopupMenu menu = new JPopupMenu(attributes.getValue("name"));
-        menu.setName(attributes.getValue("name"));
-        return menu;
+    private fun createPopupMenu(attributes: Attributes): JPopupMenu {
+        val menu = JPopupMenu(attributes.getValue("name"))
+        menu.name = attributes.getValue("name")
+        return menu
     }
 
-    private JMenuItem createMenuItemRef(Attributes attributes) {
-        final JMenuItem menuItem = getMenuItem(attributes.getValue("name"));
-        final JMenuItem cloned = new JMenuItem(menuItem.getAction());
-        cloned.setName(menuItem.getName());
-        cloned.setText(menuItem.getText());
-        cloned.setSelected(menuItem.isSelected());
-        cloned.setHorizontalTextPosition(menuItem.getHorizontalTextPosition());
-        final ItemListener[] itemListeners = menuItem.getItemListeners();
+    private fun createMenuItemRef(attributes: Attributes): JMenuItem {
+        val menuItem = getMenuItem(attributes.getValue("name"))
+        val cloned = JMenuItem(menuItem!!.action)
+        cloned.name = menuItem.name
+        cloned.text = menuItem.text
+        cloned.isSelected = menuItem.isSelected
+        cloned.horizontalTextPosition = menuItem.horizontalTextPosition
+        val itemListeners = menuItem.itemListeners
         if (itemListeners != null) {
-            for (final ItemListener itemListener : itemListeners) {
-                cloned.addItemListener(itemListener);
+            for (itemListener in itemListeners) {
+                cloned.addItemListener(itemListener)
             }
         }
-        return cloned;
+        return cloned
     }
 
-    private JMenuItem createMenuItem(Attributes attributes) {
-        JMenuItem menuItem = null;
+    private fun createMenuItem(attributes: Attributes): JMenuItem? {
+        var menuItem: JMenuItem? = null
         try {
-            final String name = attributes.getValue("name");
-            final String type = attributes.getValue("type");
-            final String ic = attributes.getValue("icon");
-            final String tooltip = attributes.getValue("tooltip");
-            final String shortcut = attributes.getValue("mnemonic");
-            toolTips.put(name, tooltip);
-            final Action action = (Action) Class
-                    .forName(attributes.getValue("action")).newInstance();
-            action.putValue(Action.NAME, name);
+            val name = attributes.getValue("name")
+            val type = attributes.getValue("type")
+            val ic = attributes.getValue("icon")
+            val tooltip = attributes.getValue("tooltip")
+            val shortcut = attributes.getValue("mnemonic")
+            toolTips[name] = tooltip
+            val action = Class
+                .forName(attributes.getValue("action")).newInstance() as Action
+            action.putValue(Action.NAME, name)
             if (ic != null) {
-                final Icon icon = Resources.getSystemResourceIcon(ic);
-//                imageIcons.put(name, icon);
-                action.putValue(Action.SMALL_ICON, icon);
+                val icon: Icon? = getSystemResourceIcon(ic)
+                //                imageIcons.put(name, icon);
+                action.putValue(Action.SMALL_ICON, icon)
             }
-            action.putValue(Action.SHORT_DESCRIPTION, tooltip);
-            if (null != shortcut && shortcut.length() > 0) {
-                action.putValue(Action.MNEMONIC_KEY, (int) shortcut.charAt(0));
+            action.putValue(Action.SHORT_DESCRIPTION, tooltip)
+            if (null != shortcut && shortcut.length > 0) {
+                action.putValue(Action.MNEMONIC_KEY, shortcut[0].toInt())
             }
-            action.putValue(Action.ACCELERATOR_KEY,
-                    getAccelerator(attributes.getValue("accelerator")));
-            final String cmd = attributes.getValue("actionCommand");
-            action.putValue(Action.ACTION_COMMAND_KEY, cmd);
-            final String listener = attributes.getValue("listener");
+            action.putValue(
+                Action.ACCELERATOR_KEY,
+                getAccelerator(attributes.getValue("accelerator"))
+            )
+            val cmd = attributes.getValue("actionCommand")
+            action.putValue(Action.ACTION_COMMAND_KEY, cmd)
+            val listener = attributes.getValue("listener")
+            /*
             if (listener != null) {
-//                action.addPropertyChangeListener((PropertyChangeListener) Class.forName(listener).newInstance());
+                action.addPropertyChangeListener((PropertyChangeListener) Class.forName(listener).newInstance());
             }
-            final String enabled = attributes.getValue("actionEnabled");
+*/
+            val enabled = attributes.getValue("actionEnabled")
             if (enabled != null) {
-                action.setEnabled(Boolean.valueOf(enabled));
+                action.isEnabled = java.lang.Boolean.parseBoolean(enabled)
             }
-            menuItem = (JMenuItem) Class.forName(type).newInstance();
-            menuItem.setHorizontalTextPosition(JMenuItem.RIGHT);
-            menuItem.setAction(action);
-            menuItem.setSelected(
-                    "on".equalsIgnoreCase(attributes.getValue("actionMode")));
-            actions.put(name, action);
-            menuItems.put(name, menuItem);
-            final String button = attributes.getValue("toolButton");
-            final String buttonVisible =
-                    attributes.getValue("toolButtonVisible");
-            final String buttonTextVisible =
-                    attributes.getValue("toolButtonTextVisible");
-            if ("true".equalsIgnoreCase(buttonVisible)) {
-                final JComponent component =
-                        (JComponent) Class.forName(button).newInstance();
-                component.setToolTipText(tooltip);
-                if (AbstractButton.class.isInstance(component)) {
-                    final AbstractButton abstractButton =
-                            (AbstractButton) component;
-                    abstractButton.setAction(action);
-                    if (ItemListener.class.isInstance(action)) {
-                        abstractButton.addItemListener((ItemListener) action);
+            menuItem = Class.forName(type).newInstance() as JMenuItem
+            menuItem!!.horizontalTextPosition = JMenuItem.RIGHT
+            menuItem.action = action
+            menuItem.isSelected = "on".equals(attributes.getValue("actionMode"), ignoreCase = true)
+            Companion.actions[name] = action
+            Companion.menuItems[name] = menuItem
+            val button = attributes.getValue("toolButton")
+            val buttonVisible = attributes.getValue("toolButtonVisible")
+            val buttonTextVisible = attributes.getValue("toolButtonTextVisible")
+            if ("true".equals(buttonVisible, ignoreCase = true)) {
+                val component = Class.forName(button).getDeclaredConstructor().newInstance() as JComponent
+                component.toolTipText = tooltip
+                if (component is AbstractButton) {
+                    val abstractButton = component
+                    abstractButton.action = action
+                    if (action is ItemListener) {
+                        abstractButton.addItemListener(action as ItemListener)
                     }
-                    if ("false".equalsIgnoreCase(buttonTextVisible)) {
-                        abstractButton.setText("");
+                    if ("false".equals(buttonTextVisible, ignoreCase = true)) {
+                        abstractButton.text = ""
                     }
                 }
-                toolBar.add(component);
-                toolButtons.put(name, (AbstractButton) component);
+                toolBar!!.add(component)
+                if (component is AbstractButton) {
+                    toolButtons[name] = component
+                }
             }
-            if (ItemListener.class.isInstance(action)) {
-                menuItem.addItemListener((ItemListener) action);
+            if (action is ItemListener) {
+                menuItem.addItemListener(action as ItemListener)
             }
-        } catch (InstantiationException e) {
-            logger.severe("Unable to create Menu Item: " + e.getMessage());
-            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        } catch (IllegalAccessException e) {
-            logger.severe("Unable to create Menu Item: " + e.getMessage());
-            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
-        } catch (ClassNotFoundException e) {
-            logger.severe("Unable to create Menu Item: " + e.getMessage());
-            e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+        } catch (e: Exception) {
+            logger.severe("Unable to create Menu Item: " + e.message)
+            e.printStackTrace() //To change body of catch statement use Options | File Templates.
         }
-        return menuItem;
+        return menuItem
     }
 
+    companion object {
+        private val actions: MutableMap<String, Action> = HashMap()
+        private val toolTips: MutableMap<String, String> = HashMap()
+        private val toolButtons: MutableMap<String, AbstractButton> = HashMap()
+        private val menuItems: MutableMap<String, JMenuItem?> = HashMap()
+        private val menus: MutableMap<String, JMenu> = HashMap()
+        private val popupMenus: MutableMap<String, JPopupMenu?> = HashMap()
+        private val menuBars: MutableMap<String, JMenuBar?> = HashMap()
+        private val toolBars: MutableMap<String, JToolBar?> = HashMap()
+        private val stack = Stack<JMenu>()
+        private val logger = Logger.getLogger("sted.ui.MenuHandler")
+
+        //        private var lookAndFeelInfos: Array<LookAndFeelInfo>
+        @JvmStatic
+        var instance: MenuHandler? = null
+            get() {
+                if (null == field) {
+                    try {
+                        field = MenuHandler()
+                        field!!.loadMenu(getResource("config.menu"))
+                    } catch (e: Exception) {
+                        logger.throwing("sted.STEDGUI", "main", e)
+                    }
+                }
+                return field
+            }
+            private set
+
+        @JvmStatic
+        fun getToolTips(): Map<String, String> {
+            return toolTips
+        }
+
+        fun getToolButtons(): Map<String, AbstractButton> {
+            return toolButtons
+        }
+
+        fun getMenus(): Map<String, JMenu> {
+            return menus
+        }
+
+        fun getPopupMenus(): Map<String, JPopupMenu?> {
+            return popupMenus
+        }
+
+        fun getMenuBars(): Map<String, JMenuBar?> {
+            return menuBars
+        }
+
+        fun getToolBars(): Map<String, JToolBar?> {
+            return toolBars
+        }
+
+        private fun getAccelerator(key: String?): KeyStroke? {
+            return if (key != null && key.length > 0) {
+                KeyStroke.getKeyStroke(key)
+            } else null
+        }
+
+        @JvmStatic
+        fun clearReOpenItems(menuHandler: MenuHandler) {
+            val menu = menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
+            val sz = menu!!.menuComponentCount
+            var i = sz - 2
+            while (i > 0) {
+                val menuItem = menu.getMenuComponent(0)
+                menu.remove(0)
+                menuHandler.removeMenuItem(menuItem.name)
+                i--
+            }
+            menu.isEnabled = false
+        }
+
+        @JvmStatic
+        fun addSampleFontMapMenuItem(
+            menu: JMenu,
+            fileName: String?
+        ) {
+            addReOpenItem(menu, fileName, OpenSampleFontMapAction(), false)
+        }
+
+        @JvmOverloads
+        @JvmStatic
+        fun addReOpenItem(
+            menu: JMenu,
+            fileName: String?, action: Action = ReOpenFontMapAction(), checkInCache: Boolean = true
+        ) {
+            val menuHandler = instance
+            require(!fileName.isNullOrBlank()) { "Invalid File name: $fileName" }
+            var menuItem = menuHandler!!.getMenuItem(fileName)
+            // check if the menu item already exists.. if not add new
+            // this check is done only if cachecheck is enabled.. opensamplefontmap does not require this
+            if (!checkInCache || menuItem == null) {
+                menuItem = JMenuItem(fileName)
+                action.putValue(Action.NAME, fileName)
+                action.putValue(
+                    Action.ACTION_COMMAND_KEY,
+                    Resources.ACTION_FILE_REOPEN_COMMAND
+                )
+                menuItem.name = fileName
+                menuItem.action = action
+                menuHandler.addMenuItem(menuItem)
+                // always insert as the first item
+                menu.insert(menuItem, 0)
+                menu.isEnabled = true
+            }
+        }
+
+        @JvmStatic
+        fun disableMenuItem(menuHandler: MenuHandler, fileName: String) {
+            disableMenuItem(
+                menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND),
+                fileName
+            )
+        }
+
+        private fun disableMenuItem(menu: JMenu?, name: String) {
+            var count = menu!!.itemCount
+            var i = 0
+            while (count > Resources.DEFAULT_MENU_COUNT) {
+                val menuItem = menu.getItem(i++)
+                menuItem.isEnabled = name != menuItem.name
+                count--
+            }
+            menu.isEnabled = menu.itemCount > Resources.DEFAULT_MENU_COUNT
+        }
+
+        @JvmStatic
+        fun enableReOpenItems(menuHandler: MenuHandler) {
+            enableReOpenItems(
+                menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
+            )
+        }
+
+        @JvmStatic
+        fun enableReOpenItems(menu: JMenu?) {
+            var count = menu!!.itemCount
+            var i = 0
+            while (count > Resources.DEFAULT_MENU_COUNT) {
+                val menuItem = menu.getItem(i++)
+                menuItem.isEnabled = true
+                count--
+            }
+            menu.isEnabled = menu.itemCount > Resources.DEFAULT_MENU_COUNT
+        }
+
+        @JvmStatic
+        fun enableItemsInReOpenMenu(
+            menuHandler: MenuHandler,
+            fontMap: FontMap
+        ) {
+            val menu = menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
+            if (fontMap.isNew) {
+                enableReOpenItems(menu)
+            } else {
+                disableMenuItem(menu, fontMap.fileName)
+            }
+        }
+
+        @JvmStatic
+        val userOptions: String
+            get() {
+                val menuItems = instance!!.menuItems
+                val keys = menuItems.keys.iterator()
+                val userOptions = StringBuilder()
+                while (keys.hasNext()) {
+                    val name = keys.next()
+                    val menuItem = menuItems[name]
+                    val action = menuItem!!.action
+                    if (action is ItemListenerAction) {
+                        userOptions.append(name)
+                        userOptions.append(Resources.SYMBOL_ASTERISK)
+                        userOptions.append(menuItem.isSelected)
+                        userOptions.append(Resources.NEWLINE_DELIMITER)
+                    } else if (action is ReOpenFontMapAction) {
+                        userOptions.append(Resources.ACTION_FILE_REOPEN_COMMAND + name.hashCode())
+                        userOptions.append(Resources.SYMBOL_ASTERISK)
+                        userOptions.append(name)
+                        userOptions.append(Resources.NEWLINE_DELIMITER)
+                    }
+                }
+                return userOptions.toString()
+            }
+
+        @JvmStatic
+        fun loadLookAndFeelMenu(stedWindow: STEDWindow?) {
+            val menuHandler = instance
+            val lookAndFeelInfos = UIManager.getInstalledLookAndFeels()
+            val buttonGroup = ButtonGroup()
+            val curLookAndFeel = UIManager.getLookAndFeel()
+            for (lookAndFeelInfo in lookAndFeelInfos) {
+                val menuItem = JRadioButtonMenuItem()
+                val lafAction = LAFAction()
+                lafAction.stedWindow = stedWindow
+                lafAction.putValue(Action.NAME, lookAndFeelInfo.name)
+                lafAction.putValue(
+                    Action.ACTION_COMMAND_KEY,
+                    lookAndFeelInfo.className
+                )
+                menuItem.name = lookAndFeelInfo.name
+                menuItem.action = lafAction
+                menuHandler!!.addMenuItem(menuItem)
+                if (menuItem.name == curLookAndFeel.name) {
+                    menuItem.isSelected = true
+                }
+                buttonGroup.add(menuItem)
+                val menu = menuHandler.getMenu(Resources.ACTION_VIEW_LAF)
+                menu!!.add(menuItem)
+            }
+        }
+
+    }
 }

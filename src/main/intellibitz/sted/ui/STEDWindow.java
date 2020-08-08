@@ -47,8 +47,7 @@ public class STEDWindow
 
         statusEvent = new StatusEvent(this);
 
-        final JMenuBar menuBar =
-                MenuHandler.getInstance().getMenuBar(Resources.MENUBAR_STED);
+        final JMenuBar menuBar = MenuHandler.getInstance().getMenuBar("STED-MenuBar");
         MenuHandler.loadLookAndFeelMenu(this);
 
         // load the menubar for the application
