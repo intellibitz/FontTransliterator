@@ -12,18 +12,18 @@ import java.util.logging.Logger
 import kotlin.system.exitProcess
 
 class STEDConsole(args: Array<String>) : IThreadListener {
-    private var fontMapName: String? = null
-    private var inputFileName: String? = null
-    private var outputFileName: String? = null
+    lateinit var fontMapName: String
+    lateinit var inputFileName: String
+    lateinit var outputFileName: String
     private var reverse = false
     private var html = false
 
     private fun performStedConsole() {
         try {
-            val input = File(inputFileName!!)
-            val output = File(outputFileName!!)
+            val input = File(inputFileName)
+            val output = File(outputFileName)
             // create console based FontMap.. no need to readFontMap fonts
-            val fontMap = FontMap(File(fontMapName!!), true)
+            val fontMap = FontMap(File(fontMapName), true)
             FontMapReader.read(fontMap)
             val converter = Converter(fontMap, input, output)
             converter.setReverseTransliterate(reverse)
@@ -45,6 +45,9 @@ class STEDConsole(args: Array<String>) : IThreadListener {
     }
 
     private fun loadArgs(args: Array<String>) {
+        fontMapName = System.getProperty(Resources.FONTMAP_FILE)
+        inputFileName = System.getProperty(Resources.INPUT_FILE)
+        outputFileName = System.getProperty(Resources.OUTPUT_FILE)
 /*
                 val len = args.size
                 val args1 = arrayOfNulls<String>(len - 1)
@@ -66,26 +69,17 @@ class STEDConsole(args: Array<String>) : IThreadListener {
         }
         reverse = args.contains("-r") || args.contains("-R")
         html = args.contains("-p") || args.contains("-P")
-        if (fontMapName == null) {
-            fontMapName = System.getProperty(Resources.FONTMAP_FILE)
-        }
-        if (inputFileName == null) {
-            inputFileName = System.getProperty(Resources.INPUT_FILE)
-        }
-        if (outputFileName == null) {
-            outputFileName = System.getProperty(Resources.OUTPUT_FILE)
-        }
-        if (null == fontMapName || "" == fontMapName) {
+        if (fontMapName.isBlank()) {
             logger.info("Invalid FontMap: $fontMapName")
             printUsage()
             exitProcess(1)
         }
-        if (null == inputFileName || "" == inputFileName) {
+        if (inputFileName.isBlank()) {
             logger.info("Invalid Input File: $inputFileName")
             printUsage()
             exitProcess(2)
         }
-        if (null == outputFileName || "" == outputFileName) {
+        if (outputFileName.isBlank()) {
             logger.info("Invalid Output File: $outputFileName")
             printUsage()
             exitProcess(3)
@@ -105,7 +99,7 @@ class STEDConsole(args: Array<String>) : IThreadListener {
     }
 
     companion object {
-        private lateinit var logger: Logger
+        private val logger: Logger = Logger.getLogger("sted.STEDConsole")
 
         @JvmStatic
         fun main(args: Array<String>) {
@@ -125,7 +119,6 @@ class STEDConsole(args: Array<String>) : IThreadListener {
     }
 
     init {
-        logger = Logger.getLogger("sted.STEDConsole")
         addLogger(logger)
         loadArgs(args)
         performStedConsole()
