@@ -1,5 +1,6 @@
 package sted.ui;
 
+import org.jetbrains.annotations.NotNull;
 import sted.actions.RedoAction;
 import sted.actions.UndoAction;
 import sted.event.*;
@@ -899,7 +900,7 @@ public class TabDesktop
         messageListener.messagePosted(messageEvent);
     }
 
-    public void addMessageListener(IMessageListener messageListener) {
+    public void addMessageListener(@NotNull IMessageListener messageListener) {
         this.messageListener = messageListener;
     }
 

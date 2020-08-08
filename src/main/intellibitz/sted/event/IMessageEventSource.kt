@@ -6,5 +6,5 @@ package sted.event
  */
 interface IMessageEventSource {
     fun fireMessagePosted()
-    fun addMessageListener(messageListener: IMessageListener?)
+    fun addMessageListener(messageListener: IMessageListener)
 }

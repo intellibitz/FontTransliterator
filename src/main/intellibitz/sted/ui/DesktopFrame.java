@@ -1,5 +1,6 @@
 package sted.ui;
 
+import org.jetbrains.annotations.NotNull;
 import sted.event.FontMapChangeEvent;
 import sted.event.FontMapChangeListener;
 import sted.event.FontMapEntriesChangeEvent;
@@ -298,7 +299,7 @@ public class DesktopFrame
         }
     }
 
-    public void stateChanged(FontMapEntriesChangeEvent e) {
+    public void stateChanged(@NotNull FontMapEntriesChangeEvent e) {
         desktopModel.fireFontMapChangedEvent();
     }
 

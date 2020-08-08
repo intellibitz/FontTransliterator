@@ -1,5 +1,6 @@
 package sted.ui;
 
+import org.jetbrains.annotations.NotNull;
 import sted.event.IMessageEventSource;
 import sted.event.IMessageListener;
 import sted.event.MessageEvent;
@@ -278,7 +279,7 @@ public class MappingTableModel
         messageListener.messagePosted(messageEvent);
     }
 
-    public void addMessageListener(IMessageListener messageListener) {
+    public void addMessageListener(@NotNull IMessageListener messageListener) {
         this.messageListener = messageListener;
     }
 }

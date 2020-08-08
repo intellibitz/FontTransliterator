@@ -24,7 +24,7 @@ class LoadFontMapAction : TableModelListenerAction(), FontMapChangeListener, Int
      *
      * @param e a ChangeEvent object
      */
-    override fun stateChanged(e: FontMapChangeEvent?) {
+    override fun stateChanged(e: FontMapChangeEvent) {
         isEnabled = e!!.fontMap.isReloadable
     }
 

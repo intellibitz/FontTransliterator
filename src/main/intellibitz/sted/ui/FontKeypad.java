@@ -1,5 +1,6 @@
 package sted.ui;
 
+import org.jetbrains.annotations.NotNull;
 import sted.actions.LoadFontAction;
 import sted.event.*;
 import sted.fontmap.FontInfo;
@@ -202,7 +203,7 @@ public abstract class FontKeypad
         }
     }
 
-    public void addKeypadListener(IKeypadListener keypadListener) {
+    public void addKeypadListener(@NotNull IKeypadListener keypadListener) {
         keypadListeners.add(IKeypadListener.class, keypadListener);
     }
 

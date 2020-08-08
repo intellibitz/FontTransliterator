@@ -26,7 +26,7 @@ class CopyAction : TableModelListenerAction(), FontMapChangeListener {
         stedWindow.desktop.addToClipboard(Resources.ENTRIES, copySelectedRows())
     }
 
-    override fun stateChanged(e: FontMapChangeEvent?) {
+    override fun stateChanged(e: FontMapChangeEvent) {
         isEnabled = !selectedRows.isEmpty()
     }
 }

@@ -29,7 +29,7 @@ open class STEDWindowAction : AbstractAction(), WindowListener, KeyListener, Win
         messageListener!!.messagePosted(messageEvent)
     }
 
-    override fun addMessageListener(messageListener: IMessageListener?) {
+    override fun addMessageListener(messageListener: IMessageListener) {
         this.messageListener = messageListener
     }
 
@@ -42,7 +42,7 @@ open class STEDWindowAction : AbstractAction(), WindowListener, KeyListener, Win
         statusListener!!.statusPosted(statusEvent)
     }
 
-    override fun addStatusListener(statusListener: IStatusListener?) {
+    override fun addStatusListener(statusListener: IStatusListener) {
         this.statusListener = statusListener
     }
 

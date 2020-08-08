@@ -56,7 +56,7 @@ class UndoAction : TableModelListenerAction(), FontMapChangeListener, ChangeList
         return !empty
     }
 
-    override fun stateChanged(e: FontMapChangeEvent?) {
+    override fun stateChanged(e: FontMapChangeEvent) {
         val fontMap = e!!.fontMap
         if (!setEnabled(fontMap)) {
             fontMap.isDirty = false

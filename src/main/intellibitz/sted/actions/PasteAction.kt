@@ -31,7 +31,7 @@ class PasteAction : TableModelListenerAction(), FontMapChangeListener {
         fireStatusPosted(Resources.ACTION_PASTE_COMMAND)
     }
 
-    override fun stateChanged(e: FontMapChangeEvent?) {
+    override fun stateChanged(e: FontMapChangeEvent) {
         isEnabled = !stedWindow.desktop
             .getClipboard()
             .isEmpty()

@@ -18,7 +18,7 @@ class NewFontMapAction : STEDWindowAction(), FontMapChangeListener, InternalFram
      *
      * @param fontMapChangeEvent a ChangeEvent object
      */
-    override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent?) {
+    override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent) {
         val fontMap = fontMapChangeEvent!!.fontMap
         isEnabled = if (fontMap == null) {
             true

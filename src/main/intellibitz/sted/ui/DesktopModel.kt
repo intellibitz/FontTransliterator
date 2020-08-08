@@ -37,10 +37,10 @@ class DesktopModel {
             if (listeners[i] === FontMapChangeListener::class.java) {
                 // Lazily create the event:
                 if (fontMapChangeEvent == null) {
-                    fontMapChangeEvent = FontMapChangeEvent(fontMap)
+                    fontMapChangeEvent = FontMapChangeEvent(fontMap!!)
                 }
                 (listeners[i + 1] as FontMapChangeListener)
-                    .stateChanged(fontMapChangeEvent)
+                    .stateChanged(fontMapChangeEvent!!)
             }
             i -= 2
         }

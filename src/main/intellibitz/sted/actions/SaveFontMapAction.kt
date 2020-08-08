@@ -3,7 +3,6 @@ package sted.actions
 import sted.event.FontMapChangeEvent
 import sted.event.FontMapChangeListener
 import sted.fontmap.FontMap
-import sted.ui.STEDWindow
 import java.awt.event.ActionEvent
 import javax.swing.event.TableModelEvent
 
@@ -22,7 +21,7 @@ class SaveFontMapAction : TableModelListenerAction(), FontMapChangeListener {
      *
      * @param e a ChangeEvent object
      */
-    override fun stateChanged(e: FontMapChangeEvent?) {
+    override fun stateChanged(e: FontMapChangeEvent) {
         isEnabled = isSaveable(e!!.fontMap)
     }
 

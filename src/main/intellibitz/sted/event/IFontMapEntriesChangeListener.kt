@@ -3,5 +3,5 @@ package sted.event
 import java.util.*
 
 interface IFontMapEntriesChangeListener : EventListener {
-    fun stateChanged(e: FontMapEntriesChangeEvent?)
+    fun stateChanged(e: FontMapEntriesChangeEvent)
 }

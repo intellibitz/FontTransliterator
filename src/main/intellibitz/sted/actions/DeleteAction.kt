@@ -31,7 +31,7 @@ class DeleteAction : CutAction() {
         } else null
     }
 
-    override fun stateChanged(e: FontMapChangeEvent?) {
+    override fun stateChanged(e: FontMapChangeEvent) {
         isEnabled = !selectedRows.isEmpty()
     }
 }

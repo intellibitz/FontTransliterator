@@ -28,8 +28,9 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         private set
     lateinit var statusPanel: StatusPanel
         private set
+    lateinit var statusEvent: StatusEvent
+        private set
     private var statusListener: IStatusListener? = null
-    private var statusEvent: StatusEvent? = null
     val logger: Logger = Logger.getLogger(STEDWindow::class.java.name)
     fun init() {
         setDefaultLookAndFeelDecorated(true)
@@ -118,7 +119,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         statusListener!!.statusPosted(statusEvent)
     }
 
-    override fun addStatusListener(statusListener: IStatusListener?) {
+    override fun addStatusListener(statusListener: IStatusListener) {
         this.statusListener = statusListener
     }
 
@@ -234,7 +235,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         }
     }
 
-    override fun messagePosted(event: MessageEvent?) {
+    override fun messagePosted(event: MessageEvent) {
         JOptionPane.showMessageDialog(this, event!!.message)
     }
 
