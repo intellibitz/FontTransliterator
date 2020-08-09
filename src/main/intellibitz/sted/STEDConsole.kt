@@ -11,14 +11,14 @@ import java.io.File
 import java.util.logging.Logger
 import kotlin.system.exitProcess
 
-class STEDConsole(args: Array<String>) : IThreadListener {
+class STEDConsole : IThreadListener {
     lateinit var fontMapName: String
     lateinit var inputFileName: String
     lateinit var outputFileName: String
     private var reverse = false
     private var html = false
 
-    private fun performStedConsole() {
+    fun run() {
         try {
             val input = File(inputFileName)
             val output = File(outputFileName)
@@ -44,48 +44,6 @@ class STEDConsole(args: Array<String>) : IThreadListener {
         }
     }
 
-    private fun loadArgs(args: Array<String>) {
-        fontMapName = System.getProperty(Resources.FONTMAP_FILE)
-        inputFileName = System.getProperty(Resources.INPUT_FILE)
-        outputFileName = System.getProperty(Resources.OUTPUT_FILE)
-/*
-                val len = args.size
-                val args1 = arrayOfNulls<String>(len - 1)
-                System.arraycopy(args, 1, args1, 0, len - 1)
-
- */
-        for (param in args) {
-            when {
-                param.startsWith("-map=") -> {
-                    fontMapName = param.substring(5)
-                }
-                param.startsWith("-in=") -> {
-                    inputFileName = param.substring(4)
-                }
-                param.startsWith("-out=") -> {
-                    outputFileName = param.substring(5)
-                }
-            }
-        }
-        reverse = args.contains("-r") || args.contains("-R")
-        html = args.contains("-p") || args.contains("-P")
-        if (fontMapName.isBlank()) {
-            logger.info("Invalid FontMap: $fontMapName")
-            printUsage()
-            exitProcess(1)
-        }
-        if (inputFileName.isBlank()) {
-            logger.info("Invalid Input File: $inputFileName")
-            printUsage()
-            exitProcess(2)
-        }
-        if (outputFileName.isBlank()) {
-            logger.info("Invalid Output File: $outputFileName")
-            printUsage()
-            exitProcess(3)
-        }
-    }
-
     override fun threadRunStarted(threadEvent: ThreadEvent) {}
     override fun threadRunning(threadEvent: ThreadEvent) {}
     override fun threadRunFailed(threadEvent: ThreadEvent) {
@@ -98,12 +56,55 @@ class STEDConsole(args: Array<String>) : IThreadListener {
         exitProcess(0)
     }
 
+    private fun loadArgs(args: Array<String>) {
+        console.fontMapName = System.getProperty(Resources.FONTMAP_FILE)
+        console.inputFileName = System.getProperty(Resources.INPUT_FILE)
+        console.outputFileName = System.getProperty(Resources.OUTPUT_FILE)
+        for (param in args) {
+            when {
+                param.startsWith("-map=") -> {
+                    console.fontMapName = param.substring(5)
+                }
+                param.startsWith("-in=") -> {
+                    console.inputFileName = param.substring(4)
+                }
+                param.startsWith("-out=") -> {
+                    console.outputFileName = param.substring(5)
+                }
+            }
+        }
+        console.reverse = args.contains("-r") || args.contains("-R")
+        console.html = args.contains("-p") || args.contains("-P")
+        if (console.fontMapName.isBlank()) {
+            logger.info("Invalid FontMap: $console.fontMapName")
+            printUsage()
+            exitProcess(1)
+        }
+        if (console.inputFileName.isBlank()) {
+            logger.info("Invalid Input File: $console.inputFileName")
+            printUsage()
+            exitProcess(2)
+        }
+        if (console.outputFileName.isBlank()) {
+            logger.info("Invalid Output File: $console.outputFileName")
+            printUsage()
+            exitProcess(3)
+        }
+    }
+
+    fun run(args: Array<String>) {
+        loadArgs(args)
+        run()
+    }
+
     companion object {
-        private val logger: Logger = Logger.getLogger("sted.STEDConsole")
+        val logger: Logger = Logger.getLogger(STEDConsole::class.java.name)
+        val console = STEDConsole()
 
         @JvmStatic
         fun main(args: Array<String>) {
-            STEDConsole(args)
+            logger.info("Launching STED Console: ")
+            console.run(args)
         }
 
         private fun printUsage() {
@@ -120,8 +121,5 @@ class STEDConsole(args: Array<String>) : IThreadListener {
 
     init {
         addLogger(logger)
-        logger.info("Launching STED Console: ")
-        loadArgs(args)
-        performStedConsole()
     }
 }

@@ -17,10 +17,10 @@ object Main {
         logger.info("Begin STED: args - " + args.asList())
         if (args.isNullOrEmpty()) {
             // launch GUI
-            STEDGUI()
+            STEDGUI.main(args)
         } else {
             // launch Console
-            STEDConsole(args)
+            STEDConsole.main(args)
         }
     }
 
