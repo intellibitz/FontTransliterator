@@ -15,8 +15,8 @@ class STEDConsole : IThreadListener {
     lateinit var fontMapName: String
     lateinit var inputFileName: String
     lateinit var outputFileName: String
-    private var reverse = false
-    private var html = false
+    var reverse = false
+    var html = false
 
     fun run() {
         try {
@@ -56,37 +56,37 @@ class STEDConsole : IThreadListener {
         exitProcess(0)
     }
 
-    private fun loadArgs(args: Array<String>) {
-        console.fontMapName = System.getProperty(Resources.FONTMAP_FILE)
-        console.inputFileName = System.getProperty(Resources.INPUT_FILE)
-        console.outputFileName = System.getProperty(Resources.OUTPUT_FILE)
+    fun loadArgs(args: Array<String>) {
+        fontMapName = System.getProperty(Resources.FONTMAP_FILE)
+        inputFileName = System.getProperty(Resources.INPUT_FILE)
+        outputFileName = System.getProperty(Resources.OUTPUT_FILE)
         for (param in args) {
             when {
                 param.startsWith("-map=") -> {
-                    console.fontMapName = param.substring(5)
+                    fontMapName = param.substring(5)
                 }
                 param.startsWith("-in=") -> {
-                    console.inputFileName = param.substring(4)
+                    inputFileName = param.substring(4)
                 }
                 param.startsWith("-out=") -> {
-                    console.outputFileName = param.substring(5)
+                    outputFileName = param.substring(5)
                 }
             }
         }
-        console.reverse = args.contains("-r") || args.contains("-R")
-        console.html = args.contains("-p") || args.contains("-P")
-        if (console.fontMapName.isBlank()) {
-            logger.info("Invalid FontMap: $console.fontMapName")
+        reverse = args.contains("-r") || args.contains("-R")
+        html = args.contains("-p") || args.contains("-P")
+        if (fontMapName.isBlank()) {
+            logger.info("Invalid FontMap: $fontMapName")
             printUsage()
             exitProcess(1)
         }
-        if (console.inputFileName.isBlank()) {
-            logger.info("Invalid Input File: $console.inputFileName")
+        if (inputFileName.isBlank()) {
+            logger.info("Invalid Input File: $inputFileName")
             printUsage()
             exitProcess(2)
         }
-        if (console.outputFileName.isBlank()) {
-            logger.info("Invalid Output File: $console.outputFileName")
+        if (outputFileName.isBlank()) {
+            logger.info("Invalid Output File: $outputFileName")
             printUsage()
             exitProcess(3)
         }
@@ -97,26 +97,26 @@ class STEDConsole : IThreadListener {
         run()
     }
 
+    fun printUsage() {
+        logger.info("STED Console Usage: ")
+        logger.info(
+            "   java -Dfontmap.file='<file>' -Dinput.file='<input>' -Doutput.file='<output>' sted.STEDConsole"
+        )
+        logger.info(" -OR- ")
+        logger.info(
+            "   java sted.STEDConsole -map='<file>' -in='<input>' -out='<output>'"
+        )
+    }
+
     companion object {
         val logger: Logger = Logger.getLogger(STEDConsole::class.java.name)
-        val console = STEDConsole()
 
         @JvmStatic
         fun main(args: Array<String>) {
             logger.info("Launching STED Console: ")
-            console.run(args)
+            STEDConsole().run(args)
         }
 
-        private fun printUsage() {
-            logger.info("STED Console Usage: ")
-            logger.info(
-                "   java -Dfontmap.file='<file>' -Dinput.file='<input>' -Doutput.file='<output>' sted.STEDConsole"
-            )
-            logger.info(" -OR- ")
-            logger.info(
-                "   java sted.STEDConsole -map='<file>' -in='<input>' -out='<output>'"
-            )
-        }
     }
 
     init {

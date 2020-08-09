@@ -15,6 +15,29 @@ import javax.swing.UIManager
 import javax.swing.UnsupportedLookAndFeelException
 
 class STEDGUI {
+    fun run() {
+        val splashWindow = SplashWindow(AboutText.instance)
+        centerComponent(splashWindow)
+        splashWindow.isVisible = true
+        splashWindow.setProgress(10)
+        sTEDWindow.addStatusListener(splashWindow)
+        sTEDWindow.init()
+        sTEDWindow.load()
+        splashWindow.setProgress(90)
+        sTEDWindow.isVisible = true
+        val fileName = System.getProperty("fontmap.file")
+        if (fileName.isNullOrBlank()) {
+//            File file = new File(Resources.getSampleFontMap());
+//            stedWindow.getDesktop().openFontMap(file);
+            sTEDWindow.desktop.newFontMap()
+        } else {
+            sTEDWindow.desktop
+                .openFontMap(File(fileName))
+        }
+        splashWindow.setProgress(100)
+        splashWindow.dispose()
+    }
+
     companion object {
         val logger: Logger = Logger.getLogger(STEDGUI::class.java.name)
         val sTEDWindow: STEDWindow = STEDWindow()
@@ -67,29 +90,6 @@ class STEDGUI {
             STEDGUI().run()
         }
 
-    }
-
-    fun run() {
-        val splashWindow = SplashWindow(AboutText.instance)
-        centerComponent(splashWindow)
-        splashWindow.isVisible = true
-        splashWindow.setProgress(10)
-        sTEDWindow.addStatusListener(splashWindow)
-        sTEDWindow.init()
-        sTEDWindow.load()
-        splashWindow.setProgress(90)
-        sTEDWindow.isVisible = true
-        val fileName = System.getProperty("fontmap.file")
-        if (fileName.isNullOrBlank()) {
-//            File file = new File(Resources.getSampleFontMap());
-//            stedWindow.getDesktop().openFontMap(file);
-            sTEDWindow.desktop.newFontMap()
-        } else {
-            sTEDWindow.desktop
-                .openFontMap(File(fileName))
-        }
-        splashWindow.setProgress(100)
-        splashWindow.dispose()
     }
 
     init {
