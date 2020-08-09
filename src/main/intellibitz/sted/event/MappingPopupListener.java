@@ -18,7 +18,7 @@ public class MappingPopupListener
     }
 
     public void load() {
-        popupMenu = MenuHandler.getInstance()
+        popupMenu = MenuHandler.getMenuHandler()
                 .getPopupMenu(Resources.MENU_POPUP_MAPPING);
     }
 
@@ -38,7 +38,7 @@ public class MappingPopupListener
     }
 
     private void setTableOnAction(JTable table) {
-        final Map actions = MenuHandler.getInstance().getActions();
+        final Map actions = MenuHandler.getMenuHandler().getActions();
         for (Object o : actions.values()) {
             final Object action = o;
             if (TableRowsSelectAction.class.isInstance(action)) {

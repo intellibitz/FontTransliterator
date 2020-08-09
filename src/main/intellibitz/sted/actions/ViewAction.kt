@@ -1,7 +1,7 @@
 package sted.actions
 
 import sted.io.Resources
-import sted.ui.MenuHandler.Companion.instance
+import sted.ui.MenuHandler.Companion.menuHandler
 import java.awt.event.ItemEvent
 import javax.swing.JPanel
 import javax.swing.JSplitPane
@@ -10,7 +10,7 @@ open class ViewAction : ItemListenerAction() {
     class ViewSample : ViewAction() {
         override fun itemStateChanged(e: ItemEvent) {
             val sampleText: JPanel = stedWindow.desktop
-                .getFontMapperDesktopFrame()
+                .fontMapperDesktopFrame
                 .getMapperPanel()
                 .getPreviewPanel()
             sampleText.isVisible = ItemEvent.SELECTED == e.stateChange
@@ -20,7 +20,7 @@ open class ViewAction : ItemListenerAction() {
 
     class ViewToolBar : ViewAction() {
         override fun itemStateChanged(e: ItemEvent) {
-            instance.getToolBar(Resources.MENUBAR_STED)
+            menuHandler.getToolBar(Resources.MENUBAR_STED)
                 ?.setVisible(
                     ItemEvent.SELECTED == e.stateChange
                 )
@@ -38,7 +38,7 @@ open class ViewAction : ItemListenerAction() {
         override fun itemStateChanged(e: ItemEvent) {
             val splitPane: JSplitPane = stedWindow
                 .desktop
-                .getFontMapperDesktopFrame()
+                .fontMapperDesktopFrame
                 .getMapperPanel().getMappingEntryPanel().getSplitPane()
             splitPane.bottomComponent.isVisible = ItemEvent.SELECTED == e.stateChange
             splitPane.resetToPreferredSizes()

@@ -16,7 +16,7 @@ class LoadFontMapAction : TableModelListenerAction(), FontMapChangeListener, Int
      */
     override fun tableChanged(e: TableModelEvent) {
         isEnabled = stedWindow.desktop
-            .getFontMap().isReloadable()
+            .fontMap.isReloadable()
     }
 
     /**
@@ -25,7 +25,7 @@ class LoadFontMapAction : TableModelListenerAction(), FontMapChangeListener, Int
      * @param e a ChangeEvent object
      */
     override fun stateChanged(e: FontMapChangeEvent) {
-        isEnabled = e!!.fontMap.isReloadable
+        isEnabled = e.fontMap.isReloadable
     }
 
     override fun actionPerformed(e: ActionEvent) {

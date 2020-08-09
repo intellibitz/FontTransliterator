@@ -21,7 +21,7 @@ class LAFAction : STEDWindowAction() {
             }
             val aboutDialog = AboutSTED.instance
             collection.add(aboutDialog)
-            val component: Component? = MenuHandler.instance
+            val component: Component? = MenuHandler.menuHandler
                 .getPopupMenu(Resources.MENU_POPUP_MAPPING)
             if (null != component) {
                 collection.add(component)

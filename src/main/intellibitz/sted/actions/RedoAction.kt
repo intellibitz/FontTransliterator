@@ -16,7 +16,7 @@ class RedoAction : TableModelListenerAction(), FontMapChangeListener, ChangeList
     override fun actionPerformed(e: ActionEvent) {
         redo(stedWindow)
         val fontMap: FontMap = stedWindow.desktop
-            .getFontMap()
+            .fontMap
         fontMap.isDirty = true
         fireStatusPosted("Redo")
         fontMap.fireUndoEvent()
@@ -70,7 +70,7 @@ class RedoAction : TableModelListenerAction(), FontMapChangeListener, ChangeList
     override fun tableChanged(e: TableModelEvent) {
         setEnabled(
             stedWindow.desktop
-                .getFontMap()
+                .fontMap
         )
     }
 

@@ -1,288 +1,208 @@
-package sted.ui;
+package sted.ui
 
-import org.jetbrains.annotations.NotNull;
-import sted.actions.RedoAction;
-import sted.actions.UndoAction;
-import sted.event.*;
-import sted.fontmap.FontMap;
-import sted.io.FileFilterHelper;
-import sted.io.FontMapReader;
-import sted.STEDGUI;
-import sted.io.FileHelper;
-import sted.io.Resources;
-import sted.widgets.ButtonTabComponent;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
-import javax.xml.transform.TransformerException;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyVetoException;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.logging.Logger;
-
+import sted.STEDGUI.Companion.busy
+import sted.STEDGUI.Companion.relax
+import sted.actions.RedoAction
+import sted.actions.UndoAction
+import sted.event.*
+import sted.fontmap.FontMap
+import sted.io.FileFilterHelper
+import sted.io.FileHelper.openFile
+import sted.io.FontMapReader
+import sted.io.Resources
+import sted.io.Resources.cleanIcon
+import sted.io.Resources.dirtyIcon
+import sted.io.Resources.getResource
+import sted.io.Resources.sTEDIcon
+import sted.ui.MenuHandler.Companion.addReOpenItem
+import sted.ui.MenuHandler.Companion.menuHandler
+import sted.widgets.ButtonTabComponent
+import java.awt.HeadlessException
+import java.awt.event.ActionEvent
+import java.awt.event.ActionListener
+import java.beans.PropertyVetoException
+import java.io.File
+import java.io.IOException
+import java.util.*
+import java.util.logging.Logger
+import javax.swing.*
+import javax.swing.event.ChangeEvent
+import javax.swing.event.ChangeListener
+import javax.swing.event.InternalFrameEvent
+import javax.swing.event.InternalFrameListener
+import javax.xml.transform.TransformerException
 
 /**
  * Desktop managing FontMap Internal Frame's
  */
-public class TabDesktop
-        extends JTabbedPane
-        implements InternalFrameListener,
-        IThreadListener,
-        FontMapChangeListener,
-        ChangeListener,
-        ActionListener,
-        IStatusEventSource,
-        IMessageEventSource {
+class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMapChangeListener, ChangeListener,
+    ActionListener, IStatusEventSource, IMessageEventSource {
+    private val desktopPane = JDesktopPane()
+    private val frameNumberIndex = FrameNumberIndex()
 
-
-    /**
-     * FrameNumberIndex <br> Generates Unique Id for New fontmap frames
-     */
-    private static class FrameNumberIndex {
-        private Set<Integer> indices = new TreeSet<Integer>();
-
-        public FrameNumberIndex() {
-            super();
-        }
-
-        /**
-         * if the index is new, add it if the index is existing, then find free
-         * index and add it
-         *
-         * @param indx
-         * @return
-         */
-        public int addNewIndex(int indx) {
-            int sz = indices.size();
-            if (!containsIndex(indx) && indx >= sz) {
-                indices.add(indx);
-                return indx;
-            } else {
-                for (int i = 1; i <= sz; i++) {
-                    if (!containsIndex(i)) {
-                        indices.add(i);
-                        return i;
-                    }
-                }
-            }
-            return indx;
-        }
-
-        public boolean removeIndex(int indx) {
-            return indices.remove(indx);
-        }
-
-        public boolean containsIndex(int indx) {
-            for (Integer indice : indices) {
-                if (indice == indx) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-
-    private JDesktopPane desktopPane;
-    private static final Logger logger =
-            Logger.getLogger(TabDesktop.class.getName());
-    private FrameNumberIndex frameNumberIndex = new FrameNumberIndex();
     // cache to hold fonmap internal frames used by this desktop
-    private Map<String, DesktopFrame> frameCache =
-            new HashMap<String, DesktopFrame>();
+    private val frameCache: MutableMap<String, DesktopFrame?> = HashMap()
+
     // cache to hold new/open fontmaps
     //    private Map<String, FontMap> fontMapCache = new HashMap<String, FontMap>();
     // Tabbed Desktop
     //    private JTabbedPane desktopFrames;
     //    private DesktopFrame fontMapperDesktopFrame;
     // clipboard for fontmap edits
-    private Map<String, Collection> clipboard =
-            new HashMap<String, Collection>();
-    private IStatusListener statusListener;
-    private StatusEvent statusEvent;
-    private IMessageListener messageListener;
-    private MessageEvent messageEvent;
-
-
-    public TabDesktop() {
-        super();
-    }
-
-    public void init() {
-        desktopPane = new JDesktopPane();
+    private val clipboard: MutableMap<String, Collection<*>> = HashMap()
+    private var statusListener: IStatusListener? = null
+    private var statusEvent: StatusEvent? = null
+    private var messageListener: IMessageListener? = null
+    private var messageEvent: MessageEvent? = null
+    fun init() {
         // we need to listen to our own events here
         // to update the desktop
-        addChangeListener(this);
-        statusEvent = new StatusEvent(this);
-        messageEvent = new MessageEvent(this);
-        setVisible(true);
+        addChangeListener(this)
+        statusEvent = StatusEvent(this)
+        messageEvent = MessageEvent(this)
+        isVisible = true
     }
 
-    public void load() {
+    fun load() {}
+    fun fireStatusPosted(message: String?) {
+        statusEvent!!.status = message
+        statusListener!!.statusPosted(statusEvent!!)
     }
 
-    public void fireStatusPosted(String message) {
-        statusEvent.setStatus(message);
-        statusListener.statusPosted(statusEvent);
+    override fun fireStatusPosted() {
+        statusListener!!.statusPosted(statusEvent!!)
     }
 
-    public void fireStatusPosted() {
-        statusListener.statusPosted(statusEvent);
+    override fun addStatusListener(statusListener: IStatusListener) {
+        this.statusListener = statusListener
     }
 
-    public void addStatusListener(IStatusListener statusListener) {
-        this.statusListener = statusListener;
+    fun addTab(desktopFrame: DesktopFrame) {
+        addTab(desktopFrame.title, desktopFrame)
     }
 
-    public void addTab(DesktopFrame desktopFrame) {
-        addTab(desktopFrame.getTitle(), desktopFrame);
-    }
-
-    public void addTab(String title,
-                       DesktopFrame desktopFrame) {
-        desktopFrame.setTitle(title);
-
-        desktopFrame.removeInternalFrameListener(this);
-        desktopFrame.addInternalFrameListener(this);
-
-        desktopFrame.getModel().removeFontMapChangeListener(this);
-        desktopFrame.getModel().addFontMapChangeListener(this);
-
-        super.addTab(title, Resources.getSTEDIcon(),
-                desktopFrame,
-                Resources.getResource(Resources.TIP_TAB_FONTMAP));
-        initTabComponent(getTabCount() - 1, title);
-        setEnabledAt(getTabCount() - 1, true);
-        setSelectedIndex(getTabCount() - 1);
-//        setSelectedComponent(desktopFrame);
+    fun addTab(title: String, desktopFrame: DesktopFrame) {
+        desktopFrame.title = title
+        desktopFrame.removeInternalFrameListener(this)
+        desktopFrame.addInternalFrameListener(this)
+        desktopFrame.model.removeFontMapChangeListener(this)
+        desktopFrame.model.addFontMapChangeListener(this)
+        super.addTab(title, sTEDIcon, desktopFrame, getResource("tip.tab.fontmap"))
+        initTabComponent(tabCount - 1, title)
+        setEnabledAt(tabCount - 1, true)
+        selectedIndex = tabCount - 1
+        //        setSelectedComponent(desktopFrame);
 //        desktopPane.setSelectedFrame(desktopFrame);
         try {
-            desktopFrame.setSelected(true);
-        } catch (PropertyVetoException e) {
-            e.printStackTrace();
+            desktopFrame.isSelected = true
+        } catch (e: PropertyVetoException) {
+            e.printStackTrace()
         }
-//        stedWindow.selectTab();
+        //        stedWindow.selectTab();
 //        stedWindow.setState(JFrame.MAXIMIZED_BOTH);
 //        stedWindow.setExtendedState(JFrame.MAXIMIZED_BOTH);
 //        this.updateUI();
     }
 
-    private void initTabComponent(int i, String title) {
-        ButtonTabComponent buttonTabComponent =
-                new ButtonTabComponent("TabComponent " + i, this);
-        buttonTabComponent.getTabTitle().setIcon(Resources.getCleanIcon());
-        buttonTabComponent.getTabTitle().setText(title);
-        buttonTabComponent.addActionListener(this);
-        setTabComponentAt(i,
-                buttonTabComponent);
+    private fun initTabComponent(i: Int, title: String) {
+        val buttonTabComponent = ButtonTabComponent("TabComponent $i", this)
+        buttonTabComponent.tabTitle.icon = cleanIcon
+        buttonTabComponent.tabTitle.text = title
+        buttonTabComponent.addActionListener(this)
+        setTabComponentAt(i, buttonTabComponent)
     }
 
-    public int closeFontMap() {
-        return closeFontMap(getFontMapperDesktopFrame());
-    }
-
-    public int closeFontMap(DesktopFrame desktopFrame) {
-        int i = saveDirty(desktopFrame);
+    @JvmOverloads
+    fun closeFontMap(desktopFrame: DesktopFrame = fontMapperDesktopFrame): Int {
+        val i = saveDirty(desktopFrame)
         if (JOptionPane.CANCEL_OPTION != i) {
-            int index = getSelectedIndex();
+            var index = selectedIndex
             // todo: hacking because the first frame not getting selected by default
             if (index == -1) {
-                index = getTabCount() - 1;
+                index = tabCount - 1
             }
-            removeTabFrameAt(index);
-            desktopFrame.close();
+            removeTabFrameAt(index)
+            desktopFrame.close()
         }
         // todo: this must be in activated
         // hacking it for now since the first frame we load by default is not
         // getting activated
-        enableCloseAction();
-        return i;
+        enableCloseAction()
+        return i
     }
 
-    public int closeFontMap(DesktopFrame desktopFrame, int i) {
-        int result = saveDirty(desktopFrame);
+    fun closeFontMap(desktopFrame: DesktopFrame, i: Int): Int {
+        val result = saveDirty(desktopFrame)
         if (JOptionPane.CANCEL_OPTION != result) {
-            removeTabFrameAt(i);
-            desktopFrame.close();
+            removeTabFrameAt(i)
+            desktopFrame.close()
         }
         // todo: this must be in activated
         // hacking it for now since the first frame we load by default is not
         // getting activated
-        enableCloseAction();
-        return i;
+        enableCloseAction()
+        return i
     }
 
-    private boolean removeTabFrameAt(int index) {
+    private fun removeTabFrameAt(index: Int): Boolean {
         if (index > -1) {
-            DesktopFrame desktopFrame =
-                    (DesktopFrame) getComponentAt(index);
-            String title = desktopFrame.getTitle();
+            val desktopFrame = getComponentAt(index) as DesktopFrame
+            val title = desktopFrame.title
             if (title.startsWith(Resources.ACTION_FILE_NEW_COMMAND)) {
-                int indx = getNewIndexNumber(title);
+                val indx = getNewIndexNumber(title)
                 // removes the tab index as generated by the newframeindex
-                frameNumberIndex.removeIndex(indx);
+                frameNumberIndex.removeIndex(indx)
             }
             // remove the tab with the tab index supplied
-            removeTabAt(index);
-            return true;
+            removeTabAt(index)
+            return true
         }
-        return false;
+        return false
     }
 
-    private int getNewIndexNumber(String title) {
+    private fun getNewIndexNumber(title: String): Int {
         return Integer.valueOf(title.substring(
-                Resources.ACTION_FILE_NEW_COMMAND.length()).trim());
+            Resources.ACTION_FILE_NEW_COMMAND.length
+        ).trim { it <= ' ' })
     }
 
-    private String createNewFrameTitle(int num) {
+    private fun createNewFrameTitle(num: Int): String {
         return Resources.ACTION_FILE_NEW_COMMAND + " " +
-                frameNumberIndex.addNewIndex(num);
+                frameNumberIndex.addNewIndex(num)
     }
 
-    public void stateChanged(FontMapChangeEvent e) {
+    override fun stateChanged(e: FontMapChangeEvent) {
 
         // select a new tab, if the fontmap is new
-        DesktopFrame desktopFrame =
-                getSelectedFrame();
-        String title = desktopFrame.getTitle();
+        val desktopFrame = selectedFrame
+        val title = desktopFrame.title
         if (null != title) {
-            int indx = indexOfTab(title);
+            val indx = indexOfTab(title)
             if (-1 == indx) {
-                addTab(desktopFrame);
+                addTab(desktopFrame)
             } else {
-                setEnabledAt(indx, true);
+                setEnabledAt(indx, true)
             }
-        }
-        // if title null, new frame
-        else {
-            addTab(desktopFrame);
+        } else {
+            addTab(desktopFrame)
         }
         // existing fontmaps, with existing tabs
-        ButtonTabComponent buttonTabComponent =
-                (ButtonTabComponent) getTabComponentAt(getSelectedIndex());
-        buttonTabComponent.getTabTitle().setIcon(Resources.getDirtyIcon());
-
-        FontMap fontMap = desktopFrame.getModel().getFontMap();
-        if (fontMap.getFontMapFile() != null) {
-            buttonTabComponent.getTabTitle()
-                    .setText(fontMap.getFontMapFile().getName());
+        val buttonTabComponent = getTabComponentAt(selectedIndex) as ButtonTabComponent
+        buttonTabComponent.tabTitle.icon = dirtyIcon
+        val fontMap = desktopFrame.model.fontMap
+        if (fontMap.fontMapFile != null) {
+            buttonTabComponent.tabTitle.text = fontMap.fontMapFile.name
         }
-        if (fontMap.isDirty()) {
-            buttonTabComponent.getTabTitle().setIcon(Resources.getDirtyIcon());
+        if (fontMap.isDirty) {
+            buttonTabComponent.tabTitle.icon = dirtyIcon
         } else {
-            buttonTabComponent.getTabTitle().setIcon(Resources.getCleanIcon());
+            buttonTabComponent.tabTitle.icon = cleanIcon
         }
         fireStatusPosted(
-                buttonTabComponent.getTabTitle().getText() + " Active");
-//        buttonTabComponent.updateUI();
-        this.updateUI();
+            buttonTabComponent.tabTitle.text + " Active"
+        )
+        //        buttonTabComponent.updateUI();
+        updateUI()
     }
 
     /**
@@ -292,36 +212,31 @@ public class TabDesktop
      *
      * @param e The change event of this tabbed pane
      */
-    public void stateChanged(ChangeEvent e) {
-        TabDesktop me = (TabDesktop) e.getSource();
-        int i = me.getSelectedIndex();
+    override fun stateChanged(e: ChangeEvent) {
+        val me = e.source as TabDesktop
+        var i = me.selectedIndex
         if (i != -1) {
-            DesktopFrame myframe =
-                    (DesktopFrame) getComponentAt(i);
-            desktopPane.setSelectedFrame(myframe);
-            i = me.getSelectedIndex();
-            ButtonTabComponent buttonTab =
-                    (ButtonTabComponent) getTabComponentAt(i);
-            String title = myframe.getTitle();
-            if (buttonTab != null) {
-                title = buttonTab.getTabTitle().getText();
-            }
-            fireStatusPosted(title + " Active");
+            val myframe = getComponentAt(i) as DesktopFrame
+            desktopPane.selectedFrame = myframe
+            i = me.selectedIndex
+            var title = myframe.title
+            val buttonTab = getTabComponentAt(i)
+            if (buttonTab is ButtonTabComponent)
+                title = buttonTab.tabTitle.text
+            fireStatusPosted("$title Active")
         }
-        enableCloseAction();
+        enableCloseAction()
     }
 
-    private void enableCloseAction(boolean flag) {
-        MenuHandler.getInstance()
-                .getMenuItem(Resources.ACTION_FILE_CLOSE_COMMAND)
-                .setEnabled(flag);
+    private fun enableCloseAction(flag: Boolean) {
+        menuHandler.getMenuItem("Close")?.setEnabled(flag)
     }
 
-    private void enableCloseAction() {
-        if (getTabCount() > 0) {
-            enableCloseAction(true);
+    private fun enableCloseAction() {
+        if (tabCount > 0) {
+            enableCloseAction(true)
         } else {
-            enableCloseAction(false);
+            enableCloseAction(false)
         }
     }
 
@@ -331,20 +246,25 @@ public class TabDesktop
      *
      * @param e
      */
-    public void actionPerformed(ActionEvent e) {
-        ButtonTabComponent buttonTabComponent =
-                (ButtonTabComponent) e.getSource();
-
-        int i = indexOfTabComponent(buttonTabComponent);
+    override fun actionPerformed(e: ActionEvent) {
+        val buttonTabComponent = e.source as ButtonTabComponent
+        val i = indexOfTabComponent(buttonTabComponent)
         if (i != -1) {
-            DesktopFrame desktopFrame =
-                    (DesktopFrame) getComponentAt(i);
-//            closeFrameTab(desktopFrame, i-1);
-            closeFontMap(desktopFrame, i);
+            val desktopFrame = getComponentAt(i) as DesktopFrame
+            //            closeFrameTab(desktopFrame, i-1);
+            closeFontMap(desktopFrame, i)
         }
     }
 
-/*
+    //hack!!
+    //todo: the frame must be selected, so we dont do this
+//        desktopFrame = (DesktopFrame) getComponentAt(getTabCount()-1);
+    private val selectedFrame: DesktopFrame
+        get() =//hack!!
+        //todo: the frame must be selected, so we dont do this
+//        desktopFrame = (DesktopFrame) getComponentAt(getTabCount()-1);
+            desktopPane.selectedFrame as DesktopFrame
+    /*
     private void closeFrameTab (DesktopFrame fontMapperDesktopFrame, int i)
     {
         if (JOptionPane.CANCEL_OPTION !=
@@ -356,152 +276,122 @@ public class TabDesktop
         }
     }
 */
-
-
-    private DesktopFrame getSelectedFrame() {
-        DesktopFrame desktopFrame =
-                (DesktopFrame) desktopPane.getSelectedFrame();
-        //hack!!
-        //todo: the frame must be selected, so we dont do this
-//        desktopFrame = (DesktopFrame) getComponentAt(getTabCount()-1);
-        return desktopFrame;
-    }
-
     /**
      * sets FontMap and invokes #fireFontMapChangeEvent ()
      *
      * @param desktopFrame
      */
-    public void addListenersToDesktopFrame(
-            DesktopFrame desktopFrame) {
-        MapperPanel mapperPanel = desktopFrame.getMapperPanel();
-        DesktopModel desktopModel = desktopFrame.getModel();
-        FontMap fontMap = desktopModel.getFontMap();
+    fun addListenersToDesktopFrame(
+        desktopFrame: DesktopFrame?
+    ) {
+        val mapperPanel = desktopFrame!!.mapperPanel
+        val desktopModel = desktopFrame.model
+        val fontMap = desktopModel.fontMap
         fontMap.removeFontMapChangeListener(
-                mapperPanel);
+            mapperPanel
+        )
         fontMap.addFontMapChangeListener(
-                mapperPanel);
-
+            mapperPanel
+        )
         fontMap.removeFontMapChangeListener(
-                mapperPanel.getMappingEntryPanel());
+            mapperPanel.mappingEntryPanel
+        )
         fontMap.addFontMapChangeListener(
-                mapperPanel.getMappingEntryPanel());
-
-        fontMap.removeFontMapChangeListener(desktopFrame);
-        fontMap.addFontMapChangeListener(desktopFrame);
-
-        final MenuHandler menuHandler = MenuHandler.getInstance();
-        final Map actions = menuHandler.getActions();
-        final FontMapChangeListener newAction = (FontMapChangeListener)
-                menuHandler.getAction(Resources.ACTION_FILE_NEW_COMMAND);
-        fontMap.removeFontMapChangeListener(newAction);
-        fontMap.addFontMapChangeListener(newAction);
-
-        final FontMapChangeListener reload = (FontMapChangeListener) actions
-                .get(Resources.ACTION_FILE_RELOAD);
-        fontMap.removeFontMapChangeListener(reload);
-        fontMap.addFontMapChangeListener(reload);
-
-        final FontMapChangeListener save = (FontMapChangeListener) actions
-                .get(Resources.ACTION_FILE_SAVE_COMMAND);
-        fontMap.removeFontMapChangeListener(save);
-        fontMap.addFontMapChangeListener(save);
-
-        final FontMapChangeListener paste = (FontMapChangeListener) actions
-                .get(Resources.ACTION_PASTE_COMMAND);
-        fontMap.removeFontMapChangeListener(paste);
-        fontMap.addFontMapChangeListener(paste);
-
-        final UndoAction undo = (UndoAction) actions
-                .get(Resources.ACTION_UNDO_COMMAND);
-        fontMap.removeUndoListener(undo);
-        undo.setEnabled(false);
-        fontMap.addUndoListener(undo);
-
-        this.removeChangeListener(undo);
-        this.addChangeListener(undo);
-
-        final RedoAction redo = (RedoAction) actions
-                .get(Resources.ACTION_REDO_COMMAND);
-        fontMap.removeRedoListener(redo);
-        redo.setEnabled(false);
-        fontMap.addRedoListener(redo);
-
-        this.removeChangeListener(redo);
-        this.addChangeListener(redo);
-
-        final FontKeypad1 keypad1 = mapperPanel.getFontKeypad1();
-        fontMap.removeFontListChangeListener(keypad1);
-        fontMap.addFontListChangeListener(keypad1);
-        desktopModel.addFontMapChangeListener(keypad1);
-
-        final FontKeypad2 keypad2 = mapperPanel.getFontKeypad2();
-        fontMap.removeFontListChangeListener(keypad2);
-        fontMap.addFontListChangeListener(keypad2);
-        desktopModel.addFontMapChangeListener(keypad2);
-
-
+            mapperPanel.mappingEntryPanel
+        )
+        fontMap.removeFontMapChangeListener(desktopFrame)
+        fontMap.addFontMapChangeListener(desktopFrame)
+        val menuHandler = menuHandler
+        val actions: Map<*, *> = menuHandler.actions
+        val newAction = menuHandler.getAction(Resources.ACTION_FILE_NEW_COMMAND) as FontMapChangeListener?
+        fontMap.removeFontMapChangeListener(newAction)
+        fontMap.addFontMapChangeListener(newAction)
+        val reload = actions[Resources.ACTION_FILE_RELOAD] as FontMapChangeListener?
+        fontMap.removeFontMapChangeListener(reload)
+        fontMap.addFontMapChangeListener(reload)
+        val save = actions[Resources.ACTION_FILE_SAVE_COMMAND] as FontMapChangeListener?
+        fontMap.removeFontMapChangeListener(save)
+        fontMap.addFontMapChangeListener(save)
+        val paste = actions[Resources.ACTION_PASTE_COMMAND] as FontMapChangeListener?
+        fontMap.removeFontMapChangeListener(paste)
+        fontMap.addFontMapChangeListener(paste)
+        val undo = actions[Resources.ACTION_UNDO_COMMAND] as UndoAction?
+        fontMap.removeUndoListener(undo)
+        undo!!.isEnabled = false
+        fontMap.addUndoListener(undo)
+        removeChangeListener(undo)
+        addChangeListener(undo)
+        val redo = actions[Resources.ACTION_REDO_COMMAND] as RedoAction?
+        fontMap.removeRedoListener(redo)
+        redo!!.isEnabled = false
+        fontMap.addRedoListener(redo)
+        removeChangeListener(redo)
+        addChangeListener(redo)
+        val keypad1 = mapperPanel.fontKeypad1
+        fontMap.removeFontListChangeListener(keypad1)
+        fontMap.addFontListChangeListener(keypad1)
+        desktopModel.addFontMapChangeListener(keypad1)
+        val keypad2 = mapperPanel.fontKeypad2
+        fontMap.removeFontListChangeListener(keypad2)
+        fontMap.addFontListChangeListener(keypad2)
+        desktopModel.addFontMapChangeListener(keypad2)
         desktopFrame.addInternalFrameListener(
-                (InternalFrameListener) menuHandler.getActions()
-                        .get(Resources.ACTION_FILE_NEW_COMMAND));
+            menuHandler.actions[Resources.ACTION_FILE_NEW_COMMAND] as InternalFrameListener?
+        )
         desktopFrame.addInternalFrameListener(
-                (InternalFrameListener) menuHandler.getActions
-                        ().get(Resources.ACTION_FILE_RELOAD_COMMAND));
+            menuHandler.actions[Resources.ACTION_FILE_RELOAD_COMMAND] as InternalFrameListener?
+        )
         desktopFrame.addInternalFrameListener(
-                (InternalFrameListener) menuHandler.getActions()
-                        .get(Resources.ACTION_FILE_REOPEN_COMMAND));
+            menuHandler.actions[Resources.ACTION_FILE_REOPEN_COMMAND] as InternalFrameListener?
+        )
         desktopFrame.addInternalFrameListener(
-                (InternalFrameListener) menuHandler.getActions()
-                        .get(Resources.ACTION_FILE_SAVEAS_COMMAND));
+            menuHandler.actions[Resources.ACTION_FILE_SAVEAS_COMMAND] as InternalFrameListener?
+        )
         desktopFrame.addInternalFrameListener(
-                (InternalFrameListener) menuHandler.getActions().get(
-                        Resources.ACTION_FILE_CLOSE_COMMAND));
-
-        desktopModel.removeFontMapChangeListener(newAction);
-        desktopModel.addFontMapChangeListener(newAction);
-        final FontMapChangeListener reopen =
-                (FontMapChangeListener) menuHandler.getActions
-                        ().get(Resources.ACTION_FILE_REOPEN_COMMAND);
-        desktopModel.removeFontMapChangeListener(reopen);
-        desktopModel.addFontMapChangeListener(reopen);
+            menuHandler.actions[Resources.ACTION_FILE_CLOSE_COMMAND] as InternalFrameListener?
+        )
+        desktopModel.removeFontMapChangeListener(newAction)
+        desktopModel.addFontMapChangeListener(newAction)
+        val reopen = menuHandler.actions[Resources.ACTION_FILE_REOPEN_COMMAND] as FontMapChangeListener?
+        desktopModel.removeFontMapChangeListener(reopen)
+        desktopModel.addFontMapChangeListener(reopen)
         desktopFrame
-                .addInternalFrameListener((InternalFrameListener) reopen);
-
-
+            .addInternalFrameListener(reopen as InternalFrameListener?)
     }
 
-    public DesktopModel createDesktopModel(
-            DesktopFrame desktopFrame, FontMap fontMap) {
-        DesktopModel desktopModel = new DesktopModel();
-        desktopModel.setFontMap(fontMap);
-        desktopFrame.setModel(desktopModel);
-
-        addListenersToDesktopFrame(desktopFrame);
-
-        desktopFrame.load();
-        return desktopModel;
+    fun createDesktopModel(
+        desktopFrame: DesktopFrame, fontMap: FontMap
+    ): DesktopModel {
+        val desktopModel = DesktopModel()
+        desktopModel.fontMap = fontMap
+        desktopFrame.model = desktopModel
+        addListenersToDesktopFrame(desktopFrame)
+        desktopFrame.load()
+        return desktopModel
     }
 
-    public void loadFontMap(File file) {
-        loadFontMap(getSelectedFrame(), file);
+    fun loadFontMap(file: File) {
+        loadFontMap(selectedFrame, file)
     }
 
-    public void loadFontMap(DesktopFrame desktopFrame,
-                            File file) {
-        DesktopModel desktopModel = createDesktopModel(
-                desktopFrame, new FontMap(file));
-        desktopModel.addFontMapChangeListener(this);
-        readFontMap(desktopModel);
-        fireStatusPosted("FontMap loaded");
+    fun loadFontMap(
+        desktopFrame: DesktopFrame,
+        file: File
+    ) {
+        val desktopModel = createDesktopModel(
+            desktopFrame, FontMap(file)
+        )
+        desktopModel.addFontMapChangeListener(this)
+        readFontMap(desktopModel)
+        fireStatusPosted("FontMap loaded")
     }
-
 
     /**
      * reads the FontMap from an external File
      *
      * @param desktopModel
      */
-    public void readFontMap(DesktopModel desktopModel) {
+    fun readFontMap(desktopModel: DesktopModel) {
         //TODO: move this somewhere applicable
 //        clear();
 //        final String path1 = fontMap.getFont1Path();
@@ -513,41 +403,45 @@ public class TabDesktop
 //        fontMap.setFontMapFile(file);
 //        fontMap.setFont1Path(path1);
 //        fontMap.setFont2Path(path2);
-        FontMap fontMap = desktopModel.getFontMap();
+        val fontMap = desktopModel.fontMap
         try {
-            final FontMapReader fontMapReader = new FontMapReader(fontMap);
-            fontMapReader.addThreadListener(this);
-            SwingUtilities.invokeLater(fontMapReader);
-        } catch (IllegalArgumentException e) {
+            val fontMapReader = FontMapReader(fontMap)
+            fontMapReader.addThreadListener(this)
+            SwingUtilities.invokeLater(fontMapReader)
+        } catch (e: IllegalArgumentException) {
             fireMessagePosted(
-                    "Cannot Read FontMap.. Failed: " + e.getMessage());
-            logger.severe("Cannot Read FontMap - Illegal Argument " +
-                    fontMap.getFontMapFile().getAbsolutePath());
-            fireStatusPosted("Cannot Read FontMap - Illegal Argument " +
-                    fontMap.getFontMapFile().getAbsolutePath());
+                "Cannot Read FontMap.. Failed: " + e.message
+            )
+            logger.severe(
+                "Cannot Read FontMap - Illegal Argument " +
+                        fontMap.fontMapFile.absolutePath
+            )
+            fireStatusPosted(
+                "Cannot Read FontMap - Illegal Argument " +
+                        fontMap.fontMapFile.absolutePath
+            )
         }
     }
 
     /**
      *
      */
-    public void openFontMap() {
-        final File selectedFile = FileHelper
-                .openFile("Please select FontMap location:", Resources.XML,
-                        "STED FontMap files", this);
-        if (selectedFile != null) {
-            openFontMap(selectedFile);
-        }
+    fun openFontMap() {
+        val selectedFile = openFile(
+            "Please select FontMap location:", Resources.XML,
+            "STED FontMap files", this
+        )
+        selectedFile?.let { openFontMap(it) }
     }
 
-
-    public void newFontMap() {
-        DesktopFrame desktopFrame =
-                loadNewFontMap();
-        int num = getTabCount() + 1;
-        addTab(createNewFrameTitle(num),
-                desktopFrame);
-        fireStatusPosted("New FontMap");
+    fun newFontMap() {
+        val desktopFrame = loadNewFontMap()
+        val num = tabCount + 1
+        addTab(
+            createNewFrameTitle(num),
+            desktopFrame
+        )
+        fireStatusPosted("New FontMap")
     }
 
     /**
@@ -558,21 +452,18 @@ public class TabDesktop
      *
      * @return DesktopFrame the newly added fontmap component
      */
-    public DesktopFrame loadNewFontMap() {
-        DesktopFrame desktopFrame =
-                createFontMapperDesktopFrame();
-        FontMap fontMap = new FontMap();
-        DesktopModel desktopModel =
-                createDesktopModel(desktopFrame, fontMap);
-//        fontMapCache.put(Resources.ACTION_FILE_NEW_COMMAND, fontMap);
-        desktopModel.fireFontMapChangedEvent();
-        return desktopFrame;
+    fun loadNewFontMap(): DesktopFrame {
+        val desktopFrame = createFontMapperDesktopFrame()
+        val fontMap = FontMap()
+        val desktopModel = createDesktopModel(desktopFrame, fontMap)
+        //        fontMapCache.put(Resources.ACTION_FILE_NEW_COMMAND, fontMap);
+        desktopModel.fireFontMapChangedEvent()
+        return desktopFrame
     }
 
-
-    public void reopenFontMap(String fileName) {
-        openFontMap(new File(fileName));
-/*
+    fun reopenFontMap(fileName: String?) {
+        openFontMap(File(fileName))
+        /*
         FontMap fontMap = getFontMap();
         // add it to the reopen menu.. one last check
         // TODO: remove the following.. typically reopen items must be added as part of events
@@ -607,39 +498,36 @@ public class TabDesktop
 */
     }
 
-    public void reloadFontMap() {
+    fun reloadFontMap() {
 //        readFontMap(getSelectedFrame().getModel());
-        DesktopFrame selectedFrame = getSelectedFrame();
-        File selectedFile =
-                selectedFrame.getModel().getFontMap().getFontMapFile();
-//        closeFontMap(selectedFrame);
-        removeTabFrameAt(getSelectedIndex());
-        frameCache.remove(selectedFrame.getModel().getFontMap().getFileName());
-//        fontMapCache
+        val selectedFrame = selectedFrame
+        val selectedFile = selectedFrame.model.fontMap.fontMapFile
+        //        closeFontMap(selectedFrame);
+        removeTabFrameAt(selectedIndex)
+        frameCache.remove(selectedFrame.model.fontMap.fileName)
+        //        fontMapCache
 //                .remove(selectedFrame.getModel().getFontMap().getFileName());
-        openFontMap(selectedFile);
+        openFontMap(selectedFile)
     }
 
-    public void openFontMap(File selectedFile) {
+    fun openFontMap(selectedFile: File) {
         try {
-            DesktopFrame desktopFrame =
-                    frameCache.get(selectedFile.getAbsolutePath());
+            var desktopFrame = frameCache[selectedFile.absolutePath]
             if (desktopFrame == null) {
-                desktopFrame = createFontMapperDesktopFrame();
+                desktopFrame = createFontMapperDesktopFrame()
                 //todo: repeat the logic of the frame creation, init and load
-                loadFontMap(desktopFrame, selectedFile);
-                DesktopModel desktopModel =
-                        desktopFrame.getModel();
-                FontMap fontMap = desktopModel.getFontMap();
-//                desktopModel.setFontMap(fontMap);
+                loadFontMap(desktopFrame, selectedFile)
+                val desktopModel = desktopFrame.model
+                val fontMap = desktopModel.fontMap
+                //                desktopModel.setFontMap(fontMap);
 //                fontMapCache.put(fontMap.getFileName(), fontMap);
-                frameCache.put(fontMap.getFileName(), desktopFrame);
+                frameCache[fontMap.fileName] = desktopFrame
             }
             // add it to the tabs
-            add(desktopFrame);
-            desktopPane.setSelectedFrame(desktopFrame);
-            desktopFrame.getModel().fireFontMapChangedEvent();
-//            showDesktopFrame();
+            add(desktopFrame)
+            desktopPane.selectedFrame = desktopFrame
+            desktopFrame.model.fireFontMapChangedEvent()
+            //            showDesktopFrame();
 /*
                 // try the cache first
                 fontMap = (FontMap) fontMapCache.get(selectedFile.getAbsolutePath());
@@ -652,122 +540,135 @@ public class TabDesktop
                     showDesktopFrame();
                 }
 */
-        } catch (HeadlessException ex) {
-            logger.throwing("sted.util.FontMapHelper",
-                    "readFontMap", ex);
-            JOptionPane.showMessageDialog(this,
-                    "Invalid FontMap " + selectedFile.getAbsolutePath());
-        } catch (IllegalArgumentException ex) {
-            logger.throwing("sted.util.FontMapHelper",
-                    "readFontMap", ex);
-            JOptionPane.showMessageDialog(this,
-                    "Load Failed: " + ex.getMessage());
+        } catch (ex: HeadlessException) {
+            logger.throwing(
+                "sted.util.FontMapHelper",
+                "readFontMap", ex
+            )
+            JOptionPane.showMessageDialog(
+                this,
+                "Invalid FontMap " + selectedFile.absolutePath
+            )
+        } catch (ex: IllegalArgumentException) {
+            logger.throwing(
+                "sted.util.FontMapHelper",
+                "readFontMap", ex
+            )
+            JOptionPane.showMessageDialog(
+                this,
+                "Load Failed: " + ex.message
+            )
         }
     }
 
-
-    private void saveFontMap() {
-        DesktopFrame desktopFrame =
-                getSelectedFrame();
-        FontMap fontMap = desktopFrame.getModel().getFontMap();
-        fontMap.setFont1(desktopFrame.getMapperPanel()
-                .getFontKeypad1().getSelectedFont());
-        fontMap.setFont2(desktopFrame.getMapperPanel()
-                .getFontKeypad2().getSelectedFont());
+    private fun saveFontMap() {
+        val desktopFrame = selectedFrame
+        var fontMap = desktopFrame.model.fontMap
+        fontMap.setFont1(
+            desktopFrame.mapperPanel
+                .fontKeypad1.selectedFont
+        )
+        fontMap.setFont2(
+            desktopFrame.mapperPanel
+                .fontKeypad2.selectedFont
+        )
         try {
-            fontMap = desktopFrame.getModel().saveFontMap();
+            fontMap = desktopFrame.model.saveFontMap()
             //add it to cache
 //            fontMapCache.put(fontMap.getFileName(), fontMap);
 //            get
-        } catch (TransformerException exception) {
+        } catch (exception: TransformerException) {
             exception
-                    .printStackTrace();  //To change body of catch statement use Options | File Templates.
-            JOptionPane.showMessageDialog(this,
-                    fontMap.getFileName() +
-                            " cannot create for writing " +
-                            exception.getMessage());
+                .printStackTrace() //To change body of catch statement use Options | File Templates.
+            JOptionPane.showMessageDialog(
+                this,
+                fontMap.fileName +
+                        " cannot create for writing " +
+                        exception.message
+            )
         }
-//        JOptionPane.showMessageDialog(stedWindow, "saved FontMap in " + selectedFile.getAbsolutePath());
+        //        JOptionPane.showMessageDialog(stedWindow, "saved FontMap in " + selectedFile.getAbsolutePath());
     }
 
-    public void saveAction() {
-        FontMap fontMap = getFontMap();
-        final File selectedFile = fontMap.getFontMapFile();
+    fun saveAction() {
+        val fontMap = fontMap
+        val selectedFile = fontMap.fontMapFile
         if (selectedFile == null) {
             // try the save as functionality
-            saveAsAction();
+            saveAsAction()
         } else if (!selectedFile.canWrite()) {
             try {
-                selectedFile.createNewFile();
-                fontMap.setFontMapFile(selectedFile);
-            } catch (IOException exception) {
-                JOptionPane.showMessageDialog(this,
-                        selectedFile +
-                                " cannot create for writing " +
-                                exception.getMessage());
+                selectedFile.createNewFile()
+                fontMap.fontMapFile = selectedFile
+            } catch (exception: IOException) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    selectedFile.toString() +
+                            " cannot create for writing " +
+                            exception.message
+                )
             }
         } else {
-            saveFontMap();
+            saveFontMap()
         }
     }
 
-    public int saveAsAction() {
-        FontMap fontMap = getFontMap();
-        final JFileChooser jFileChooser =
-                new JFileChooser(System.getProperty("user.dir"));
-        final FileFilterHelper fileFilterHelper =
-                new FileFilterHelper("xml", "STED FontMap files");
-        jFileChooser.setFileFilter(fileFilterHelper);
-        final int result = jFileChooser.showSaveDialog(this);
+    fun saveAsAction(): Int {
+        val fontMap = fontMap
+        val jFileChooser = JFileChooser(System.getProperty("user.dir"))
+        val fileFilterHelper = FileFilterHelper("xml", "STED FontMap files")
+        jFileChooser.fileFilter = fileFilterHelper
+        val result = jFileChooser.showSaveDialog(this)
         if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = jFileChooser.getSelectedFile();
-            boolean ok = false;
+            val selectedFile = jFileChooser.selectedFile
+            var ok = false
             if (!selectedFile.canWrite()) {
                 try {
-                    ok = selectedFile.createNewFile();
-                } catch (IOException exception) {
-                    JOptionPane.showMessageDialog(this,
-                            selectedFile +
-                                    " cannot create for writing " +
-                                    exception.getMessage());
+                    ok = selectedFile.createNewFile()
+                } catch (exception: IOException) {
+                    JOptionPane.showMessageDialog(
+                        this,
+                        selectedFile.toString() +
+                                " cannot create for writing " +
+                                exception.message
+                    )
                 }
             }
             if (ok) {
-                fontMap.setFontMapFile(selectedFile);
-                saveFontMap();
+                fontMap.fontMapFile = selectedFile
+                saveFontMap()
             } else {
-                JOptionPane.showMessageDialog(this,
-                        selectedFile +
-                                " is NOT Writable");
+                JOptionPane.showMessageDialog(
+                    this, selectedFile.toString() +
+                            " is NOT Writable"
+                )
             }
         }
-        return result;
+        return result
     }
 
-    public int saveDirty() {
-        return saveDirty(getSelectedFrame());
-    }
-
-
-    public int saveDirty(DesktopFrame desktopFrame) {
-        int result = JOptionPane.CLOSED_OPTION;
+    @JvmOverloads
+    fun saveDirty(desktopFrame: DesktopFrame? = selectedFrame): Int {
+        var result = JOptionPane.CLOSED_OPTION
         if (null != desktopFrame) {
-            FontMap fontMap = desktopFrame.getModel().getFontMap();
-            if (fontMap != null && fontMap.isDirty()) {
-                result = JOptionPane.showConfirmDialog(this,
-                        "FontMap Changed.. Do you want to save changes?",
-                        "Save Changes",
-                        JOptionPane.YES_NO_CANCEL_OPTION);
+            val fontMap = desktopFrame.model.fontMap
+            if (fontMap.isDirty) {
+                result = JOptionPane.showConfirmDialog(
+                    this,
+                    "FontMap Changed.. Do you want to save changes?",
+                    "Save Changes",
+                    JOptionPane.YES_NO_CANCEL_OPTION
+                )
                 // if yes, save the fontmap
                 if (JOptionPane.YES_OPTION == result) {
-                    if (fontMap.isNew()) {
-                        result = saveAsAction();
+                    if (fontMap.isNew) {
+                        result = saveAsAction()
                         // can be cancelled.. clear the fontmap
                         if (JFileChooser.CANCEL_OPTION == result) {
-                            fontMap.clear();
+                            fontMap.clear()
                         }
                     } else {
-                        saveAction();
+                        saveAction()
                     }
                 } else if (JOptionPane.NO_OPTION == result) {
                     //TODO: need to do something sensible for NO_OPTION
@@ -775,45 +676,45 @@ public class TabDesktop
                     // setDirty will fire events..so DONT use!
 //                fontMap.setDirty(false);
                     // try clear (need to investigate if this would affect other actions!)
-                    fontMap.clear();
+                    fontMap.clear()
                 }
             }
         }
-        return result;
+        return result
     }
 
-
-    public void clear() {
-        getSelectedFrame().clear();
+    fun clear() {
+        selectedFrame.clear()
     }
 
-    public FontMap getFontMap() {
-        return getSelectedFrame().getModel()
-                .getFontMap();
+    val fontMap: FontMap
+        get() = selectedFrame.model
+            .fontMap
+
+    fun addItemToReOpenMenu(item: String?) {
+        val menuHandler = menuHandler
+        val menu = menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
+        addReOpenItem(menu!!, item)
+        menu.isEnabled = menu.itemCount != Resources.DEFAULT_MENU_COUNT + 1
     }
 
-    public void addItemToReOpenMenu(String item) {
-        final MenuHandler menuHandler = MenuHandler.getInstance();
-        final JMenu menu =
-                menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND);
-        MenuHandler.addReOpenItem(menu, item);
-        menu.setEnabled(
-                menu.getItemCount() != Resources.DEFAULT_MENU_COUNT + 1);
-    }
-
-
-    public DesktopFrame createFontMapperDesktopFrame() {
-        DesktopFrame desktopFrame =
-                new DesktopFrame();
-        desktopFrame.addInternalFrameListener(this);
-        desktopFrame.init();
+    fun createFontMapperDesktopFrame(): DesktopFrame {
+        val desktopFrame = DesktopFrame()
+        desktopFrame.addInternalFrameListener(this)
+        desktopFrame.init()
         // add it to the desktop
-        desktopPane.add(desktopFrame);
-        desktopPane.setSelectedFrame(desktopFrame);
-        desktopFrame.setEnabled(true);
-        desktopFrame.setVisible(true);
+        desktopPane.add(desktopFrame)
+        desktopPane.selectedFrame = desktopFrame
+        desktopFrame.isEnabled = true
+        desktopFrame.isVisible = true
+        return desktopFrame
+    }
 
-        return desktopFrame;
+    /**
+     * @return
+     */
+    fun getClipboard(): Map<String, Collection<*>> {
+        return clipboard
     }
 
     /**
@@ -823,7 +724,7 @@ public class TabDesktop
      * FontMap, stores in cache and loads new FontMap
      * @return
      */
-/*
+    /*
     public void loadNewFontMap() {
         // FIRST TIME
         // create a new frame and set the fontmap
@@ -859,163 +760,182 @@ public class TabDesktop
         stedWindow.showDesktop();
     }
 */
-
-    /**
-     * @return
-     */
-    public Map<String, Collection> getClipboard() {
-        return clipboard;
+    fun addToClipboard(entry: String, value: Collection<*>) {
+        clipboard[entry] = value
+        fireStatusPosted("Copied Fontmap Entries")
     }
 
-    public void addToClipboard(String entry, Collection value) {
-        clipboard.put(entry, value);
-        fireStatusPosted("Copied Fontmap Entries");
-    }
-
-    public DesktopFrame getFontMapperDesktopFrame() {
-        return getSelectedFrame();
-    }
-
-    public DesktopModel getDesktopModel() {
-        return getFontMapperDesktopFrame().getModel();
-    }
-
-    public String getFrameTitle() {
-        DesktopFrame desktopFrame =
-                getSelectedFrame();
-        if (null == desktopFrame) {
-            return null;
-        } else {
-            return desktopFrame.getTitle();
+    val fontMapperDesktopFrame: DesktopFrame
+        get() = selectedFrame
+    val desktopModel: DesktopModel
+        get() = fontMapperDesktopFrame.model
+    val frameTitle: String?
+        get() {
+            val desktopFrame = selectedFrame
+            return desktopFrame.title
         }
+
+    fun fireMessagePosted(message: String?) {
+        messageEvent!!.message = message
+        messageListener!!.messagePosted(messageEvent!!)
     }
 
-
-    public void fireMessagePosted(String message) {
-        messageEvent.setMessage(message);
-        messageListener.messagePosted(messageEvent);
+    override fun fireMessagePosted() {
+        messageListener!!.messagePosted(messageEvent!!)
     }
 
-    public void fireMessagePosted() {
-        messageListener.messagePosted(messageEvent);
+    override fun addMessageListener(messageListener: IMessageListener) {
+        this.messageListener = messageListener
     }
 
-    public void addMessageListener(@NotNull IMessageListener messageListener) {
-        this.messageListener = messageListener;
+    override fun threadRunStarted(threadEvent: ThreadEvent) {
+        busy()
     }
 
-
-    public void threadRunStarted(ThreadEvent e) {
-        STEDGUI.busy();
-    }
-
-    public void threadRunning(ThreadEvent e) {
-
-    }
-
-    public void threadRunFailed(ThreadEvent e) {
-        STEDGUI.busy();
-        String message = e.getEventSource().getMessage().toString();
-        JOptionPane.showMessageDialog(this, message, "Error",
-                JOptionPane.ERROR_MESSAGE);
+    override fun threadRunning(threadEvent: ThreadEvent) {}
+    override fun threadRunFailed(threadEvent: ThreadEvent) {
+        busy()
+        val message = threadEvent.eventSource.message.toString()
+        JOptionPane.showMessageDialog(
+            this, message, "Error",
+            JOptionPane.ERROR_MESSAGE
+        )
         // if FontMapReader..
-        if (FontMapReadEvent.class.isInstance(e)) {
-            closeFontMap();
+        if (FontMapReadEvent::class.java.isInstance(threadEvent)) {
+            closeFontMap()
         }
         // if Transliterator..
-        if (TransliterateEvent.class.isInstance(e)) {
+        if (TransliterateEvent::class.java.isInstance(threadEvent)) {
             // enable the convert action
-            MenuHandler.getInstance()
-                    .getAction(Resources.ACTION_CONVERT_NAME)
-                    .setEnabled(true);
+            menuHandler
+                .getAction(Resources.ACTION_CONVERT_NAME)
+                ?.setEnabled(true)
             // disable the stop button
-            MenuHandler.getInstance().getAction(Resources.ACTION_STOP_NAME)
-                    .setEnabled(false);
+            menuHandler.getAction(Resources.ACTION_STOP_NAME)
+                ?.setEnabled(false)
         }
-        fireStatusPosted(message);
-        STEDGUI.relax();
+        fireStatusPosted(message)
+        relax()
     }
 
-    public void threadRunFinished(ThreadEvent e) {
+    override fun threadRunFinished(threadEvent: ThreadEvent) {
         // if FontMapReader..
-        if (FontMapReadEvent.class.isInstance(e)) {
-            DesktopModel desktopModel =
-                    getSelectedFrame().getModel();
-            final FontMap fontMap = desktopModel.getFontMap();
-            fontMap.setDirty(false);
-            desktopModel.fireFontMapChangedEvent();
-            fireStatusPosted("FontMap Loaded");
-        }
-        // if Transliterator..
-        else if (TransliterateEvent.class.isInstance(e)) {
+        if (FontMapReadEvent::class.java.isInstance(threadEvent)) {
+            val desktopModel = selectedFrame.model
+            val fontMap = desktopModel.fontMap
+            fontMap.isDirty = false
+            desktopModel.fireFontMapChangedEvent()
+            fireStatusPosted("FontMap Loaded")
+        } else if (TransliterateEvent::class.java.isInstance(threadEvent)) {
             // readFontMap the converted file
-            getSelectedFrame().readOutputFile();
+            selectedFrame.readOutputFile()
             // enable the convert action
-            MenuHandler.getInstance()
-                    .getAction(Resources.ACTION_CONVERT_NAME)
-                    .setEnabled(true);
+            menuHandler
+                .getAction(Resources.ACTION_CONVERT_NAME)
+                ?.setEnabled(true)
             // disable the stop button
-            MenuHandler.getInstance().getAction(Resources.ACTION_STOP_NAME)
-                    .setEnabled(false);
-            fireStatusPosted("Transliterate Done");
+            menuHandler.getAction(Resources.ACTION_STOP_NAME)
+                ?.setEnabled(false)
+            fireStatusPosted("Transliterate Done")
         }
-        STEDGUI.relax();
+        relax()
     }
 
-
-    public void internalFrameClosing(InternalFrameEvent e) {
-        DesktopFrame desktopFrame =
-                (DesktopFrame) e.getInternalFrame();
+    override fun internalFrameClosing(e: InternalFrameEvent) {
+        val desktopFrame = e.internalFrame as DesktopFrame
         if (JOptionPane.CANCEL_OPTION != saveDirty(desktopFrame)) {
             // when the frame closes, close the tab
-            int index = getSelectedIndex();
-            removeTabFrameAt(index);
-            desktopFrame.close();
+            val index = selectedIndex
+            removeTabFrameAt(index)
+            desktopFrame.close()
         }
         // todo: this must be in activated
         // hacking it for now since the first frame we load by default is not
         // getting activated
-        enableCloseAction();
+        enableCloseAction()
     }
 
-    public void internalFrameActivated(InternalFrameEvent e) {
+    override fun internalFrameActivated(e: InternalFrameEvent) {
         // enable the view mapping and sample when the internal frame is shown
-        MenuHandler.getInstance()
-                .getMenuItem(Resources.ACTION_VIEW_MAPPING)
-                .setEnabled(true);
-        MenuHandler.getInstance()
-                .getMenuItem(Resources.ACTION_VIEW_SAMPLE)
-                .setEnabled(true);
-        DesktopFrame desktopFrame =
-                (DesktopFrame) e.getInternalFrame();
-        desktopFrame.setEnabledFontMapTab(true);
-        enableCloseAction();
+        menuHandler
+            .getMenuItem(Resources.ACTION_VIEW_MAPPING)
+            ?.setEnabled(true)
+        menuHandler
+            .getMenuItem(Resources.ACTION_VIEW_SAMPLE)
+            ?.setEnabled(true)
+        val desktopFrame = e.internalFrame as DesktopFrame
+        desktopFrame.setEnabledFontMapTab(true)
+        enableCloseAction()
     }
 
-    public void internalFrameOpened(InternalFrameEvent e) {
+    override fun internalFrameOpened(e: InternalFrameEvent) {
         // todo: this must be in activated
         // hacking it for now since the first frame we load by default is not
         // getting activated
-        enableCloseAction();
+        enableCloseAction()
     }
 
-    public void internalFrameClosed(InternalFrameEvent e) {
+    override fun internalFrameClosed(e: InternalFrameEvent) {
         // todo: this must be in activated
         // hacking it for now since the first frame we load by default is not
         // getting activated
-        enableCloseAction();
+        enableCloseAction()
     }
 
-    public void internalFrameIconified(InternalFrameEvent e) {
+    override fun internalFrameIconified(e: InternalFrameEvent) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void internalFrameDeiconified(InternalFrameEvent e) {
+    override fun internalFrameDeiconified(e: InternalFrameEvent) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void internalFrameDeactivated(InternalFrameEvent e) {
+    override fun internalFrameDeactivated(e: InternalFrameEvent) {}
+
+    /**
+     * FrameNumberIndex <br></br> Generates Unique Id for New fontmap frames
+     */
+    private class FrameNumberIndex {
+        private val indices: MutableSet<Int> = TreeSet()
+
+        /**
+         * if the index is new, add it if the index is existing, then find free
+         * index and add it
+         *
+         * @param indx
+         * @return
+         */
+        fun addNewIndex(indx: Int): Int {
+            val sz = indices.size
+            if (!containsIndex(indx) && indx >= sz) {
+                indices.add(indx)
+                return indx
+            } else {
+                for (i in 1..sz) {
+                    if (!containsIndex(i)) {
+                        indices.add(i)
+                        return i
+                    }
+                }
+            }
+            return indx
+        }
+
+        fun removeIndex(indx: Int): Boolean {
+            return indices.remove(indx)
+        }
+
+        fun containsIndex(indx: Int): Boolean {
+            for (indice in indices) {
+                if (indice == indx) {
+                    return true
+                }
+            }
+            return false
+        }
     }
 
-
+    companion object {
+        private val logger = Logger.getLogger(TabDesktop::class.java.name)
+    }
 }

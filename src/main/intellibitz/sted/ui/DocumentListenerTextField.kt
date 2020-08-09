@@ -3,7 +3,7 @@ package sted.ui
 import sted.fontmap.FontMap
 import sted.fontmap.SampleTextConverter
 import sted.io.Resources
-import sted.ui.MenuHandler.Companion.instance
+import sted.ui.MenuHandler.Companion.menuHandler
 import sted.widgets.FontChangeTextField
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.SwingUtilities
@@ -43,7 +43,7 @@ class DocumentListenerTextField : FontChangeTextField(), DocumentListener {
                 converter = SampleTextConverter(mapperPanel!!)
             }
             converter!!.setFontMap(fontMap)
-            val menuHandler = instance
+            val menuHandler = menuHandler
             val preserve = menuHandler.getMenuItem(Resources.ACTION_PRESERVE_TAGS) as JCheckBoxMenuItem?
             converter!!.setHTMLAware(preserve!!.isSelected)
             val reverse = menuHandler.getMenuItem(Resources.ACTION_TRANSLITERATE_REVERSE) as JCheckBoxMenuItem?

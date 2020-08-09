@@ -2,7 +2,7 @@ package sted.actions
 
 import sted.fontmap.Converter
 import sted.io.Resources
-import sted.ui.MenuHandler.Companion.instance
+import sted.ui.MenuHandler.Companion.menuHandler
 import sted.ui.TabDesktop
 import java.awt.event.ActionEvent
 import javax.swing.JCheckBoxMenuItem
@@ -50,16 +50,16 @@ class TransliterateAction : TableModelListenerAction() {
             desktop.desktopModel.inputFile!!,
             desktop.desktopModel.outputFile!!
         )
-        val preserve = instance.getMenuItem(
+        val preserve = menuHandler.getMenuItem(
             Resources.ACTION_PRESERVE_TAGS
         ) as JCheckBoxMenuItem?
         converter.setHTMLAware(preserve!!.isSelected)
-        val reverse = instance.getMenuItem(
+        val reverse = menuHandler.getMenuItem(
             Resources.ACTION_TRANSLITERATE_REVERSE
         ) as JCheckBoxMenuItem?
         converter.setReverseTransliterate(reverse!!.isSelected)
         converter.addThreadListener(desktop)
-        val stop = instance.getAction(
+        val stop = menuHandler.getAction(
             Resources.ACTION_STOP_NAME
         ) as TransliterateStopAction?
         stop!!.setConverter(converter)

@@ -40,7 +40,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         val imageIcon = getSystemResourceIcon(getSetting("icon.sted"))
         if (imageIcon != null) iconImage = imageIcon.image
         statusEvent = StatusEvent(this)
-        val menuBar = MenuHandler.instance.getMenuBar("STED-MenuBar")
+        val menuBar = MenuHandler.menuHandler.getMenuBar("STED-MenuBar")
         loadLookAndFeelMenu()
 
         // load the menubar for the application
@@ -58,7 +58,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         gridBagConstraints.gridy = 0
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL
         fireStatusPosted("30")
-        val toolBar = MenuHandler.instance.getToolBar(Resources.MENUBAR_STED)
+        val toolBar = MenuHandler.menuHandler.getToolBar(Resources.MENUBAR_STED)
         gridBagLayout.setConstraints(toolBar, gridBagConstraints)
 
         // adds the toolbar for the app
@@ -96,7 +96,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
     fun load() {
         // status panel added as status listener to recieve status messages
         desktop.addStatusListener(statusPanel)
-        val actions = MenuHandler.instance.actions
+        val actions = MenuHandler.menuHandler.actions
         for (action in actions.values) {
             if (action is STEDWindowAction) {
                 action.addStatusListener(statusPanel)
@@ -128,7 +128,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
     }
 
     private fun setUserOptions() {
-        val menuItems = MenuHandler.instance.menuItems
+        val menuItems = MenuHandler.menuHandler.menuItems
         for (key in menuItems.keys) {
             val menuItem = menuItems[key]
             val action = menuItem!!.action
@@ -150,7 +150,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         }
         val reopenItems = getSettingBeginsWith(Resources.ACTION_FILE_REOPEN_COMMAND)
         if (reopenItems.isNotEmpty()) {
-            val menu = MenuHandler.instance.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
+            val menu = MenuHandler.menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
             for (reopenItem in reopenItems) {
                 addReOpenItem(menu!!, reopenItem)
             }
@@ -160,7 +160,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         // set the sample fontmap action
         val sampleFontMapPaths = getSampleFontMapPaths("resource")
         if (sampleFontMapPaths?.size ?: 0 > 0) {
-            val menu = MenuHandler.instance.getMenu(Resources.MENU_SAMPLES_NAME)
+            val menu = MenuHandler.menuHandler.getMenu(Resources.MENU_SAMPLES_NAME)
             for (reopenItem in sampleFontMapPaths!!) {
                 addSampleFontMapMenuItem(menu!!, reopenItem)
             }

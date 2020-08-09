@@ -422,7 +422,7 @@ class MenuHandler private constructor() : DefaultHandler() {
             menu: JMenu,
             fileName: String?, action: Action = ReOpenFontMapAction(), checkInCache: Boolean = true
         ) {
-            val menuHandler = instance
+            val menuHandler = menuHandler
             require(!fileName.isNullOrBlank()) { "Invalid File name: $fileName" }
             var menuItem = menuHandler.getMenuItem(fileName)
             // check if the menu item already exists.. if not add new
@@ -497,7 +497,7 @@ class MenuHandler private constructor() : DefaultHandler() {
         @JvmStatic
         val userOptions: String
             get() {
-                val menuItems = instance.menuItems
+                val menuItems = menuHandler.menuItems
                 val keys = menuItems.keys.iterator()
                 val userOptions = StringBuilder()
                 while (keys.hasNext()) {
@@ -521,7 +521,7 @@ class MenuHandler private constructor() : DefaultHandler() {
 
         @JvmStatic
         fun loadLookAndFeelMenu() {
-            val menuHandler = instance
+            val menuHandler = menuHandler
             val lookAndFeelInfos = UIManager.getInstalledLookAndFeels()
             val buttonGroup = ButtonGroup()
             val curLookAndFeel = UIManager.getLookAndFeel()
@@ -547,7 +547,7 @@ class MenuHandler private constructor() : DefaultHandler() {
 
         //        private var lookAndFeelInfos: Array<LookAndFeelInfo>
         @JvmStatic
-        val instance: MenuHandler by lazy {
+        val menuHandler: MenuHandler by lazy {
             MenuHandler()
         }
     }

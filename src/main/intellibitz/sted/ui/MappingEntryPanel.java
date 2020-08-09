@@ -140,7 +140,7 @@ public class MappingEntryPanel
 
     private void addTableModelListeners() {
         final Map<String, Action> actions =
-                MenuHandler.getInstance().getActions();
+                MenuHandler.getMenuHandler().getActions();
         for (Action action : actions.values()) {
             if (TableModelListenerAction.class.isInstance(action)) {
                 addTableModelListener((TableModelListener) action);

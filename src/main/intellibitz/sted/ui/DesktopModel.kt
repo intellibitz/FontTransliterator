@@ -15,7 +15,7 @@ class DesktopModel {
     private val eventListenerList = EventListenerList()
     var inputFile: File? = null
     var outputFile: File? = null
-    var fontMap: FontMap? = null
+    lateinit var fontMap: FontMap
 
     // the fontmap related events.. the model when change will fire these
     private var fontMapChangeEvent: FontMapChangeEvent? = null
@@ -37,7 +37,7 @@ class DesktopModel {
             if (listeners[i] === FontMapChangeListener::class.java) {
                 // Lazily create the event:
                 if (fontMapChangeEvent == null) {
-                    fontMapChangeEvent = FontMapChangeEvent(fontMap!!)
+                    fontMapChangeEvent = FontMapChangeEvent(fontMap)
                 }
                 (listeners[i + 1] as FontMapChangeListener)
                     .stateChanged(fontMapChangeEvent!!)
@@ -49,7 +49,7 @@ class DesktopModel {
     val isReadyForTransliteration: Boolean
         get() {
             var flag = false
-            if (inputFile != null && outputFile != null && fontMap!!.fontMapFile != null) {
+            if (inputFile != null && outputFile != null && fontMap.fontMapFile != null) {
                 flag = true
             }
             return flag
@@ -66,10 +66,10 @@ class DesktopModel {
     }
 
     @Throws(TransformerException::class)
-    fun saveFontMap(): FontMap? {
+    fun saveFontMap(): FontMap {
         FontMapXMLWriter.write(fontMap)
-        fontMap!!.entries.clearUndoRedo()
-        fontMap!!.isDirty = false
+        fontMap.entries.clearUndoRedo()
+        fontMap.isDirty = false
         fireFontMapChangedEvent()
         return fontMap
     }

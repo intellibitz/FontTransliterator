@@ -7,7 +7,7 @@ import sted.ui.MenuHandler.Companion.addReOpenItem
 import sted.ui.MenuHandler.Companion.disableMenuItem
 import sted.ui.MenuHandler.Companion.enableItemsInReOpenMenu
 import sted.ui.MenuHandler.Companion.enableReOpenItems
-import sted.ui.MenuHandler.Companion.instance
+import sted.ui.MenuHandler.Companion.menuHandler
 import java.awt.event.ActionEvent
 import javax.swing.event.InternalFrameEvent
 import javax.swing.event.InternalFrameListener
@@ -21,13 +21,13 @@ class ReOpenAction : ReOpenFontMapAction(), FontMapChangeListener, InternalFrame
     override fun stateChanged(e: FontMapChangeEvent) {
         val fontMap = e!!.fontMap
         if (fontMap.isNew) {
-            enableReOpenItems(instance)
+            enableReOpenItems(menuHandler)
         } else {
             val fileName = fontMap.fileName
             stedWindow.desktop
                 .addItemToReOpenMenu(fileName)
             // needed when opening a new fontmap
-            disableMenuItem(instance, fileName)
+            disableMenuItem(menuHandler, fileName)
         }
     }
 
@@ -38,9 +38,9 @@ class ReOpenAction : ReOpenFontMapAction(), FontMapChangeListener, InternalFrame
      */
     override fun internalFrameActivated(e: InternalFrameEvent) {
         enableItemsInReOpenMenu(
-            instance,
+            menuHandler,
             stedWindow.desktop
-                .getFontMap()
+                .fontMap
         )
     }
 
@@ -51,10 +51,10 @@ class ReOpenAction : ReOpenFontMapAction(), FontMapChangeListener, InternalFrame
      */
     override fun internalFrameOpened(e: InternalFrameEvent) {
         enableItemsInReOpenMenu(
-            instance,
+            menuHandler,
             stedWindow
                 .desktop
-                .getFontMap()
+                .fontMap
         )
     }
 
@@ -98,7 +98,7 @@ class ReOpenAction : ReOpenFontMapAction(), FontMapChangeListener, InternalFrame
      */
     override fun internalFrameIconified(e: InternalFrameEvent) {}
     fun addItemToReOpenMenu() {
-        val menuHandler = instance
+        val menuHandler = menuHandler
         val fontMap = stedWindow.desktop
             .fontMap
         val menu = menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)

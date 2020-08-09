@@ -38,8 +38,7 @@ class PasteAction : TableModelListenerAction(), FontMapChangeListener {
     }
 
     private fun paste() {
-        val entries = stedWindow
-            .desktop.clipboard[Resources.ENTRIES]
+        val entries = stedWindow.desktop.getClipboard()[Resources.ENTRIES]
         if (entries != null && !entries.isEmpty()) {
             val fontMap = stedWindow.desktop
                 .fontMap

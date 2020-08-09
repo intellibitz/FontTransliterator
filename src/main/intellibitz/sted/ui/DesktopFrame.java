@@ -187,7 +187,7 @@ public class DesktopFrame
     public void close() {
         hideFrame();
         enableTabs(false);
-        final MenuHandler menuHandler = MenuHandler.getInstance();
+        final MenuHandler menuHandler = MenuHandler.getMenuHandler();
         menuHandler.getMenuItem(Resources.ACTION_VIEW_MAPPING)
                 .setEnabled(false);
         menuHandler.getMenuItem(Resources.ACTION_VIEW_SAMPLE).setEnabled(false);
@@ -251,7 +251,7 @@ public class DesktopFrame
 
     public boolean enableConverterIfFilesLoaded() {
         boolean flag = desktopModel.isReadyForTransliteration();
-        MenuHandler.getInstance().getActions()
+        MenuHandler.getMenuHandler().getActions()
                 .get(Resources.ACTION_CONVERT_NAME).setEnabled(flag);
         return flag;
     }
