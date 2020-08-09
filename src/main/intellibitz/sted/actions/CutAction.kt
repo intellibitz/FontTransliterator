@@ -44,7 +44,7 @@ open class CutAction : TableModelListenerAction(), FontMapChangeListener {
         val fontMap = desktopModel.fontMap
         //        stedWindow.addListenersToDesktopFrame(fontMap);
 //        desktopModel.fireFontMapChangedEvent();
-        return fontMap?.entries!!.remove(selectedRows)
+        return fontMap.entries.remove(selectedRows)
     }
 
     override fun stateChanged(e: FontMapChangeEvent) {

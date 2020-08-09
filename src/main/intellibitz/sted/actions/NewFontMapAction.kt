@@ -9,7 +9,7 @@ import javax.swing.event.InternalFrameListener
 
 class NewFontMapAction : STEDWindowAction(), FontMapChangeListener, InternalFrameListener {
     override fun actionPerformed(e: ActionEvent) {
-        val tabDesktop: TabDesktop = stedWindow.desktop!!
+        val tabDesktop: TabDesktop = stedWindow.desktop
         tabDesktop.newFontMap()
     }
 
@@ -19,17 +19,11 @@ class NewFontMapAction : STEDWindowAction(), FontMapChangeListener, InternalFram
      * @param fontMapChangeEvent a ChangeEvent object
      */
     override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent) {
-        val fontMap = fontMapChangeEvent!!.fontMap
-        isEnabled = if (fontMap == null) {
-            true
+        val fontMap = fontMapChangeEvent.fontMap
+        isEnabled = if (fontMap.isNew) {
+            fontMap.isDirty
         } else {
-            // if fontmap is new, enable new only when the new fontmap had been changed
-            // logic is, no need to show 'New' when already a new fontmap open
-            if (fontMap.isNew) {
-                fontMap.isDirty
-            } else {
-                true
-            }
+            true
         }
 
         //todo: fix-me! reevaluate this logic

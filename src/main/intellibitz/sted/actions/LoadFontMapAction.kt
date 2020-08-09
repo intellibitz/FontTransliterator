@@ -15,8 +15,7 @@ class LoadFontMapAction : TableModelListenerAction(), FontMapChangeListener, Int
      * rows, or columns that changed.
      */
     override fun tableChanged(e: TableModelEvent) {
-        isEnabled = stedWindow.desktop
-            .fontMap.isReloadable()
+        isEnabled = stedWindow.desktop.fontMap.isReloadable
     }
 
     /**

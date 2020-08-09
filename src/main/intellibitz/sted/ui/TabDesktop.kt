@@ -190,9 +190,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         val buttonTabComponent = getTabComponentAt(selectedIndex) as ButtonTabComponent
         buttonTabComponent.tabTitle.icon = dirtyIcon
         val fontMap = desktopFrame.model.fontMap
-        if (fontMap.fontMapFile != null) {
-            buttonTabComponent.tabTitle.text = fontMap.fontMapFile.name
-        }
+        buttonTabComponent.tabTitle.text = fontMap.fontMapFile.name
         if (fontMap.isDirty) {
             buttonTabComponent.tabTitle.icon = dirtyIcon
         } else {
@@ -359,9 +357,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
             .addInternalFrameListener(reopen as InternalFrameListener?)
     }
 
-    fun createDesktopModel(
-        desktopFrame: DesktopFrame, fontMap: FontMap
-    ): DesktopModel {
+    fun createDesktopModel(desktopFrame: DesktopFrame, fontMap: FontMap): DesktopModel {
         val desktopModel = DesktopModel()
         desktopModel.fontMap = fontMap
         desktopFrame.model = desktopModel
@@ -374,10 +370,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         loadFontMap(selectedFrame, file)
     }
 
-    fun loadFontMap(
-        desktopFrame: DesktopFrame,
-        file: File
-    ) {
+    fun loadFontMap(desktopFrame: DesktopFrame, file: File) {
         val desktopModel = createDesktopModel(
             desktopFrame, FontMap(file)
         )
@@ -593,10 +586,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
     fun saveAction() {
         val fontMap = fontMap
         val selectedFile = fontMap.fontMapFile
-        if (selectedFile == null) {
-            // try the save as functionality
-            saveAsAction()
-        } else if (!selectedFile.canWrite()) {
+        if (!selectedFile.canWrite()) {
             try {
                 selectedFile.createNewFile()
                 fontMap.fontMapFile = selectedFile

@@ -57,7 +57,7 @@ class RedoAction : TableModelListenerAction(), FontMapChangeListener, ChangeList
     }
 
     override fun stateChanged(e: FontMapChangeEvent) {
-        val fontMap = e!!.fontMap
+        val fontMap = e.fontMap
         if (!setEnabled(fontMap)) {
             fontMap.isDirty = false
         }
@@ -86,7 +86,7 @@ class RedoAction : TableModelListenerAction(), FontMapChangeListener, ChangeList
             val dframe = desktop.getComponentAt(
                 index
             ) as DesktopFrame
-            setEnabled(dframe.model.fontMap!!)
+            setEnabled(dframe.model.fontMap)
         }
     }
 }

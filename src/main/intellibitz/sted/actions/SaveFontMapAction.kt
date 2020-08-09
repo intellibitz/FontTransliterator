@@ -22,7 +22,7 @@ class SaveFontMapAction : TableModelListenerAction(), FontMapChangeListener {
      * @param e a ChangeEvent object
      */
     override fun stateChanged(e: FontMapChangeEvent) {
-        isEnabled = isSaveable(e!!.fontMap)
+        isEnabled = isSaveable(e.fontMap)
     }
 
     /**
