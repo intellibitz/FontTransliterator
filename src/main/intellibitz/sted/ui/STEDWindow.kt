@@ -24,13 +24,13 @@ import javax.swing.event.ChangeListener
 
 class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, IStatusEventSource {
     // desktop to show fontmap
-    lateinit var desktop: TabDesktop
-        private set
+    val desktop: TabDesktop = TabDesktop()
     lateinit var statusPanel: StatusPanel
         private set
     lateinit var statusEvent: StatusEvent
         private set
-    private var statusListener: IStatusListener? = null
+    lateinit var statusListener: IStatusListener
+
     val logger: Logger = Logger.getLogger(STEDWindow::class.java.name)
     fun init() {
         setDefaultLookAndFeelDecorated(true)
@@ -65,7 +65,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         // adds the toolbar for the app
         container.add(toolBar)
         fireStatusPosted("40")
-        desktop = TabDesktop()
+
         desktop.init()
         fireStatusPosted("50")
         gridBagConstraints.weighty = 1.0
@@ -111,12 +111,12 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
     }
 
     fun fireStatusPosted(message: String?) {
-        statusEvent!!.status = message
-        statusListener!!.statusPosted(statusEvent)
+        statusEvent.status = message
+        statusListener.statusPosted(statusEvent)
     }
 
     override fun fireStatusPosted() {
-        statusListener!!.statusPosted(statusEvent)
+        statusListener.statusPosted(statusEvent)
     }
 
     override fun addStatusListener(statusListener: IStatusListener) {
@@ -236,7 +236,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
     }
 
     override fun messagePosted(event: MessageEvent) {
-        JOptionPane.showMessageDialog(this, event!!.message)
+        JOptionPane.showMessageDialog(this, event.message)
     }
 
 }
