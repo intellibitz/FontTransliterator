@@ -7,23 +7,24 @@ import java.awt.event.ActionListener
 import javax.swing.Icon
 import javax.swing.JButton
 
-class GCButton(icon: Icon, rollOverIcon: Icon?) : JButton(), ActionListener {
-    private val runtime: Runtime
+class GCButton : JButton(), ActionListener {
     override fun actionPerformed(e: ActionEvent) {
+        val runtime = Runtime.getRuntime()
         runtime.runFinalization()
         runtime.gc()
     }
 
-    init {
-        setIcon(icon)
-        rolloverIcon = rollOverIcon
+    fun load(icon: Icon?, rollOverIcon: Icon?) {
         isRolloverEnabled = true
         margin = Insets(0, 0, 0, 0)
-        size = Dimension(icon.iconHeight, icon.iconWidth)
         toolTipText = "Runs Garbage Collector"
-        runtime = Runtime.getRuntime()
         // add the button as the self action listener
         // the button knows what to do anyways
         addActionListener(this)
+        if (icon != null) {
+            setIcon(icon)
+            size = Dimension(icon.iconHeight, icon.iconWidth)
+        }
+        rolloverIcon = rollOverIcon
     }
 }

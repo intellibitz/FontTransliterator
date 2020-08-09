@@ -25,8 +25,7 @@ import javax.swing.event.ChangeListener
 class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, IStatusEventSource {
     // desktop to show fontmap
     val desktop: TabDesktop = TabDesktop()
-    lateinit var statusPanel: StatusPanel
-        private set
+    val statusPanel: StatusPanel = StatusPanel()
     lateinit var statusEvent: StatusEvent
         private set
     lateinit var statusListener: IStatusListener
@@ -75,7 +74,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         gridBagLayout.setConstraints(desktop, gridBagConstraints)
         container.add(desktop)
         fireStatusPosted("60")
-        statusPanel = StatusPanel(this)
+        statusPanel.load(this)
         gridBagConstraints.weighty = 0.0
         gridBagConstraints.gridy = 2
         gridBagConstraints.fill = GridBagConstraints.BOTH

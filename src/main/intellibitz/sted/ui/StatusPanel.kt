@@ -1,186 +1,174 @@
-package sted.ui;
+package sted.ui
 
-import sted.event.FontMapChangeEvent;
-import sted.event.FontMapChangeListener;
-import sted.event.IStatusListener;
-import sted.event.StatusEvent;
-import sted.fontmap.FontMap;
-import sted.io.Resources;
-import sted.widgets.GCButton;
-import sted.widgets.MemoryBar;
+import sted.event.FontMapChangeEvent
+import sted.event.FontMapChangeListener
+import sted.event.IStatusListener
+import sted.event.StatusEvent
+import sted.fontmap.FontMap
+import sted.io.Resources
+import sted.io.Resources.cleanIcon
+import sted.io.Resources.dirtyIcon
+import sted.io.Resources.getSetting
+import sted.io.Resources.getSystemResourceIcon
+import sted.io.Resources.lockIcon
+import sted.io.Resources.unLockIcon
+import sted.widgets.GCButton
+import sted.widgets.MemoryBar
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
+import java.util.*
+import javax.swing.*
+import javax.swing.Timer
+import javax.swing.event.ListSelectionEvent
+import javax.swing.event.ListSelectionListener
+import javax.swing.event.TableModelEvent
+import javax.swing.event.TableModelListener
+import javax.swing.table.TableModel
 
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
-import java.awt.*;
-import java.util.StringTokenizer;
+class StatusPanel : JPanel(), TableModelListener, ListSelectionListener, FontMapChangeListener, IStatusListener {
+    private val memoryBar = MemoryBar()
+    val progressBar = JProgressBar(JProgressBar.HORIZONTAL)
+    private val status = JLabel()
+    private val counter = JLabel()
+    private val flag = JLabel()
+    private val lock = JLabel()
+    lateinit var stedWindow: STEDWindow
 
-public class StatusPanel
-        extends JPanel
-        implements TableModelListener,
-        ListSelectionListener,
-        FontMapChangeListener,
-        IStatusListener {
-    private JProgressBar progressBar;
-    private JLabel counter;
-    private JLabel flag;
-    private JLabel lock;
-    private JLabel status;
-    private final MemoryBar memoryBar;
-
-    private STEDWindow stedWindow;
-
-    private static final String COUNTER_INIT = "0:0";
-
-    public StatusPanel(STEDWindow stedWindow) {
-        super();
-        this.stedWindow = stedWindow;
-        setBorder(BorderFactory.createLineBorder(getForeground()));
-        final GridBagLayout gridBagLayout = new GridBagLayout();
-        setLayout(gridBagLayout);
-        final GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1;
-        gridBagConstraints.weightx = 1;
-        gridBagConstraints.gridheight = 1;
-        gridBagConstraints.gridwidth = 1;
-        gridBagConstraints.ipadx = 1;
-        status = new JLabel();
-        gridBagLayout.setConstraints(status, gridBagConstraints);
-        add(status);
-        progressBar = new JProgressBar(JProgressBar.HORIZONTAL);
-        gridBagConstraints.weightx = 0;
-        gridBagLayout.setConstraints(progressBar, gridBagConstraints);
-        add(progressBar);
-        final JPanel panel1 = new JPanel();
-        panel1.setBorder(BorderFactory.createLineBorder(getForeground()));
-        counter = new JLabel();
-        initCounter();
-        panel1.add(counter);
-        gridBagLayout.setConstraints(panel1, gridBagConstraints);
-        add(panel1);
-        final JPanel panel2 = new JPanel();
-        panel2.setBorder(BorderFactory.createLineBorder(getForeground()));
-        flag = new JLabel();
-        panel2.add(flag);
-        gridBagLayout.setConstraints(panel2, gridBagConstraints);
-        add(panel2);
-        final JPanel panel3 = new JPanel();
-        panel3.setBorder(BorderFactory.createLineBorder(getForeground()));
-        lock = new JLabel();
-        panel3.add(lock);
-        gridBagLayout.setConstraints(panel3, gridBagConstraints);
-        add(panel3);
-        memoryBar = new MemoryBar();
-        gridBagLayout.setConstraints(memoryBar, gridBagConstraints);
-        add(memoryBar);
-        final Icon imageIcon = Resources
-                .getSystemResourceIcon(Resources.getSetting(Resources.ICON_GC));
-        final GCButton gcButton = new GCButton
-                (imageIcon, Resources.getSystemResourceIcon(
-                        Resources.getSetting(Resources.ICON_GC2)));
-        gridBagLayout.setConstraints(gcButton, gridBagConstraints);
-        add(gcButton);
+    fun load(stedWindow: STEDWindow) {
+        this.stedWindow = stedWindow
+        border = BorderFactory.createLineBorder(foreground)
+        val gridBagLayout = GridBagLayout()
+        layout = gridBagLayout
+        val gridBagConstraints = GridBagConstraints()
+        gridBagConstraints.fill = GridBagConstraints.BOTH
+        gridBagConstraints.weighty = 1.0
+        gridBagConstraints.weightx = 1.0
+        gridBagConstraints.gridheight = 1
+        gridBagConstraints.gridwidth = 1
+        gridBagConstraints.ipadx = 1
+        gridBagLayout.setConstraints(status, gridBagConstraints)
+        add(status)
+        gridBagConstraints.weightx = 0.0
+        gridBagLayout.setConstraints(progressBar, gridBagConstraints)
+        add(progressBar)
+        val panel1 = JPanel()
+        panel1.border = BorderFactory.createLineBorder(foreground)
+        initCounter()
+        panel1.add(counter)
+        gridBagLayout.setConstraints(panel1, gridBagConstraints)
+        add(panel1)
+        val panel2 = JPanel()
+        panel2.border = BorderFactory.createLineBorder(foreground)
+        panel2.add(flag)
+        gridBagLayout.setConstraints(panel2, gridBagConstraints)
+        add(panel2)
+        val panel3 = JPanel()
+        panel3.border = BorderFactory.createLineBorder(foreground)
+        panel3.add(lock)
+        gridBagLayout.setConstraints(panel3, gridBagConstraints)
+        add(panel3)
+        gridBagLayout.setConstraints(memoryBar, gridBagConstraints)
+        add(memoryBar)
+        val imageIcon: Icon? = getSystemResourceIcon(getSetting("icon.gc"))
+        val gcButton = GCButton()
+        gcButton.load(
+            imageIcon, getSystemResourceIcon(
+                getSetting(Resources.ICON_GC2)
+            )
+        )
+        gridBagLayout.setConstraints(gcButton, gridBagConstraints)
+        add(gcButton)
     }
 
-    public void runMemoryBar() {
+    fun runMemoryBar() {
         // update memory status every 2 seconds
-        final Timer timer = new Timer(2000, memoryBar);
-        timer.start();
+        val timer = Timer(2000, memoryBar)
+        timer.start()
     }
 
-    public void clear() {
-        clearStatus();
-        clearProgress();
-        initCounter();
-        setCleanFlag();
-        setLockFlag(true);
+    fun clear() {
+        clearStatus()
+        clearProgress()
+        initCounter()
+        setCleanFlag()
+        setLockFlag(true)
     }
 
-    public void setStatus(String msg) {
-        status.setText(Resources.SPACE + msg);
+    fun setStatus(msg: String?) {
+        status.text = Resources.SPACE + msg
     }
 
-    private void clearStatus() {
-        status.setText(Resources.EMPTY_STRING);
+    private fun clearStatus() {
+        status.text = Resources.EMPTY_STRING
     }
 
-    public void clearProgress() {
-        progressBar.setStringPainted(false);
-        progressBar.setMinimum(0);
-        progressBar.setMaximum(0);
-        progressBar.setValue(0);
+    fun clearProgress() {
+        progressBar.isStringPainted = false
+        progressBar.minimum = 0
+        progressBar.maximum = 0
+        progressBar.value = 0
     }
 
-    private void initCounter() {
-        counter.setText(COUNTER_INIT);
+    private fun initCounter() {
+        counter.text = COUNTER_INIT
     }
 
-    public JProgressBar getProgressBar() {
-        return progressBar;
-    }
-
-    private void setTotalCount(int total) {
+    private fun setTotalCount(total: Int) {
         if (total < 1) {
-            initCounter();
+            initCounter()
         } else {
-            final StringTokenizer stringTokenizer =
-                    new StringTokenizer(counter.getText(), Resources.COLON);
-            final StringBuffer stringBuffer = new StringBuffer();
+            val stringTokenizer = StringTokenizer(counter.text, Resources.COLON)
+            val stringBuffer = StringBuilder()
             if (stringTokenizer.hasMoreTokens()) {
-                stringBuffer.append(stringTokenizer.nextToken());
+                stringBuffer.append(stringTokenizer.nextToken())
             } else {
-                stringBuffer.append(String.valueOf(0));
+                stringBuffer.append(0)
             }
-            stringBuffer.append(Resources.COLON);
-            stringBuffer.append(String.valueOf(total));
-            counter.setText(stringBuffer.toString());
+            stringBuffer.append(Resources.COLON)
+            stringBuffer.append(total)
+            counter.text = stringBuffer.toString()
         }
     }
 
-    private void setCurrentCount(int curr) {
+    private fun setCurrentCount(curr: Int) {
         if (curr >= 0) {
-            final StringBuffer stringBuffer = new StringBuffer();
-            stringBuffer.append(String.valueOf(curr + 1));
-            stringBuffer.append(Resources.COLON);
-            final StringTokenizer stringTokenizer =
-                    new StringTokenizer(counter.getText(), Resources.COLON);
+            val stringBuffer = StringBuilder()
+            stringBuffer.append(curr + 1)
+            stringBuffer.append(Resources.COLON)
+            val stringTokenizer = StringTokenizer(counter.text, Resources.COLON)
             if (stringTokenizer.hasMoreTokens()) {
                 // skip the current count
-                stringTokenizer.nextToken();
+                stringTokenizer.nextToken()
                 // keep the total count
-                stringBuffer.append(stringTokenizer.nextToken());
+                stringBuffer.append(stringTokenizer.nextToken())
             }
-            counter.setText(stringBuffer.toString());
+            counter.text = stringBuffer.toString()
         }
     }
 
-    public void setNeatness(FontMap fontMap) {
-        clearProgress();
-        setLockFlag(!fontMap.isFileWritable());
-        if (fontMap.isDirty()) {
-            setDirtyFlag();
+    fun setNeatness(fontMap: FontMap) {
+        clearProgress()
+        setLockFlag(!fontMap.isFileWritable)
+        if (fontMap.isDirty) {
+            setDirtyFlag()
         } else {
-            setCleanFlag();
+            setCleanFlag()
         }
     }
 
-    private void setCleanFlag() {
-        flag.setIcon(Resources.getCleanIcon());
+    private fun setCleanFlag() {
+        flag.icon = cleanIcon
     }
 
-    private void setDirtyFlag() {
-        flag.setIcon(Resources.getDirtyIcon());
+    private fun setDirtyFlag() {
+        flag.icon = dirtyIcon
     }
 
-    public void setLockFlag(boolean flag) {
+    fun setLockFlag(flag: Boolean) {
         if (flag) {
-            lock.setIcon(Resources.getLockIcon());
+            lock.icon = lockIcon
         } else {
-            lock.setIcon(Resources.getUnLockIcon());
+            lock.icon = unLockIcon
         }
     }
 
@@ -188,11 +176,10 @@ public class StatusPanel
      * This fine grain notification tells listeners the exact range of cells,
      * rows, or columns that changed.
      */
-    public void tableChanged(TableModelEvent e) {
-        final TableModel tableModel = (TableModel) e.getSource();
-        setTotalCount(tableModel.getRowCount());
-        setNeatness(stedWindow.getDesktop()
-                .getFontMap());
+    override fun tableChanged(e: TableModelEvent) {
+        val tableModel = e.source as TableModel
+        setTotalCount(tableModel.rowCount)
+        setNeatness(stedWindow.desktop.fontMap)
     }
 
     /**
@@ -200,17 +187,20 @@ public class StatusPanel
      *
      * @param e the event that characterizes the change.
      */
-    public void valueChanged(ListSelectionEvent e) {
-        final ListSelectionModel listSelectionModel =
-                (ListSelectionModel) e.getSource();
-        setCurrentCount(listSelectionModel.getMaxSelectionIndex());
+    override fun valueChanged(e: ListSelectionEvent) {
+        val listSelectionModel = e.source as ListSelectionModel
+        setCurrentCount(listSelectionModel.maxSelectionIndex)
     }
 
-    public void stateChanged(FontMapChangeEvent e) {
-        setNeatness(e.getFontMap());
+    override fun stateChanged(e: FontMapChangeEvent) {
+        setNeatness(e.fontMap)
     }
 
-    public void statusPosted(StatusEvent event) {
-        setStatus(event.getStatus());
+    override fun statusPosted(event: StatusEvent) {
+        setStatus(event.status)
+    }
+
+    companion object {
+        private const val COUNTER_INIT = "0:0"
     }
 }
