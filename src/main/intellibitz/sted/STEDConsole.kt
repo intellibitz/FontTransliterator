@@ -120,6 +120,7 @@ class STEDConsole(args: Array<String>) : IThreadListener {
 
     init {
         addLogger(logger)
+        logger.info("Launching STED Console: ")
         loadArgs(args)
         performStedConsole()
     }

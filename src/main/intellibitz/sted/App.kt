@@ -5,48 +5,29 @@ import java.util.logging.Logger
 
 object Main {
     @JvmStatic
+    var logManager: LogManager = LogManager.getLogManager()
+
+    @JvmStatic
     fun main(args: Array<String>) {
-        val logger = Logger.getLogger("sted.Main")
+        logManager.readConfiguration(
+            ClassLoader.getSystemResourceAsStream("log/logging.properties")
+        )
+        val logger = Logger.getLogger(Main::class.java.name)
         addLogger(logger)
-        if (args.isNotEmpty()) {
-            val param1 = args[0]
-            // launch Console
-            if (param1.toLowerCase().startsWith("-c")) {
-                logger.info("Launching STED Console: ")
-                STEDConsole(args)
-            }
-        } else {
-            logger.info("Launching STED GUI: ")
+        logger.info("Begin STED: args - " + args.asList())
+        if (args.isNullOrEmpty()) {
             // launch GUI
             STEDGUI()
+        } else {
+            // launch Console
+            STEDConsole(args)
         }
     }
 
     @JvmStatic
     fun addLogger(logger: Logger) {
-        logmanager?.addLogger(logger)
+        logManager.addLogger(logger)
     }
-
-    private var logManager: LogManager? = null
-
-    @JvmStatic
-    val logmanager: LogManager?
-        get() {
-            if (logManager == null) {
-                logManager = LogManager.getLogManager()
-                try {
-                    with(logManager) {
-                        this?.readConfiguration(
-                            ClassLoader.getSystemResourceAsStream("log/logging.properties")
-//                            FileHelper.getInputStream(File("log/logging.properties"))
-                        )
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace() //To change body of catch statement use Options | File Templates.
-                }
-            }
-            return logManager
-        }
 
 }
 

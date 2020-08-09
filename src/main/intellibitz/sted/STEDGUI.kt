@@ -16,7 +16,7 @@ import javax.swing.UnsupportedLookAndFeelException
 
 class STEDGUI {
     companion object {
-        private val logger = Logger.getLogger(STEDGUI::class.java.name)
+        val logger = Logger.getLogger(STEDGUI::class.java.name)
         val sTEDWindow: STEDWindow = STEDWindow()
 
         @JvmStatic
@@ -64,12 +64,12 @@ class STEDGUI {
     }
 
     init {
+        addLogger(logger)
+        logger.info("Launching STED GUI: ")
         val splashWindow = SplashWindow(AboutText.instance)
         centerComponent(splashWindow)
         splashWindow.isVisible = true
-        addLogger(logger)
         splashWindow.setProgress(10)
-//        sTEDWindow = STEDWindow()
         sTEDWindow.addStatusListener(splashWindow)
         sTEDWindow.init()
         sTEDWindow.load()
