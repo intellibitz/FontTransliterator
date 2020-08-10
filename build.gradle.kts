@@ -13,6 +13,7 @@ repositories {
     mavenCentral()
     maven("https://dl.bintray.com/kotlin/kotlin-eap")
     maven("https://kotlin.bintray.com/kotlinx")
+    maven("https://dl.bintray.com/kotlin/dokka")
 }
 
 distributions {
@@ -57,6 +58,7 @@ dependencies {
     // Align versions of all Kotlin components
     implementation(kotlin("bom"))
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0-rc")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.0-rc")
     implementation(kotlin("reflect"))
     // Use the Kotlin test library.
     testImplementation(kotlin("test"))
@@ -85,5 +87,8 @@ tasks {
                 "Main-Class" to "sted.main"
             )
         }
+    }
+    dokkaHtml {
+        outputDirectory = "$buildDir/dokka"
     }
 }
