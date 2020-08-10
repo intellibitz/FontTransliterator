@@ -19,7 +19,7 @@ import java.util.logging.Logger
 import javax.swing.event.ChangeListener
 import javax.swing.event.EventListenerList
 
-class FontMap() {
+class FontMap {
     val entries = FontMapEntries()
     private val changeListeners = EventListenerList()
     private val fontListChangeListeners = EventListenerList()
@@ -31,41 +31,39 @@ class FontMap() {
         private set
     var font1Path = "SYSTEM"
     var font2Path = "SYSTEM"
-    private var changeEvent: FontMapChangeEvent? = null
-    private var fontListChangeEvent: FontListChangeEvent? = null
+    private val fontMapChangeEvent: FontMapChangeEvent by lazy {
+        FontMapChangeEvent(this)
+    }
+    private val fontListChangeEvent: FontListChangeEvent by lazy {
+        FontListChangeEvent(this)
+    }
     private var console = false
 
-    constructor(file: File) : this() {
-        fontMapFile = file
+    fun init(file: File) {
+        init(file, console)
     }
 
-    constructor(file: File, isConsole: Boolean) : this(file) {
+    fun init(file: File, isConsole: Boolean) {
+        fontMapFile = file
         setConsole(isConsole)
     }
 
     var isDirty: Boolean = false
         set(value) {
-            setDirtyValue(value)
+            field = value
+            fireFontMapEditEvent()
         }
-
-    private fun setDirtyValue(dirtyVal: Boolean) {
-        this.isDirty = dirtyVal
-        fireFontMapEditEvent()
-    }
 
     val isReloadable: Boolean
         get() = isDirty && !isNew
 
     var fontMapFile: File = File("")
         set(value) {
-            setFontMapFileValue(value)
+            field = getFontMapFileValue(value)
         }
 
-    val isFileWritable: Boolean
-        get() = fontMapFile.canWrite()
-
-    private fun setFontMapFileValue(file: File) {
-        fontMapFile = if (!file.name.toLowerCase().endsWith("xml")) {
+    private fun getFontMapFileValue(file: File): File {
+        return if (!file.name.toLowerCase().endsWith("xml")) {
             File(file.absolutePath + ".xml")
         } else {
             file
@@ -86,6 +84,10 @@ class FontMap() {
 */
     }
 
+    val isFileWritable: Boolean
+        get() = fontMapFile.canWrite()
+
+
     fun setConsole(console: Boolean) {
         this.console = console
     }
@@ -97,10 +99,10 @@ class FontMap() {
         fontMapFile = File("")
         font1 = arial
         font2 = arial
-        font1Path = Resources.SYSTEM
-        font2Path = Resources.SYSTEM
-        changeEvent = null
-        fontListChangeEvent = null
+        font1Path = "SYSTEM"
+        font2Path = "SYSTEM"
+//        fontMapChangeEvent = FontMapChangeEvent(this)
+//        fontListChangeEvent = FontListChangeEvent(this)
     }
 
     private val font1Name: String
@@ -110,7 +112,7 @@ class FontMap() {
     val fileName: String
         get() = fontMapFile.absolutePath
     val isNew: Boolean
-        get() = Resources.EMPTY_STRING == fileName
+        get() = fileName.isBlank()
 
     /**
      * if the font is a system font.. do not create if not, check for font
@@ -320,12 +322,8 @@ class FontMap() {
         var i = listeners.size - 2
         while (i >= 0) {
             if (listeners[i] === FontMapChangeListener::class.java) {
-                // Lazily create the event:
-                if (changeEvent == null) {
-                    changeEvent = FontMapChangeEvent(this)
-                }
                 (listeners[i + 1] as FontMapChangeListener)
-                    .stateChanged(changeEvent!!)
+                    .stateChanged(fontMapChangeEvent)
             }
             i -= 2
         }
@@ -351,12 +349,8 @@ class FontMap() {
         var i = listeners.size - 2
         while (i >= 0) {
             if (listeners[i] === ChangeListener::class.java) {
-                // Lazily create the event:
-                if (fontListChangeEvent == null) {
-                    fontListChangeEvent = FontListChangeEvent(this)
-                }
-                fontListChangeEvent!!.fontChanged = font
-                fontListChangeEvent!!.fontIndex = index
+                fontListChangeEvent.fontChanged = font
+                fontListChangeEvent.fontIndex = index
                 (listeners[i + 1] as ChangeListener)
                     .stateChanged(fontListChangeEvent)
             }
@@ -380,12 +374,8 @@ class FontMap() {
         var i = listeners.size - 2
         while (i >= 0) {
             if (listeners[i] === FontMapChangeListener::class.java) {
-                // Lazily create the event:
-                if (changeEvent == null) {
-                    changeEvent = FontMapChangeEvent(this)
-                }
                 (listeners[i + 1] as FontMapChangeListener)
-                    .stateChanged(changeEvent!!)
+                    .stateChanged(fontMapChangeEvent)
             }
             i -= 2
         }
@@ -407,12 +397,8 @@ class FontMap() {
         var i = listeners.size - 2
         while (i >= 0) {
             if (listeners[i] === FontMapChangeListener::class.java) {
-                // Lazily create the event:
-                if (changeEvent == null) {
-                    changeEvent = FontMapChangeEvent(this)
-                }
                 (listeners[i + 1] as FontMapChangeListener)
-                    .stateChanged(changeEvent!!)
+                    .stateChanged(fontMapChangeEvent)
             }
             i -= 2
         }

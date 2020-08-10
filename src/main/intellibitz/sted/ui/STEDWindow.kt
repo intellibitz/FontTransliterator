@@ -209,7 +209,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
             dframe.outputFileViewer.addThreadListener(this)
 
             // update the lock icon
-            val desktopModel = dframe.model
+            val desktopModel = dframe.desktopModel
             val fontMap = desktopModel.fontMap
             fontMap.removeFontMapChangeListener(statusPanel)
             fontMap.addFontMapChangeListener(statusPanel)

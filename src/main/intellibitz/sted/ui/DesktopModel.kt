@@ -12,15 +12,15 @@ import javax.xml.transform.TransformerException
  * Contains FontMap and all its related Entities.
  */
 class DesktopModel {
-    private val eventListenerList = EventListenerList()
-    var inputFile: File? = null
-    var outputFile: File? = null
-    lateinit var fontMap: FontMap
+    private var eventListenerList = EventListenerList()
+    var inputFile: File = File("")
+    var outputFile: File = File("")
+    val fontMap: FontMap = FontMap()
 
-    // the fontmap related events.. the model when change will fire these
-    private var fontMapChangeEvent: FontMapChangeEvent? = null
     fun clear() {
-        fontMapChangeEvent = null
+        eventListenerList = EventListenerList()
+        inputFile = File("")
+        outputFile = File("")
     }
 
     // Notify all listeners that have registered interest for
@@ -33,14 +33,12 @@ class DesktopModel {
         // Process the listeners last to first, notifying
         // those that are interested in this event
         var i = listeners.size - 2
+        // the fontmap related events.. the model when change will fire these
+        val fontMapChangeEvent = FontMapChangeEvent(fontMap)
         while (i >= 0) {
             if (listeners[i] === FontMapChangeListener::class.java) {
-                // Lazily create the event:
-                if (fontMapChangeEvent == null) {
-                    fontMapChangeEvent = FontMapChangeEvent(fontMap)
-                }
                 (listeners[i + 1] as FontMapChangeListener)
-                    .stateChanged(fontMapChangeEvent!!)
+                    .stateChanged(fontMapChangeEvent)
             }
             i -= 2
         }
@@ -48,21 +46,15 @@ class DesktopModel {
 
     val isReadyForTransliteration: Boolean
         get() {
-            var flag = false
-            if (inputFile != null && outputFile != null) {
-                flag = true
-            }
-            return flag
+            return inputFile.isFile && outputFile.isFile
         }
 
     fun addFontMapChangeListener(fontMapChangeListener: FontMapChangeListener?) {
-        eventListenerList
-            .add(FontMapChangeListener::class.java, fontMapChangeListener)
+        eventListenerList.add(FontMapChangeListener::class.java, fontMapChangeListener)
     }
 
     fun removeFontMapChangeListener(fontMapChangeListener: FontMapChangeListener?) {
-        eventListenerList
-            .remove(FontMapChangeListener::class.java, fontMapChangeListener)
+        eventListenerList.remove(FontMapChangeListener::class.java, fontMapChangeListener)
     }
 
     @Throws(TransformerException::class)

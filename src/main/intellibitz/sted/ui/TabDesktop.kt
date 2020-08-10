@@ -85,8 +85,8 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         desktopFrame.title = title
         desktopFrame.removeInternalFrameListener(this)
         desktopFrame.addInternalFrameListener(this)
-        desktopFrame.model.removeFontMapChangeListener(this)
-        desktopFrame.model.addFontMapChangeListener(this)
+        desktopFrame.desktopModel.removeFontMapChangeListener(this)
+        desktopFrame.desktopModel.addFontMapChangeListener(this)
         super.addTab(title, sTEDIcon, desktopFrame, getResource("tip.tab.fontmap"))
         initTabComponent(tabCount - 1, title)
         setEnabledAt(tabCount - 1, true)
@@ -189,7 +189,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         // existing fontmaps, with existing tabs
         val buttonTabComponent = getTabComponentAt(selectedIndex) as ButtonTabComponent
         buttonTabComponent.tabTitle.icon = dirtyIcon
-        val fontMap = desktopFrame.model.fontMap
+        val fontMap = desktopFrame.desktopModel.fontMap
         buttonTabComponent.tabTitle.text = fontMap.fontMapFile.name
         if (fontMap.isDirty) {
             buttonTabComponent.tabTitle.icon = dirtyIcon
@@ -283,7 +283,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         desktopFrame: DesktopFrame?
     ) {
         val mapperPanel = desktopFrame!!.mapperPanel
-        val desktopModel = desktopFrame.model
+        val desktopModel = desktopFrame.desktopModel
         val fontMap = desktopModel.fontMap
         fontMap.removeFontMapChangeListener(
             mapperPanel
@@ -357,10 +357,17 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
             .addInternalFrameListener(reopen as InternalFrameListener?)
     }
 
-    fun createDesktopModel(desktopFrame: DesktopFrame, fontMap: FontMap): DesktopModel {
-        val desktopModel = DesktopModel()
-        desktopModel.fontMap = fontMap
-        desktopFrame.model = desktopModel
+    fun createDesktopModel(desktopFrame: DesktopFrame): DesktopModel {
+        desktopFrame.desktopModel.clear()
+        desktopFrame.desktopModel.fontMap.clear()
+        addListenersToDesktopFrame(desktopFrame)
+        desktopFrame.load()
+        return desktopModel
+    }
+
+    fun createDesktopModel(desktopFrame: DesktopFrame, file:File): DesktopModel {
+        desktopFrame.desktopModel.clear()
+        desktopFrame.desktopModel.fontMap.init(file)
         addListenersToDesktopFrame(desktopFrame)
         desktopFrame.load()
         return desktopModel
@@ -371,9 +378,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
     }
 
     fun loadFontMap(desktopFrame: DesktopFrame, file: File) {
-        val desktopModel = createDesktopModel(
-            desktopFrame, FontMap(file)
-        )
+        val desktopModel = createDesktopModel(desktopFrame, file)
         desktopModel.addFontMapChangeListener(this)
         readFontMap(desktopModel)
         fireStatusPosted("FontMap loaded")
@@ -447,8 +452,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
      */
     fun loadNewFontMap(): DesktopFrame {
         val desktopFrame = createFontMapperDesktopFrame()
-        val fontMap = FontMap()
-        val desktopModel = createDesktopModel(desktopFrame, fontMap)
+        val desktopModel = createDesktopModel(desktopFrame)
         //        fontMapCache.put(Resources.ACTION_FILE_NEW_COMMAND, fontMap);
         desktopModel.fireFontMapChangedEvent()
         return desktopFrame
@@ -492,14 +496,14 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
     }
 
     fun reloadFontMap() {
-//        readFontMap(getSelectedFrame().getModel());
+//        readFontMap(getSelectedFrame().getDesktopModel());
         val selectedFrame = selectedFrame
-        val selectedFile = selectedFrame.model.fontMap.fontMapFile
+        val selectedFile = selectedFrame.desktopModel.fontMap.fontMapFile
         //        closeFontMap(selectedFrame);
         removeTabFrameAt(selectedIndex)
-        frameCache.remove(selectedFrame.model.fontMap.fileName)
+        frameCache.remove(selectedFrame.desktopModel.fontMap.fileName)
         //        fontMapCache
-//                .remove(selectedFrame.getModel().getFontMap().getFileName());
+//                .remove(selectedFrame.getDesktopModel().getFontMap().getFileName());
         openFontMap(selectedFile)
     }
 
@@ -510,7 +514,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
                 desktopFrame = createFontMapperDesktopFrame()
                 //todo: repeat the logic of the frame creation, init and load
                 loadFontMap(desktopFrame, selectedFile)
-                val desktopModel = desktopFrame.model
+                val desktopModel = desktopFrame.desktopModel
                 val fontMap = desktopModel.fontMap
                 //                desktopModel.setFontMap(fontMap);
 //                fontMapCache.put(fontMap.getFileName(), fontMap);
@@ -519,7 +523,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
             // add it to the tabs
             add(desktopFrame)
             desktopPane.selectedFrame = desktopFrame
-            desktopFrame.model.fireFontMapChangedEvent()
+            desktopFrame.desktopModel.fireFontMapChangedEvent()
             //            showDesktopFrame();
 /*
                 // try the cache first
@@ -556,7 +560,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
 
     private fun saveFontMap() {
         val desktopFrame = selectedFrame
-        var fontMap = desktopFrame.model.fontMap
+        var fontMap = desktopFrame.desktopModel.fontMap
         fontMap.setFont1(
             desktopFrame.mapperPanel
                 .fontKeypad1.selectedFont
@@ -566,7 +570,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
                 .fontKeypad2.selectedFont
         )
         try {
-            fontMap = desktopFrame.model.saveFontMap()
+            fontMap = desktopFrame.desktopModel.saveFontMap()
             //add it to cache
 //            fontMapCache.put(fontMap.getFileName(), fontMap);
 //            get
@@ -641,7 +645,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
     fun saveDirty(desktopFrame: DesktopFrame? = selectedFrame): Int {
         var result = JOptionPane.CLOSED_OPTION
         if (null != desktopFrame) {
-            val fontMap = desktopFrame.model.fontMap
+            val fontMap = desktopFrame.desktopModel.fontMap
             if (fontMap.isDirty) {
                 result = JOptionPane.showConfirmDialog(
                     this,
@@ -678,7 +682,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
     }
 
     val fontMap: FontMap
-        get() = selectedFrame.model
+        get() = selectedFrame.desktopModel
             .fontMap
 
     fun addItemToReOpenMenu(item: String?) {
@@ -758,7 +762,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
     val fontMapperDesktopFrame: DesktopFrame
         get() = selectedFrame
     val desktopModel: DesktopModel
-        get() = fontMapperDesktopFrame.model
+        get() = fontMapperDesktopFrame.desktopModel
     val frameTitle: String?
         get() {
             val desktopFrame = selectedFrame
@@ -811,7 +815,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
     override fun threadRunFinished(threadEvent: ThreadEvent) {
         // if FontMapReader..
         if (FontMapReadEvent::class.java.isInstance(threadEvent)) {
-            val desktopModel = selectedFrame.model
+            val desktopModel = selectedFrame.desktopModel
             val fontMap = desktopModel.fontMap
             fontMap.isDirty = false
             desktopModel.fireFontMapChangedEvent()

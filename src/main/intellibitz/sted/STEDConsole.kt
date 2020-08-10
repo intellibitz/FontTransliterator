@@ -23,9 +23,11 @@ class STEDConsole : IThreadListener {
             val input = File(inputFileName)
             val output = File(outputFileName)
             // create console based FontMap.. no need to readFontMap fonts
-            val fontMap = FontMap(File(fontMapName), true)
+            val fontMap = FontMap()
+            fontMap.init(File(fontMapName), true)
             FontMapReader.read(fontMap)
-            val converter = Converter(fontMap, input, output)
+            val converter = Converter()
+            converter.init(fontMap, input, output)
             converter.setReverseTransliterate(reverse)
             converter.setHTMLAware(html)
             converter.addThreadListener(this)

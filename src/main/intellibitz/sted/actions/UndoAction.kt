@@ -86,7 +86,7 @@ class UndoAction : TableModelListenerAction(), FontMapChangeListener, ChangeList
             val dframe = desktop.getComponentAt(
                 index
             ) as DesktopFrame
-            setEnabled(dframe.model.fontMap)
+            setEnabled(dframe.desktopModel.fontMap)
         }
     }
 }

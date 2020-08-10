@@ -6,33 +6,29 @@ import sted.io.FileHelper.fileCopy
 import java.io.*
 import java.util.logging.Logger
 
-open class Converter() : ThreadEventSourceBase() {
+open class Converter : ThreadEventSourceBase() {
     private var stopRequested = false
-    private var fontMap: FontMap? = null
-    private var fileToConvert: File? = null
-    private var convertedFile: File? = null
+    var fontMap: FontMap = FontMap()
+        set(value) {
+            field = value
+            transliterate.setEntries(fontMap.entries)
+        }
+
+    lateinit var fileToConvert: File
+    lateinit var convertedFile: File
     private var initialized = false
     private var success = false
-    var transliterate: ITransliterate? = null
+    var transliterate: ITransliterate = DefaultTransliterator()
         private set
 
-    constructor(fontMap: FontMap, input: File, output: File) : this() {
-        init(fontMap, input, output)
-    }
-
-    private fun init(fontMap: FontMap, input: File, output: File) {
+    fun init(fontMap: FontMap, input: File, output: File) {
+        this.fontMap = fontMap
         fileToConvert = input
         convertedFile = output
+        threadEvent = TransliterateEvent(this)
         initialized = true
         success = false
         stopRequested = false
-        setFontMap(fontMap)
-    }
-
-    private fun initTransliterator() {
-        if (transliterate == null) {
-            transliterate = DefaultTransliterator()
-        }
     }
 
     override fun run() {
@@ -56,17 +52,17 @@ open class Converter() : ThreadEventSourceBase() {
     }
 
     val isReady: Boolean
-        get() = fontMap != null && !fontMap!!.entries.isEmpty
+        get() = !fontMap.entries.isEmpty
 
     fun setHTMLAware(flag: Boolean) {
-        transliterate!!.setHTMLAware(flag)
+        transliterate.setHTMLAware(flag)
     }
 
     private fun convertFile() {
         try {
             fileCopy(
                 fileToConvert,
-                fileToConvert!!.absolutePath + ".bakup"
+                fileToConvert.absolutePath + ".bakup"
             )
         } catch (e: IOException) {
             message = "Unable to Backup input file: " + e.message
@@ -77,7 +73,7 @@ open class Converter() : ThreadEventSourceBase() {
         }
         val bufferedReader: BufferedReader
         try {
-            bufferedReader = BufferedReader(FileReader(fileToConvert!!))
+            bufferedReader = BufferedReader(FileReader(fileToConvert))
         } catch (e: FileNotFoundException) {
             message = "File Not Found: " + e.message
             success = false
@@ -87,7 +83,7 @@ open class Converter() : ThreadEventSourceBase() {
         }
         val bufferedWriter: BufferedWriter
         try {
-            bufferedWriter = BufferedWriter(FileWriter(convertedFile!!))
+            bufferedWriter = BufferedWriter(FileWriter(convertedFile))
         } catch (e: IOException) {
             message = "Cannot create Writer: " + e.message
             success = false
@@ -101,7 +97,7 @@ open class Converter() : ThreadEventSourceBase() {
                 if (stopRequested) {
                     break
                 }
-                bufferedWriter.write(transliterate!!.parseLine(input)!!)
+                bufferedWriter.write(transliterate.parseLine(input)!!)
                 bufferedWriter.newLine()
                 fireThreadRunning()
             }
@@ -135,14 +131,7 @@ open class Converter() : ThreadEventSourceBase() {
     }
 
     fun setReverseTransliterate(flag: Boolean) {
-        transliterate!!.setReverseTransliterate(flag)
-    }
-
-    fun setFontMap(fontMap: FontMap?) {
-        this.fontMap = fontMap
-        if (fontMap != null) {
-            transliterate!!.setEntries(fontMap.entries)
-        }
+        transliterate.setReverseTransliterate(flag)
     }
 
     @Synchronized
@@ -154,8 +143,4 @@ open class Converter() : ThreadEventSourceBase() {
         private val logger = Logger.getLogger("sted.fontmap.Converter")
     }
 
-    init {
-        threadEvent = TransliterateEvent(this)
-        initTransliterator()
-    }
 }

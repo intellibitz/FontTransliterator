@@ -11,8 +11,8 @@ open class ViewAction : ItemListenerAction() {
         override fun itemStateChanged(e: ItemEvent) {
             val sampleText: JPanel = stedWindow.desktop
                 .fontMapperDesktopFrame
-                .getMapperPanel()
-                .getPreviewPanel()
+                .mapperPanel
+                .previewPanel
             sampleText.isVisible = ItemEvent.SELECTED == e.stateChange
             sampleText.validate()
         }
@@ -39,7 +39,7 @@ open class ViewAction : ItemListenerAction() {
             val splitPane: JSplitPane = stedWindow
                 .desktop
                 .fontMapperDesktopFrame
-                .getMapperPanel().getMappingEntryPanel().getSplitPane()
+                .mapperPanel.mappingEntryPanel.getSplitPane()
             splitPane.bottomComponent.isVisible = ItemEvent.SELECTED == e.stateChange
             splitPane.resetToPreferredSizes()
             splitPane.validate()

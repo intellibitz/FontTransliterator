@@ -45,7 +45,8 @@ class TransliterateAction : TableModelListenerAction() {
     }
 
     fun getConverter(desktop: TabDesktop): Converter {
-        val converter = Converter(
+        val converter = Converter()
+        converter.init(
             desktop.fontMap,
             desktop.desktopModel.inputFile!!,
             desktop.desktopModel.outputFile!!

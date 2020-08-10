@@ -6,7 +6,7 @@ public class ThreadEventSourceBase
         extends Thread
         implements IThreadEventSource {
     private final EventListenerList eventListenerList = new EventListenerList();
-    private ThreadEvent threadEvent;
+    private ThreadEvent threadEvent = new ThreadEvent(this);
     private Object message;
     private Object result;
     private int progress;
@@ -18,9 +18,7 @@ public class ThreadEventSourceBase
     }
 
     protected void createThreadEvent() {
-        if (threadEvent == null) {
-            threadEvent = new ThreadEvent(this);
-        }
+        threadEvent = new ThreadEvent(this);
     }
 
     protected ThreadEvent getThreadEvent() {
@@ -94,8 +92,16 @@ public class ThreadEventSourceBase
         return message;
     }
 
+    public void setMessage(Object message) {
+        this.message = message;
+    }
+
     public Object getResult() {
         return result;
+    }
+
+    public void setResult(Object result) {
+        this.result = result;
     }
 
     public int getProgressMaximum() {
@@ -112,13 +118,5 @@ public class ThreadEventSourceBase
 
     public void setProgress(int progress) {
         this.progress = progress;
-    }
-
-    public void setMessage(Object message) {
-        this.message = message;
-    }
-
-    public void setResult(Object result) {
-        this.result = result;
     }
 }
