@@ -77,11 +77,11 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         this.statusListener = statusListener
     }
 
-    fun addTab(desktopFrame: DesktopFrame) {
+    private fun addTab(desktopFrame: DesktopFrame) {
         addTab(desktopFrame.title, desktopFrame)
     }
 
-    fun addTab(title: String, desktopFrame: DesktopFrame) {
+    private fun addTab(title: String, desktopFrame: DesktopFrame) {
         desktopFrame.title = title
         desktopFrame.removeInternalFrameListener(this)
         desktopFrame.addInternalFrameListener(this)
@@ -131,7 +131,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         return i
     }
 
-    fun closeFontMap(desktopFrame: DesktopFrame, i: Int): Int {
+    private fun closeFontMap(desktopFrame: DesktopFrame, i: Int): Int {
         val result = saveDirty(desktopFrame)
         if (JOptionPane.CANCEL_OPTION != result) {
             removeTabFrameAt(i)
@@ -227,7 +227,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
     }
 
     private fun enableCloseAction(flag: Boolean) {
-        menuHandler.getMenuItem("Close")?.setEnabled(flag)
+        menuHandler.getMenuItem("Close")?.isEnabled = flag
     }
 
     private fun enableCloseAction() {
@@ -279,7 +279,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
      *
      * @param desktopFrame
      */
-    fun addListenersToDesktopFrame(
+    private fun addListenersToDesktopFrame(
         desktopFrame: DesktopFrame?
     ) {
         val mapperPanel = desktopFrame!!.mapperPanel
@@ -357,7 +357,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
             .addInternalFrameListener(reopen as InternalFrameListener?)
     }
 
-    fun createDesktopModel(desktopFrame: DesktopFrame): DesktopModel {
+    private fun createDesktopModel(desktopFrame: DesktopFrame): DesktopModel {
         desktopFrame.desktopModel.clear()
         desktopFrame.desktopModel.fontMap.clear()
         addListenersToDesktopFrame(desktopFrame)
@@ -365,7 +365,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         return desktopModel
     }
 
-    fun createDesktopModel(desktopFrame: DesktopFrame, file:File): DesktopModel {
+    private fun createDesktopModel(desktopFrame: DesktopFrame, file: File): DesktopModel {
         desktopFrame.desktopModel.clear()
         desktopFrame.desktopModel.fontMap.init(file)
         addListenersToDesktopFrame(desktopFrame)
@@ -373,11 +373,13 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         return desktopModel
     }
 
+/*
     fun loadFontMap(file: File) {
         loadFontMap(selectedFrame, file)
     }
+*/
 
-    fun loadFontMap(desktopFrame: DesktopFrame, file: File) {
+    private fun loadFontMap(desktopFrame: DesktopFrame, file: File) {
         val desktopModel = createDesktopModel(desktopFrame, file)
         desktopModel.addFontMapChangeListener(this)
         readFontMap(desktopModel)
@@ -389,7 +391,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
      *
      * @param desktopModel
      */
-    fun readFontMap(desktopModel: DesktopModel) {
+    private fun readFontMap(desktopModel: DesktopModel) {
         //TODO: move this somewhere applicable
 //        clear();
 //        final String path1 = fontMap.getFont1Path();
@@ -403,7 +405,8 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
 //        fontMap.setFont2Path(path2);
         val fontMap = desktopModel.fontMap
         try {
-            val fontMapReader = FontMapReader(fontMap)
+            val fontMapReader = FontMapReader()
+            fontMapReader.init(fontMap)
             fontMapReader.addThreadListener(this)
             SwingUtilities.invokeLater(fontMapReader)
         } catch (e: IllegalArgumentException) {
@@ -450,7 +453,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
      *
      * @return DesktopFrame the newly added fontmap component
      */
-    fun loadNewFontMap(): DesktopFrame {
+    private fun loadNewFontMap(): DesktopFrame {
         val desktopFrame = createFontMapperDesktopFrame()
         val desktopModel = createDesktopModel(desktopFrame)
         //        fontMapCache.put(Resources.ACTION_FILE_NEW_COMMAND, fontMap);
@@ -458,7 +461,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         return desktopFrame
     }
 
-    fun reopenFontMap(fileName: String?) {
+    fun reopenFontMap(fileName: String) {
         openFontMap(File(fileName))
         /*
         FontMap fontMap = getFontMap();
@@ -763,11 +766,13 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         get() = selectedFrame
     val desktopModel: DesktopModel
         get() = fontMapperDesktopFrame.desktopModel
+/*
     val frameTitle: String?
         get() {
             val desktopFrame = selectedFrame
             return desktopFrame.title
         }
+*/
 
     fun fireMessagePosted(message: String?) {
         messageEvent!!.message = message
@@ -802,11 +807,9 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         if (TransliterateEvent::class.java.isInstance(threadEvent)) {
             // enable the convert action
             menuHandler
-                .getAction(Resources.ACTION_CONVERT_NAME)
-                ?.setEnabled(true)
+                .getAction(Resources.ACTION_CONVERT_NAME)?.isEnabled = true
             // disable the stop button
-            menuHandler.getAction(Resources.ACTION_STOP_NAME)
-                ?.setEnabled(false)
+            menuHandler.getAction(Resources.ACTION_STOP_NAME)?.isEnabled = false
         }
         fireStatusPosted(message)
         relax()
@@ -825,11 +828,9 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
             selectedFrame.readOutputFile()
             // enable the convert action
             menuHandler
-                .getAction(Resources.ACTION_CONVERT_NAME)
-                ?.setEnabled(true)
+                .getAction(Resources.ACTION_CONVERT_NAME)?.isEnabled = true
             // disable the stop button
-            menuHandler.getAction(Resources.ACTION_STOP_NAME)
-                ?.setEnabled(false)
+            menuHandler.getAction(Resources.ACTION_STOP_NAME)?.isEnabled = false
             fireStatusPosted("Transliterate Done")
         }
         relax()
@@ -851,12 +852,8 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
 
     override fun internalFrameActivated(e: InternalFrameEvent) {
         // enable the view mapping and sample when the internal frame is shown
-        menuHandler
-            .getMenuItem(Resources.ACTION_VIEW_MAPPING)
-            ?.setEnabled(true)
-        menuHandler
-            .getMenuItem(Resources.ACTION_VIEW_SAMPLE)
-            ?.setEnabled(true)
+        menuHandler.getMenuItem(Resources.ACTION_VIEW_MAPPING)?.isEnabled = true
+        menuHandler.getMenuItem(Resources.ACTION_VIEW_SAMPLE)?.isEnabled = true
         val desktopFrame = e.internalFrame as DesktopFrame
         desktopFrame.setEnabledFontMapTab(true)
         enableCloseAction()

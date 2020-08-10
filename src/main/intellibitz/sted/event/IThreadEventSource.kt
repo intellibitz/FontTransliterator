@@ -12,27 +12,27 @@ interface IThreadEventSource : Runnable {
      * @param threadListener IThreadListener interested in ThreadEvent
      * @see sted.event.IThreadListener
      */
-    fun addThreadListener(threadListener: IThreadListener?)
+    fun addThreadListener(threadListener: IThreadListener)
 
     /**
      * @return Object the status of this Thread
      */
-    var message: Any?
+    var message: Any
 
     /**
      * @return Object the result of this Thread operation
      */
-    val result: Any?
+    var result: Any
 
     /**
      * @return int the progress of the Thread operation.. can be used as a
      * JProgressBar value
      */
-    val progress: Int
+    var progress: Int
 
     /**
      * @return int the progress maximum value of the Thread operation.. can be
      * used as a JProgressBar#maximum
      */
-    val progressMaximum: Int
+    var progressMaximum: Int
 }

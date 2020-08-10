@@ -1,122 +1,83 @@
-package sted.event;
+package sted.event
 
-import javax.swing.event.EventListenerList;
+import javax.swing.event.EventListenerList
 
-public class ThreadEventSourceBase
-        extends Thread
-        implements IThreadEventSource {
-    private final EventListenerList eventListenerList = new EventListenerList();
-    private ThreadEvent threadEvent = new ThreadEvent(this);
-    private Object message;
-    private Object result;
-    private int progress;
-    private int progressMaximum;
+open class ThreadEventSourceBase : Thread(), IThreadEventSource {
+    private val eventListenerList = EventListenerList()
+    lateinit var threadEvent: ThreadEvent
+    override var message: Any = ""
+    override var result: Any = ""
+    override var progress = 0
+    override var progressMaximum = 0
 
-    //
-    public ThreadEventSourceBase() {
-        super();
+    private fun createThreadEvent() {
+        threadEvent = ThreadEvent(this)
     }
 
-    protected void createThreadEvent() {
-        threadEvent = new ThreadEvent(this);
-    }
-
-    protected ThreadEvent getThreadEvent() {
-        return threadEvent;
-    }
-
-    protected void setThreadEvent(ThreadEvent threadEvent) {
-        this.threadEvent = threadEvent;
-    }
-
-    public void fireThreadRunStarted() {
+    override fun fireThreadRunStarted() {
         // Guaranteed to return a non-null array
-        final Object[] listeners = eventListenerList.getListenerList();
-        createThreadEvent();
+        val listeners = eventListenerList.listenerList
+        createThreadEvent()
         // Process the listeners last to first, notifying
         // those that are interested in this event
-        for (int i = listeners.length - 2; i >= 0; i -= 2) {
-            if (listeners[i] == IThreadListener.class) {
-                ((IThreadListener) listeners[i + 1])
-                        .threadRunStarted(threadEvent);
+        var i = listeners.size - 2
+        while (i >= 0) {
+            if (listeners[i] === IThreadListener::class.java) {
+                (listeners[i + 1] as IThreadListener)
+                    .threadRunStarted(threadEvent)
             }
+            i -= 2
         }
     }
 
-    public void fireThreadRunning() {
+    override fun fireThreadRunning() {
         // Guaranteed to return a non-null array
-        final Object[] listeners = eventListenerList.getListenerList();
-        createThreadEvent();
+        val listeners = eventListenerList.listenerList
+        createThreadEvent()
         // Process the listeners last to first, notifying
         // those that are interested in this event
-        for (int i = listeners.length - 2; i >= 0; i -= 2) {
-            if (listeners[i] == IThreadListener.class) {
-                ((IThreadListener) listeners[i + 1]).threadRunning(threadEvent);
+        var i = listeners.size - 2
+        while (i >= 0) {
+            if (listeners[i] === IThreadListener::class.java) {
+                (listeners[i + 1] as IThreadListener).threadRunning(threadEvent)
             }
+            i -= 2
         }
     }
 
-    public void fireThreadRunFailed() {
+    override fun fireThreadRunFailed() {
         // Guaranteed to return a non-null array
-        final Object[] listeners = eventListenerList.getListenerList();
-        createThreadEvent();
+        val listeners = eventListenerList.listenerList
+        createThreadEvent()
         // Process the listeners last to first, notifying
         // those that are interested in this event
-        for (int i = listeners.length - 2; i >= 0; i -= 2) {
-            if (listeners[i] == IThreadListener.class) {
-                ((IThreadListener) listeners[i + 1])
-                        .threadRunFailed(threadEvent);
+        var i = listeners.size - 2
+        while (i >= 0) {
+            if (listeners[i] === IThreadListener::class.java) {
+                (listeners[i + 1] as IThreadListener)
+                    .threadRunFailed(threadEvent)
             }
+            i -= 2
         }
     }
 
-    public void fireThreadRunFinished() {
+    override fun fireThreadRunFinished() {
         // Guaranteed to return a non-null array
-        final Object[] listeners = eventListenerList.getListenerList();
-        createThreadEvent();
+        val listeners = eventListenerList.listenerList
+        createThreadEvent()
         // Process the listeners last to first, notifying
         // those that are interested in this event
-        for (int i = listeners.length - 2; i >= 0; i -= 2) {
-            if (listeners[i] == IThreadListener.class) {
-                ((IThreadListener) listeners[i + 1])
-                        .threadRunFinished(threadEvent);
+        var i = listeners.size - 2
+        while (i >= 0) {
+            if (listeners[i] === IThreadListener::class.java) {
+                (listeners[i + 1] as IThreadListener)
+                    .threadRunFinished(threadEvent)
             }
+            i -= 2
         }
     }
 
-    public void addThreadListener(IThreadListener threadListener) {
-        eventListenerList.add(IThreadListener.class, threadListener);
-    }
-
-    public Object getMessage() {
-        return message;
-    }
-
-    public void setMessage(Object message) {
-        this.message = message;
-    }
-
-    public Object getResult() {
-        return result;
-    }
-
-    public void setResult(Object result) {
-        this.result = result;
-    }
-
-    public int getProgressMaximum() {
-        return progressMaximum;
-    }
-
-    public void setProgressMaximum(int progressMaximum) {
-        this.progressMaximum = progressMaximum;
-    }
-
-    public int getProgress() {
-        return progress;
-    }
-
-    public void setProgress(int progress) {
-        this.progress = progress;
+    override fun addThreadListener(threadListener: IThreadListener) {
+        eventListenerList.add(IThreadListener::class.java, threadListener)
     }
 }

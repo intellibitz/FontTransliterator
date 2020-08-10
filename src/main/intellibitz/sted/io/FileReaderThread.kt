@@ -1,125 +1,91 @@
-package sted.io;
+package sted.io
 
-import sted.event.IStatusEventSource;
-import sted.event.IStatusListener;
-import sted.event.StatusEvent;
-import sted.event.ThreadEventSourceBase;
+import sted.event.IStatusEventSource
+import sted.event.IStatusListener
+import sted.event.StatusEvent
+import sted.event.ThreadEventSourceBase
+import java.io.*
+import java.util.logging.Logger
 
-import java.io.*;
-import java.util.logging.Logger;
-
-public class FileReaderThread
-        extends ThreadEventSourceBase
-        implements IStatusEventSource {
-    private File file;
-
-    private static final Logger logger =
-            Logger.getLogger("sted.io.FileReaderThread");
-    private IStatusListener statusListener;
-    private StatusEvent statusEvent;
-
-    public FileReaderThread() {
-        super();
-        statusEvent = new StatusEvent(this);
+class FileReaderThread : ThreadEventSourceBase(), IStatusEventSource {
+    lateinit var file: File
+    var statusListener: IStatusListener? = null
+    var statusEvent = StatusEvent(this)
+    fun init(file: File) {
+        this.file = file
     }
 
-    public FileReaderThread(File file) {
-        this();
-        this.file = file;
-    }
-
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    public IStatusListener getStatusListener() {
-        return statusListener;
-    }
-
-    public void setStatusListener(IStatusListener statusListener) {
-        this.statusListener = statusListener;
-    }
-
-    public StatusEvent getStatusEvent() {
-        return statusEvent;
-    }
-
-    public void setStatusEvent(StatusEvent statusEvent) {
-        this.statusEvent = statusEvent;
-    }
-
-    public void run() {
-        fireThreadRunStarted();
-        logger.entering(getClass().getName(), "run");
+    override fun run() {
+        fireThreadRunStarted()
+        logger.entering(javaClass.name, "run")
         try {
-            if (file == null) {
-                setMessage("File is null");
-                fireThreadRunFailed();
+            if (!file.isFile) {
+                this.message = ("File is null")
+                fireThreadRunFailed()
             } else {
-                setResult(getFileContents(file));
-                fireThreadRunFinished();
+                result = getFileContents(file)
+                fireThreadRunFinished()
             }
-        } catch (FileNotFoundException e) {
-            setMessage("Cannot Read File - File not found: " + e.getMessage());
-            logger.throwing(getClass().getName(), "run", e);
-            fireThreadRunFailed();
-        } catch (IOException e) {
-            setMessage("Cannot Read File - IOException: " + e.getMessage());
-            logger.throwing(getClass().getName(), "run", e);
-            fireThreadRunFailed();
+        } catch (e: FileNotFoundException) {
+            message=("Cannot Read File - File not found: " + e.message)
+            logger.throwing(javaClass.name, "run", e)
+            fireThreadRunFailed()
+        } catch (e: IOException) {
+            message=("Cannot Read File - IOException: " + e.message)
+            logger.throwing(javaClass.name, "run", e)
+            fireThreadRunFailed()
         }
-        logger.exiting(getClass().getName(), "run");
+        logger.exiting(javaClass.name, "run")
     }
 
-    private String getFileContents(File file)
-            throws IOException {
-        BufferedReader bufferedReader = null;
-        FileReader fileReader = null;
-        try {
-            fileReader = new FileReader(file);
-            final int sz = (int) file.length();
-            final char[] cbuf = new char[sz];
+    @Throws(IOException::class)
+    private fun getFileContents(file: File): String {
+        var bufferedReader: BufferedReader? = null
+        var fileReader: FileReader? = null
+        return try {
+            fileReader = FileReader(file)
+            val sz = file.length().toInt()
+            val cbuf = CharArray(sz)
             if (sz > 0) {
-                bufferedReader = new BufferedReader(fileReader, sz);
-                setProgressMaximum(sz);
-                int count = 0;
-                int len = 100;
+                bufferedReader = BufferedReader(fileReader, sz)
+                progressMaximum = sz
+                var count = 0
+                var len = 100
                 if (len > sz - count) {
-                    len = sz - count;
+                    len = sz - count
                 }
-                int offset = count;
-                logger.finest("File Size: " + sz);
-                logger.finest("File Offset: " + offset);
-                logger.finest("File Length to be read: " + len);
+                var offset = count
+                logger.finest("File Size: $sz")
+                logger.finest("File Offset: $offset")
+                logger.finest("File Length to be read: $len")
                 while (bufferedReader.read(cbuf, offset, len) > 0) {
-                    count += len;
+                    count += len
                     if (len > sz - count) {
-                        len = sz - count;
+                        len = sz - count
                     }
-                    offset = count;
-                    setProgress(count);
-                    fireThreadRunning();
+                    offset = count
+                    progress = count
+                    fireThreadRunning()
                 }
             }
-            return String.valueOf(cbuf);
+            String(cbuf)
         } finally {
             if (bufferedReader != null) {
-                fileReader.close();
-                bufferedReader.close();
+                fileReader!!.close()
+                bufferedReader.close()
             }
         }
     }
 
-    public void fireStatusPosted() {
-        statusListener.statusPosted(getStatusEvent());
+    override fun fireStatusPosted() {
+        statusListener!!.statusPosted(statusEvent)
     }
 
-    public void addStatusListener(IStatusListener statusListener) {
-        setStatusListener(statusListener);
+    override fun addStatusListener(statusListener: IStatusListener) {
+        this.statusListener = statusListener
+    }
+
+    companion object {
+        private val logger = Logger.getLogger("sted.io.FileReaderThread")
     }
 }
-

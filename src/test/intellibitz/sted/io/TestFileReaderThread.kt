@@ -5,7 +5,7 @@ import org.junit.Test
 class TestFileReaderThread {
     @Test
     fun testViewToolBar() {
-        val fileReaderThread = FileReaderThread(null)
+        val fileReaderThread = FileReaderThread()
         try {
             fileReaderThread.start()
         } catch (e: IllegalStateException) {
