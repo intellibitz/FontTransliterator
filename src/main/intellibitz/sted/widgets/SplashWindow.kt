@@ -13,8 +13,8 @@ class SplashWindow(component: Component?) : JWindow(), IStatusListener {
         progress.value = percent
     }
 
-    override fun statusPosted(event: StatusEvent) {
-        event.status?.toInt()?.let { setProgress(it) }
+    override fun statusPosted(statusEvent: StatusEvent) {
+        statusEvent.status?.toInt()?.let { setProgress(it) }
     }
 
     init {

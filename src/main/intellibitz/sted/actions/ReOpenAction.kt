@@ -18,8 +18,8 @@ import javax.swing.event.InternalFrameListener
  */
 class ReOpenAction : ReOpenFontMapAction(), FontMapChangeListener, InternalFrameListener {
     override fun actionPerformed(e: ActionEvent) {}
-    override fun stateChanged(e: FontMapChangeEvent) {
-        val fontMap = e!!.fontMap
+    override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent) {
+        val fontMap = fontMapChangeEvent.fontMap
         if (fontMap.isNew) {
             enableReOpenItems(menuHandler)
         } else {

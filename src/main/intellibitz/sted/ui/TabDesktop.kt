@@ -171,7 +171,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
                 frameNumberIndex.addNewIndex(num)
     }
 
-    override fun stateChanged(e: FontMapChangeEvent) {
+    override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent) {
 
         // select a new tab, if the fontmap is new
         val desktopFrame = selectedFrame

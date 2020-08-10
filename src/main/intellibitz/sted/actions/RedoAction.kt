@@ -56,8 +56,8 @@ class RedoAction : TableModelListenerAction(), FontMapChangeListener, ChangeList
         return !empty
     }
 
-    override fun stateChanged(e: FontMapChangeEvent) {
-        val fontMap = e.fontMap
+    override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent) {
+        val fontMap = fontMapChangeEvent.fontMap
         if (!setEnabled(fontMap)) {
             fontMap.isDirty = false
         }

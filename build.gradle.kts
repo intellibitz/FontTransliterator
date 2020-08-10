@@ -6,6 +6,7 @@ plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     kotlin("jvm") version "1.4.0-rc"
     kotlin("kapt") version "1.4.0-rc"
+    id("org.jetbrains.dokka") version "1.4.0-rc"
 }
 
 repositories {
@@ -52,6 +53,7 @@ dependencies {
     implementation(kotlin("script-runtime"))
     // Use the Kotlin JDK 8 standard library.
     implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
     // Align versions of all Kotlin components
     implementation(kotlin("bom"))
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0-rc")

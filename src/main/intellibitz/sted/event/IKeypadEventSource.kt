@@ -6,5 +6,5 @@ package sted.event
  */
 interface IKeypadEventSource {
     fun fireKeypadReset()
-    fun addKeypadListener(statusListener: IKeypadListener)
+    fun addKeypadListener(keypadListener: IKeypadListener)
 }

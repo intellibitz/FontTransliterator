@@ -49,7 +49,7 @@ class DesktopModel {
     val isReadyForTransliteration: Boolean
         get() {
             var flag = false
-            if (inputFile != null && outputFile != null && fontMap.fontMapFile != null) {
+            if (inputFile != null && outputFile != null) {
                 flag = true
             }
             return flag

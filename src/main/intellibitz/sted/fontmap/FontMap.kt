@@ -442,6 +442,9 @@ class FontMap() {
 
     companion object {
         private val logger = Logger.getLogger("sted.fontmap.FontMap")
-        private val arial: Font = fonts[0]?.font ?: Font.decode("Arial")
+        private val arial: Font = (fonts["Arial"] as FontInfo).font
+
+        //        private val arial: Font = GraphicsEnvironment.getLocalGraphicsEnvironment().allFonts[0]
+//        private val arial: Font = (fonts["Arial"] as FontInfo).font ?: Font.decode("Arial")
     }
 }

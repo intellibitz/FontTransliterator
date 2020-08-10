@@ -279,7 +279,7 @@ object Resources {
     fun loadFonts(allFonts: Array<Font>) {
         for (font in allFonts) {
             val f = font.deriveFont(Font.PLAIN, 14f)
-            fonts[font.name] = FontInfo(f, SYSTEM)
+            fonts[font.name] = FontInfo(f, "SYSTEM")
         }
     }
 

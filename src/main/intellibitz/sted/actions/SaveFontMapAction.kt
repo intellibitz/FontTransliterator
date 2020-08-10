@@ -19,10 +19,10 @@ class SaveFontMapAction : TableModelListenerAction(), FontMapChangeListener {
     /**
      * Invoked when the target of the listener has changed its state.
      *
-     * @param e a ChangeEvent object
+     * @param fontMapChangeEvent a ChangeEvent object
      */
-    override fun stateChanged(e: FontMapChangeEvent) {
-        isEnabled = isSaveable(e.fontMap)
+    override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent) {
+        isEnabled = isSaveable(fontMapChangeEvent.fontMap)
     }
 
     /**

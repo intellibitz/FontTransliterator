@@ -47,7 +47,7 @@ open class CutAction : TableModelListenerAction(), FontMapChangeListener {
         return fontMap.entries.remove(selectedRows)
     }
 
-    override fun stateChanged(e: FontMapChangeEvent) {
+    override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent) {
         isEnabled = !selectedRows.isEmpty()
     }
 }

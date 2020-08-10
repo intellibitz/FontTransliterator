@@ -8,6 +8,7 @@ import javax.swing.JOptionPane
 
 object FileHelper {
     private val logger = Logger.getLogger("sted.io.FileHelper")
+
     @JvmStatic
     fun openFont(parent: Component?): File? {
         return openFile("Please select Font location:", "ttf", "Fonts", parent)
@@ -40,11 +41,10 @@ object FileHelper {
 
     @JvmStatic
     fun suffixFileSeparator(path: String): String {
-        var path = path
-        if (!path.endsWith(File.separator)) {
-            path += File.separator
+        if (path.endsWith(File.separator)) {
+            return path
         }
-        return path
+        return path + File.separator
     }
 
     @JvmStatic
@@ -98,14 +98,14 @@ object FileHelper {
     }
 
     @JvmStatic
-    fun getSampleFontMapPaths(dir: String): Array<String>? {
-        val dirFile = File(dir)
+    fun getSampleFontMapPaths(path: String): Array<String>? {
+        val dirFile = File(path)
         if (dirFile.isDirectory) {
-            val files = dirFile.list { dir, name -> name.endsWith("xml") }
-            if (null != files && files.size > 0) {
+            val files = dirFile.list { _, name -> name.endsWith("xml") }
+            if (!files.isNullOrEmpty()) {
                 for (i in files.indices) {
-                    if (!files[i].contains(dir)) {
-                        files[i] = dir + files[i]
+                    if (!files[i].contains(path)) {
+                        files[i] = path + files[i]
                     }
                 }
             }

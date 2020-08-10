@@ -192,12 +192,12 @@ class StatusPanel : JPanel(), TableModelListener, ListSelectionListener, FontMap
         setCurrentCount(listSelectionModel.maxSelectionIndex)
     }
 
-    override fun stateChanged(e: FontMapChangeEvent) {
-        setNeatness(e.fontMap)
+    override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent) {
+        setNeatness(fontMapChangeEvent.fontMap)
     }
 
-    override fun statusPosted(event: StatusEvent) {
-        setStatus(event.status)
+    override fun statusPosted(statusEvent: StatusEvent) {
+        setStatus(statusEvent.status)
     }
 
     companion object {

@@ -31,8 +31,8 @@ open class FontChangeTextField : JTextField(), ItemListener, ActionListener, Tab
         requestFocus()
     }
 
-    override fun keypadReset(event: KeypadEvent) {
-        val fontKeypad = event?.eventSource as FontKeypad
+    override fun keypadReset(keypadEvent: KeypadEvent) {
+        val fontKeypad = keypadEvent.eventSource as FontKeypad
         val keys: List<JButton> = fontKeypad.keys
         val sz = keys.size
         for (i in 0 until sz) {

@@ -299,7 +299,7 @@ public class DesktopFrame
         }
     }
 
-    public void stateChanged(@NotNull FontMapEntriesChangeEvent e) {
+    public void stateChanged(@NotNull FontMapEntriesChangeEvent fontMapEntriesChangeEvent) {
         desktopModel.fireFontMapChangedEvent();
     }
 
