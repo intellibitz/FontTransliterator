@@ -1,216 +1,191 @@
-package sted.ui;
+package sted.ui
 
-import sted.event.FontMapChangeEvent;
-import sted.event.FontMapChangeListener;
-import sted.fontmap.FontMap;
-import sted.fontmap.FontMapEntry;
-import sted.io.Resources;
+import sted.event.FontMapChangeEvent
+import sted.event.FontMapChangeListener
+import sted.fontmap.FontMap
+import sted.fontmap.FontMapEntry
+import sted.io.Resources
+import sted.io.Resources.getResource
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
+import javax.swing.*
+import javax.swing.border.TitledBorder
+import javax.swing.event.ListSelectionEvent
+import javax.swing.event.ListSelectionListener
+import javax.swing.event.TableModelEvent
+import javax.swing.event.TableModelListener
+import javax.swing.table.TableModel
 
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
-import java.awt.*;
+class MappingRulesPanel : JPanel(), TableModelListener, FontMapChangeListener, ListSelectionListener {
+    private val word2 = JTextField()
+    private val word1 = JTextField()
+    private val beginsWithCheck = JCheckBox()
+    private val endsWithCheck = JCheckBox()
+    private val ruleTitle = JLabel()
+    private val followedByTitle = JLabel()
+    private val precededByTitle = JLabel()
+    private val followedText = JTextField()
+    private val precededText = JTextField()
+    private lateinit var fontMap: FontMap
+    private var tableModel: TableModel? = null
+    fun init() {
+        val titledBorder = BorderFactory.createTitledBorder(
+            getResource(Resources.TITLE_MAPPING_RULE)
+        )
+        titledBorder.titleJustification = TitledBorder.CENTER
+        border = titledBorder
+        val gridBagLayout = GridBagLayout()
+        layout = gridBagLayout
+        val gridBagConstraints = GridBagConstraints()
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL
+        gridBagConstraints.weighty = 0.0
+        gridBagConstraints.weightx = 1.0
+        gridBagConstraints.gridheight = 1
+        gridBagConstraints.gridwidth = 1
+        //
+        word1.isEditable = false
+        word1.isEnabled = false
+        word1.horizontalAlignment = JLabel.RIGHT
+        gridBagLayout.setConstraints(word1, gridBagConstraints)
+        add(word1)
+        gridBagConstraints.gridx = 1
+        gridBagConstraints.gridwidth = 1
+        gridBagConstraints.weightx = 0.0
+        val eqLabel = JLabel(" = ")
+        gridBagLayout.setConstraints(eqLabel, gridBagConstraints)
+        add(eqLabel)
+        gridBagConstraints.gridx = 2
+        gridBagConstraints.gridwidth = 1
+        gridBagConstraints.weightx = 1.0
+        word2.isEditable = false
+        word2.isEnabled = false
+        gridBagLayout.setConstraints(word2, gridBagConstraints)
+        add(word2)
+        gridBagConstraints.gridy = 1
+        gridBagConstraints.gridx = 0
+        gridBagConstraints.gridwidth = 1
+        ruleTitle.text = " If <> is: "
+        gridBagLayout.setConstraints(ruleTitle, gridBagConstraints)
+        add(ruleTitle)
 
-public class MappingRulesPanel
-        extends JPanel
-        implements TableModelListener,
-        FontMapChangeListener,
-        ListSelectionListener {
-    private FontMap fontMap;
-    private JTextField followedText;
-    private JTextField precededText;
-    private JTextField word2;
-    private JTextField word1;
-    private JCheckBox beginsWithCheck;
-    private JCheckBox endsWithCheck;
-    private TableModel tableModel;
-    private JLabel ruleTitle;
-    private JLabel followedByTitle;
-    private JLabel precededByTitle;
-
-    public MappingRulesPanel() {
-        super();
+        //
+        //
+        gridBagConstraints.gridy = 2
+        gridBagConstraints.gridx = 0
+        //        gridBagConstraints.gridwidth = 2;
+        beginsWithCheck.text = getResource(
+            Resources.TITLE_TABLE_COLUMN_FIRST_LETTER
+        )
+        beginsWithCheck.isEnabled = false
+        gridBagLayout.setConstraints(beginsWithCheck, gridBagConstraints)
+        add(beginsWithCheck)
+        gridBagConstraints.gridx = 2
+        //        gridBagConstraints.gridwidth = 2;
+        endsWithCheck.text = getResource(
+            Resources.TITLE_TABLE_COLUMN_LAST_LETTER
+        )
+        endsWithCheck.isEnabled = false
+        gridBagLayout.setConstraints(endsWithCheck, gridBagConstraints)
+        add(endsWithCheck)
+        //
+        //
+        gridBagConstraints.gridy = 3
+        gridBagConstraints.gridx = 0
+        //        gridBagConstraints.gridwidth = 2;
+        followedByTitle.text = "Followed By: "
+        followedByTitle.isEnabled = false
+        gridBagLayout.setConstraints(followedByTitle, gridBagConstraints)
+        add(followedByTitle)
+        gridBagConstraints.gridx = 2
+        //        gridBagConstraints.gridwidth = 2;
+        followedText.isEditable = false
+        followedText.isEnabled = false
+        gridBagLayout.setConstraints(followedText, gridBagConstraints)
+        add(followedText)
+        gridBagConstraints.gridy = 4
+        gridBagConstraints.gridx = 0
+        //        gridBagConstraints.gridwidth = 2;
+        precededByTitle.text = "Preceded By: "
+        precededByTitle.isEnabled = false
+        gridBagLayout.setConstraints(precededByTitle, gridBagConstraints)
+        add(precededByTitle)
+        gridBagConstraints.gridx = 2
+        //        gridBagConstraints.gridwidth = 2;
+        precededText.isEditable = false
+        precededText.isEnabled = false
+        //
+        gridBagLayout.setConstraints(precededText, gridBagConstraints)
+        add(precededText)
+        //
+        isVisible = true
     }
 
-    public void init() {
-        final TitledBorder titledBorder = BorderFactory.createTitledBorder(
-                Resources.getResource(Resources.TITLE_MAPPING_RULE));
-        titledBorder.setTitleJustification(TitledBorder.CENTER);
-        setBorder(titledBorder);
+    fun load() {}
 
-        final GridBagLayout gridBagLayout = new GridBagLayout();
-        setLayout(gridBagLayout);
-
-        final GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weighty = 0;
-        gridBagConstraints.weightx = 1;
-        gridBagConstraints.gridheight = 1;
-        gridBagConstraints.gridwidth = 1;
-        //
-        word1 = new JTextField();
-        word1.setEditable(false);
-        word1.setEnabled(false);
-        word1.setHorizontalAlignment(JLabel.RIGHT);
-        gridBagLayout.setConstraints(word1, gridBagConstraints);
-        add(word1);
-
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridwidth = 1;
-        gridBagConstraints.weightx = 0;
-        JLabel eqLabel = new JLabel(" = ");
-        gridBagLayout.setConstraints(eqLabel, gridBagConstraints);
-        add(eqLabel);
-
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridwidth = 1;
-        gridBagConstraints.weightx = 1;
-        word2 = new JTextField();
-        word2.setEditable(false);
-        word2.setEnabled(false);
-        gridBagLayout.setConstraints(word2, gridBagConstraints);
-        add(word2);
-
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridwidth = 1;
-        ruleTitle = new JLabel(Resources.RULE_TITLE);
-        gridBagLayout.setConstraints(ruleTitle, gridBagConstraints);
-        add(ruleTitle);
-
-        //
-        //
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridx = 0;
-//        gridBagConstraints.gridwidth = 2;
-        beginsWithCheck = new JCheckBox();
-        beginsWithCheck.setText(Resources.getResource(
-                Resources.TITLE_TABLE_COLUMN_FIRST_LETTER));
-        beginsWithCheck.setEnabled(false);
-        gridBagLayout.setConstraints(beginsWithCheck, gridBagConstraints);
-        add(beginsWithCheck);
-
-        gridBagConstraints.gridx = 2;
-//        gridBagConstraints.gridwidth = 2;
-        endsWithCheck = new JCheckBox();
-        endsWithCheck.setText(Resources.getResource(
-                Resources.TITLE_TABLE_COLUMN_LAST_LETTER));
-        endsWithCheck.setEnabled(false);
-        gridBagLayout.setConstraints(endsWithCheck, gridBagConstraints);
-        add(endsWithCheck);
-        //
-        //
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridx = 0;
-//        gridBagConstraints.gridwidth = 2;
-        followedByTitle = new JLabel(Resources.FOLLOWED_BY);
-        followedByTitle.setEnabled(false);
-        gridBagLayout.setConstraints(followedByTitle, gridBagConstraints);
-        add(followedByTitle);
-
-        gridBagConstraints.gridx = 2;
-//        gridBagConstraints.gridwidth = 2;
-        followedText = new JTextField();
-        followedText.setEditable(false);
-        followedText.setEnabled(false);
-        gridBagLayout.setConstraints(followedText, gridBagConstraints);
-        add(followedText);
-
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridx = 0;
-//        gridBagConstraints.gridwidth = 2;
-        precededByTitle = new JLabel(Resources.PRECEDED_BY);
-        precededByTitle.setEnabled(false);
-        gridBagLayout.setConstraints(precededByTitle, gridBagConstraints);
-        add(precededByTitle);
-
-        gridBagConstraints.gridx = 2;
-//        gridBagConstraints.gridwidth = 2;
-        precededText = new JTextField();
-        precededText.setEditable(false);
-        precededText.setEnabled(false);
-        //
-        gridBagLayout.setConstraints(precededText, gridBagConstraints);
-        add(precededText);
-        //
-        setVisible(true);
+    private fun reset() {
+        word1.font = fontMap.font1
+        word2.font = fontMap.font2
+        followedText.font = fontMap.font2
+        precededText.font = fontMap.font2
+        ruleTitle.font = fontMap.font2
     }
 
-    public void load() {
+    private fun clear() {
+        word1.text = Resources.EMPTY_STRING
+        word2.text = Resources.EMPTY_STRING
+        followedText.text = Resources.EMPTY_STRING
+        precededText.text = Resources.EMPTY_STRING
+        beginsWithCheck.isSelected = false
+        endsWithCheck.isSelected = false
+        ruleTitle.text = Resources.RULE_TITLE
     }
 
-    private void setFontMap(FontMap fontMap) {
-        this.fontMap = fontMap;
-        clear();
-        reset();
-    }
-
-    private void reset() {
-        word1.setFont(fontMap.getFont1());
-        word2.setFont(fontMap.getFont2());
-        followedText.setFont(fontMap.getFont2());
-        precededText.setFont(fontMap.getFont2());
-        ruleTitle.setFont(fontMap.getFont2());
-    }
-
-    private void clear() {
-        word1.setText(Resources.EMPTY_STRING);
-        word2.setText(Resources.EMPTY_STRING);
-        followedText.setText(Resources.EMPTY_STRING);
-        precededText.setText(Resources.EMPTY_STRING);
-        beginsWithCheck.setSelected(false);
-        endsWithCheck.setSelected(false);
-        ruleTitle.setText(Resources.RULE_TITLE);
-    }
-
-    private void load(FontMapEntry entry) {
-        clear();
+    private fun load(entry: FontMapEntry?) {
+        clear()
         if (entry != null) {
-            word1.setText(entry.getFrom());
-            word2.setText(entry.getTo());
-            if (entry.isRulesSet()) {
-                ruleTitle.setText("If <" + word1.getText() + "> is: ");
-                beginsWithCheck.setSelected(entry.isBeginsWith());
-                endsWithCheck.setSelected(entry.isEndsWith());
-                String val = entry.getFollowedBy();
-                if (val != null) {
-                    followedText.setText(val);
+            word1.text = entry.from
+            word2.text = entry.to
+            if (entry.isRulesSet) {
+                ruleTitle.text = "If <" + word1.text + "> is: "
+                beginsWithCheck.isSelected = entry.isBeginsWith
+                endsWithCheck.isSelected = entry.isEndsWith
+                var s = entry.followedBy
+                if (s != null) {
+                    followedText.text = s
                 }
-                val = entry.getPrecededBy();
-                if (val != null) {
-                    precededText.setText(val);
+                s = entry.precededBy
+                if (s != null) {
+                    precededText.text = s
                 }
             }
-            updateUI();
+            updateUI()
         }
     }
 
-    public void stateChanged(FontMapChangeEvent e) {
-        setFontMap(e.getFontMap());
+    override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent) {
+        this.fontMap = fontMapChangeEvent.fontMap
+        clear()
+        reset()
     }
 
-    public void tableChanged(TableModelEvent e) {
-        tableModel = (TableModel) e.getSource();
-        if (tableModel.getValueAt(0, 0) == null) {
-            setEnabled(false);
+    override fun tableChanged(e: TableModelEvent) {
+        val tableModel = e.source as TableModel
+        isEnabled = if (tableModel.getValueAt(0, 0) == null) {
+            false
         } else {
-            load(((MappingTableModel) tableModel).getValueAt(e.getFirstRow()));
-            setEnabled(true);
+            load((tableModel as MappingTableModel).getValueAt(e.firstRow))
+            true
         }
+        this.tableModel = tableModel
     }
 
-    public void valueChanged(ListSelectionEvent e) {
-        final ListSelectionModel listSelectionModel =
-                (ListSelectionModel) e.getSource();
-        final int row = listSelectionModel.getMinSelectionIndex();
-        if (row > -1) {
-            load(((MappingTableModel) tableModel).getValueAt(row));
+    override fun valueChanged(e: ListSelectionEvent) {
+        if (tableModel != null) {
+            val listSelectionModel = e.source as ListSelectionModel
+            val row = listSelectionModel.minSelectionIndex
+            if (row > -1) {
+                load((tableModel as MappingTableModel).getValueAt(row))
+            }
         }
     }
-
 }
-
