@@ -1,234 +1,241 @@
-package sted.io;
+package sted.io
 
-import org.xml.sax.*;
-import org.xml.sax.helpers.AttributesImpl;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.StringTokenizer;
+import org.xml.sax.*
+import org.xml.sax.helpers.AttributesImpl
+import org.xml.sax.helpers.DefaultHandler
+import java.io.BufferedReader
+import java.io.IOException
+import java.util.*
 
 /**
  * FontMapXMLReader reads the FontMap into an xml document format generates sax
  * events that can be used to transform fontmap to xml document
  */
-class FontMapXMLReader
-        implements XMLReader {
-    private static final Attributes EMPTY_ATTRIBUTES = new AttributesImpl();
-    private ContentHandler contentHandler;
-
+internal class FontMapXMLReader : XMLReader {
     // We're not doing namespaces, and we have no
     // attributes on our elements.
-    private final String nsu = Resources.EMPTY_STRING;  // NamespaceURI
+    private val nsu = "" // NamespaceURI
+    private var contentHandler: ContentHandler? = null
 
-    private final String indent = "\n"; // for readability
-
-    FontMapXMLReader() {
-    }
-
-    /**
-     * @param input
-     * @throws IOException
-     * @throws SAXException
-     */
-    public void parse(InputSource input)
-            throws IOException, SAXException {
+    @Throws(IOException::class, SAXException::class)
+    override fun parse(input: InputSource) {
         if (contentHandler == null) {
-            throw new SAXException("No content contentHandler");
+            throw SAXException("No content contentHandler")
         }
-        final String rootElement = "fontmap";
+        val rootElement = "fontmap"
         // Get an efficient reader for the file
-        final BufferedReader bufferedReader =
-                new BufferedReader(input.getCharacterStream());
+        val bufferedReader = BufferedReader(input.characterStream)
         // Read the file and display it's contents.
-        contentHandler.startDocument();
-        final AttributesImpl atts = new AttributesImpl();
-        atts.addAttribute(nsu, Resources.EMPTY_STRING, "name", "ID",
-                bufferedReader.readLine());
-        atts.addAttribute(nsu, Resources.EMPTY_STRING, "version", "CDATA",
-                bufferedReader.readLine());
-        contentHandler.startElement(nsu, rootElement, rootElement, atts);
-        newLine();
-        contentHandler.startElement(nsu, "font", "font", EMPTY_ATTRIBUTES);
-        newLine();
-        writeElement(nsu, "font_from", "font_from",
-                getFontAttributes(bufferedReader.readLine()));
-        newLine();
-        writeElement(nsu, "font_to", "font_to",
-                getFontAttributes(bufferedReader.readLine()));
-        newLine();
-        contentHandler.endElement(nsu, "font", "font");
-        newLine();
-        String line;
-        while ((line = bufferedReader.readLine()) != null) {
-            writeFontEntry(line);
-            newLine();
+        contentHandler!!.startDocument()
+        val atts = AttributesImpl()
+        atts.addAttribute(
+            nsu, Resources.EMPTY_STRING, "name", "ID",
+            bufferedReader.readLine()
+        )
+        atts.addAttribute(
+            nsu, Resources.EMPTY_STRING, "version", "CDATA",
+            bufferedReader.readLine()
+        )
+        contentHandler!!.startElement(nsu, rootElement, rootElement, atts)
+        newLine()
+        contentHandler!!.startElement(nsu, "font", "font", EMPTY_ATTRIBUTES)
+        newLine()
+        writeElement(
+            "font_from", "font_from",
+            getFontAttributes(bufferedReader.readLine())
+        )
+        newLine()
+        writeElement(
+            "font_to", "font_to",
+            getFontAttributes(bufferedReader.readLine())
+        )
+        newLine()
+        contentHandler!!.endElement(nsu, "font", "font")
+        newLine()
+        var line: String
+        while (bufferedReader.readLine().also { line = it } != null) {
+            writeFontEntry(line)
+            newLine()
         }
-        contentHandler.endElement(nsu, rootElement, rootElement);
-        newLine();
-        contentHandler.endDocument();
+        contentHandler!!.endElement(nsu, rootElement, rootElement)
+        newLine()
+        contentHandler!!.endDocument()
     }
 
-    private Attributes getFontAttributes(String line) {
-        final AttributesImpl atts = new AttributesImpl();
-        final StringTokenizer stringTokenizer =
-                new StringTokenizer(line, Resources.SYMBOL_ASTERISK);
-        atts.addAttribute(nsu, Resources.EMPTY_STRING, "value", "CDATA",
-                stringTokenizer.nextToken());
-        atts.addAttribute(nsu, Resources.EMPTY_STRING, "path", "CDATA",
-                stringTokenizer.nextToken());
-        return atts;
+    private fun getFontAttributes(line: String): Attributes {
+        val atts = AttributesImpl()
+        val stringTokenizer = StringTokenizer(line, Resources.SYMBOL_ASTERISK)
+        atts.addAttribute(
+            nsu, Resources.EMPTY_STRING, "value", "CDATA",
+            stringTokenizer.nextToken()
+        )
+        atts.addAttribute(
+            nsu, Resources.EMPTY_STRING, "path", "CDATA",
+            stringTokenizer.nextToken()
+        )
+        return atts
     }
 
-    private Attributes getValueAttribute(String val) {
-        return getAttributeImpl(nsu, Resources.EMPTY_STRING, "value", "CDATA",
-                val);
+    private fun getValueAttribute(`val`: String): Attributes {
+        val atts = AttributesImpl()
+        atts.addAttribute("", "", "value", "CDATA", `val`)
+        return atts
     }
 
-    private static Attributes getAttributeImpl(String uri, String localName,
-                                               String qName, String type,
-                                               String value) {
-        final AttributesImpl atts = new AttributesImpl();
-        atts.addAttribute(uri, localName, qName, type, value);
-        return atts;
+    @Throws(SAXException::class)
+    private fun writeElement(localName: String, qName: String, atts: Attributes) {
+        contentHandler!!.startElement("", localName, qName, atts)
+        contentHandler!!.endElement("", localName, qName)
     }
 
-    private void writeElement(String uri, String localName, String qName,
-                              Attributes atts)
-            throws SAXException {
-        contentHandler.startElement(uri, localName, qName, atts);
-        contentHandler.endElement(uri, localName, qName);
-    }
-
-    private void newLine()
-            throws SAXException {
-        contentHandler.ignorableWhitespace(indent.toCharArray(),
-                0, // start index
-                indent.length());
+    @Throws(SAXException::class)
+    private fun newLine() {
+        // for readability
+        contentHandler!!.ignorableWhitespace(
+            "\n".toCharArray(),
+            0,  // start index
+            "\n".length
+        )
     }
 
     /**
-     * <font_entry> <entry_from value="NA"/> <entry_to value="��"/>
-     * <begins_with/> <ends_with/> <followed_by value="Nu"/> <preceded_by
-     * value="Nu"/> <conditional value="AND"/> </font_entry>
+     * <font_entry> <entry_from value="NA"></entry_from> <entry_to value="��"></entry_to>
+     * <begins_with></begins_with> <ends_with></ends_with> <followed_by value="Nu"></followed_by> <preceded_by value="Nu"></preceded_by> <conditional value="AND"></conditional> </font_entry>
      *
-     * @param entry
-     * @throws SAXException
      */
-    private void writeFontEntry(String entry)
-            throws SAXException {
-        contentHandler.startElement(nsu, "font_entry", "font_entry",
-                EMPTY_ATTRIBUTES);
-        newLine();
-        final StringTokenizer stringTokenizer =
-                new StringTokenizer(entry, Resources.ENTRY_TOSTRING_DELIMITER);
-        int i = 0;
+    @Throws(SAXException::class)
+    private fun writeFontEntry(entry: String) {
+        contentHandler!!.startElement(
+            nsu, "font_entry", "font_entry",
+            EMPTY_ATTRIBUTES
+        )
+        newLine()
+        val stringTokenizer = StringTokenizer(entry, Resources.ENTRY_TOSTRING_DELIMITER)
+        var i = 0
         while (stringTokenizer.hasMoreElements()) {
-            final String token = stringTokenizer.nextToken();
+            val token = stringTokenizer.nextToken()
             if (!(token.toLowerCase().startsWith("null")
-                    || token.toLowerCase().startsWith("false")
-                    || Resources.EMPTY_STRING.equals(token))) {
-                switch (i) {
-                    case 0:
-                        writeElement(nsu, "entry_from", "entry_from",
-                                getValueAttribute(token));
-                        newLine();
-                        break;
-                    case 1:
-                        writeElement(nsu, "entry_to", "entry_to",
-                                getValueAttribute(token));
-                        newLine();
-                        break;
-                    case 2:
-                        writeElement(nsu, "begins_with", "begins_with",
-                                getValueAttribute(token));
-                        newLine();
-                        break;
-                    case 3:
-                        writeElement(nsu, "ends_with", "ends_with",
-                                getValueAttribute(token));
-                        newLine();
-                        break;
-                    case 4:
-                        writeElement(nsu, "followed_by", "followed_by",
-                                getValueAttribute(token));
-                        newLine();
-                        break;
-                    case 5:
-                        writeElement(nsu, "preceded_by", "preceded_by",
-                                getValueAttribute(token));
-                        newLine();
-                        break;
-                    case 6:
-                        writeElement(nsu, "conditional", "conditional",
-                                getValueAttribute(token));
-                        newLine();
-                        break;
-                    default:
-                        break;
+                        || token.toLowerCase().startsWith("false")
+                        || Resources.EMPTY_STRING == token)
+            ) {
+                when (i) {
+                    0 -> {
+                        writeElement(
+                            "entry_from", "entry_from",
+                            getValueAttribute(token)
+                        )
+                        newLine()
+                    }
+                    1 -> {
+                        writeElement(
+                            "entry_to", "entry_to",
+                            getValueAttribute(token)
+                        )
+                        newLine()
+                    }
+                    2 -> {
+                        writeElement(
+                            "begins_with", "begins_with",
+                            getValueAttribute(token)
+                        )
+                        newLine()
+                    }
+                    3 -> {
+                        writeElement(
+                            "ends_with", "ends_with",
+                            getValueAttribute(token)
+                        )
+                        newLine()
+                    }
+                    4 -> {
+                        writeElement(
+                            "followed_by", "followed_by",
+                            getValueAttribute(token)
+                        )
+                        newLine()
+                    }
+                    5 -> {
+                        writeElement(
+                            "preceded_by", "preceded_by",
+                            getValueAttribute(token)
+                        )
+                        newLine()
+                    }
+                    6 -> {
+                        writeElement(
+                            "conditional", "conditional",
+                            getValueAttribute(token)
+                        )
+                        newLine()
+                    }
+                    else -> {
+                    }
                 }
             }
-            i++;
+            i++
         }
-        contentHandler.endElement(nsu, "font_entry", "font_entry");
+        contentHandler!!.endElement(nsu, "font_entry", "font_entry")
     }
 
-    public ContentHandler getContentHandler() {
-        return contentHandler;  //To change body of implemented methods use Options | File Templates.
+    override fun getContentHandler(): ContentHandler {
+        return contentHandler!! //To change body of implemented methods use Options | File Templates.
     }
 
-    public void setContentHandler(ContentHandler handler) {
-        contentHandler = handler;
+    override fun setContentHandler(handler: ContentHandler) {
+        contentHandler = handler
         //To change body of implemented methods use Options | File Templates.
     }
 
-    public void parse(String systemId)
-            throws IOException, SAXException {
+    @Throws(IOException::class, SAXException::class)
+    override fun parse(systemId: String) {
         //To change body of implemented methods use Options | File Templates.
     }
 
-    public boolean getFeature(String name)
-            throws SAXNotRecognizedException, SAXNotSupportedException {
-        return false;  //To change body of implemented methods use Options | File Templates.
+    @Throws(SAXNotRecognizedException::class, SAXNotSupportedException::class)
+    override fun getFeature(name: String): Boolean {
+        return false //To change body of implemented methods use Options | File Templates.
     }
 
-    public void setFeature(String name, boolean value)
-            throws SAXNotRecognizedException, SAXNotSupportedException {
+    @Throws(SAXNotRecognizedException::class, SAXNotSupportedException::class)
+    override fun setFeature(name: String, value: Boolean) {
         //To change body of implemented methods use Options | File Templates.
     }
 
-    public DTDHandler getDTDHandler() {
-        return null;  //To change body of implemented methods use Options | File Templates.
+    override fun getDTDHandler(): DTDHandler {
+        return DefaultHandler() //To change body of implemented methods use Options | File Templates.
     }
 
-    public void setDTDHandler(DTDHandler handler) {
+    override fun setDTDHandler(handler: DTDHandler) {
         //To change body of implemented methods use Options | File Templates.
     }
 
-    public EntityResolver getEntityResolver() {
-        return null;  //To change body of implemented methods use Options | File Templates.
+    override fun getEntityResolver(): EntityResolver {
+        return DefaultHandler() //To change body of implemented methods use Options | File Templates.
     }
 
-    public void setEntityResolver(EntityResolver resolver) {
+    override fun setEntityResolver(resolver: EntityResolver) {
         //To change body of implemented methods use Options | File Templates.
     }
 
-    public ErrorHandler getErrorHandler() {
-        return null;  //To change body of implemented methods use Options | File Templates.
+    override fun getErrorHandler(): ErrorHandler {
+        return DefaultHandler() //To change body of implemented methods use Options | File Templates.
     }
 
-    public void setErrorHandler(ErrorHandler handler) {
+    override fun setErrorHandler(handler: ErrorHandler) {
         //To change body of implemented methods use Options | File Templates.
     }
 
-    public Object getProperty(String name)
-            throws SAXNotRecognizedException, SAXNotSupportedException {
-        return null;  //To change body of implemented methods use Options | File Templates.
+    @Throws(SAXNotRecognizedException::class, SAXNotSupportedException::class)
+    override fun getProperty(name: String): Any {
+        return Any() //To change body of implemented methods use Options | File Templates.
     }
 
-    public void setProperty(String name, Object value)
-            throws SAXNotRecognizedException, SAXNotSupportedException {
+    @Throws(SAXNotRecognizedException::class, SAXNotSupportedException::class)
+    override fun setProperty(name: String, value: Any) {
         //To change body of implemented methods use Options | File Templates.
     }
 
-
+    companion object {
+        private val EMPTY_ATTRIBUTES: Attributes = AttributesImpl()
+    }
 }
