@@ -1,45 +1,40 @@
-package sted.ui;
+package sted.ui
 
-import sted.fontmap.FontMap;
+import sted.fontmap.FontMap
+import java.awt.Component
+import javax.swing.JTable
+import javax.swing.table.DefaultTableCellRenderer
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.*;
+internal class MappingTableRenderer : DefaultTableCellRenderer() {
+    lateinit var fontMap: FontMap
 
-class MappingTableRenderer
-        extends DefaultTableCellRenderer {
-    MappingTableRenderer() {
-        super();
-    }
-
-    public void setFontMap(FontMap fontMap) {
-        this.fontMap = fontMap;
-    }
-
-    public Component getTableCellRendererComponent
-            (JTable table, Object value, boolean isSelected, boolean hasFocus,
-             int row,
-             int column) {
-        final DefaultTableCellRenderer renderer = (DefaultTableCellRenderer)
-                super.getTableCellRendererComponent(table, value, isSelected,
-                        hasFocus, row, column);
+    override fun getTableCellRendererComponent(
+        table: JTable,
+        value: Any,
+        isSelected: Boolean,
+        hasFocus: Boolean,
+        row: Int,
+        column: Int
+    ): Component {
+        val renderer = super.getTableCellRendererComponent(
+            table, value, isSelected,
+            hasFocus, row, column
+        ) as DefaultTableCellRenderer
         if (column == 0) {
-            renderer.setFont(fontMap.getFont1());
-            renderer.setHorizontalAlignment(JLabel.RIGHT);
+            renderer.font = fontMap.font1
+            renderer.horizontalAlignment = RIGHT
         } else if (column == 1) {
-            renderer.setHorizontalAlignment(JLabel.CENTER);
-            renderer.setFocusable(false);
+            renderer.horizontalAlignment = CENTER
+            renderer.isFocusable = false
         } else if (column == 2) {
-            renderer.setFont(fontMap.getFont2());
-            renderer.setHorizontalAlignment(JLabel.LEFT);
+            renderer.font = fontMap.font2
+            renderer.horizontalAlignment = LEFT
         } else if (column == 5 || column == 6) {
-            renderer.setFont(fontMap.getFont1());
+            renderer.font = fontMap.font1
         } else {
-            renderer.setHorizontalAlignment(JLabel.CENTER);
+            renderer.horizontalAlignment = CENTER
         }
-        return renderer;
+        return renderer
     }
 
-    private FontMap fontMap;
 }
-
