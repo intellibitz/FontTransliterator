@@ -1,5 +1,6 @@
 package sted
 
+import sted.io.Resources
 import java.util.logging.LogManager
 import java.util.logging.Logger
 
@@ -9,9 +10,10 @@ object Main {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        logManager.readConfiguration(
-            ClassLoader.getSystemResourceAsStream("log/logging.properties")
-        )
+        val resource = Resources.getResource("config.log")
+        if (!resource.isNullOrEmpty()) {
+            logManager.readConfiguration(ClassLoader.getSystemResourceAsStream(resource))
+        }
         val logger = Logger.getLogger(Main::class.java.name)
         addLogger(logger)
         logger.info("Begin STED: args - " + args.asList())

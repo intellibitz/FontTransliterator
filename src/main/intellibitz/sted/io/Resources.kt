@@ -2,7 +2,6 @@ package sted.io
 
 import org.xml.sax.SAXException
 import sted.fontmap.FontInfo
-import sted.io.FileHelper.suffixFileSeparator
 import java.awt.Font
 import java.awt.GraphicsEnvironment
 import java.io.File
@@ -19,27 +18,22 @@ object Resources {
     const val EQUALS = "="
     const val SYMBOL_ASTERISK = "*"
     const val NEWLINE_DELIMITER = "\n"
-    const val SYSTEM = "SYSTEM"
-    const val RESOURCE = "RESOURCE"
-    const val STED_CONFIG_NAME = "config.sted"
-    const val STED_VERSION = "sted.version"
-    const val LOG_CONFIG_NAME = "config.log"
-    const val MENU_CONFIG_NAME = "config.menu"
+    private const val STED_VERSION = "sted.version"
     const val FONTMAP_FILE = "fontmap.file"
     const val LABEL_ADD = "label.add"
     const val LABEL_CLEAR = "label.clear"
     const val LABEL_FONT_LOAD = "label.font.load"
     const val ICON_FILE_INPUT = "icon.file.input"
     const val ICON_FILE_OUTPUT = "icon.file.output"
-    const val ICON_FILE_NORMAL_STATE = "icon.file.normal.state"
-    const val ICON_FILE_EDIT_STATE = "icon.file.edit.state"
-    const val ICON_STED = "icon.sted"
+    private const val ICON_FILE_NORMAL_STATE = "icon.file.normal.state"
+    private const val ICON_FILE_EDIT_STATE = "icon.file.edit.state"
+    private const val ICON_STED = "icon.sted"
     const val ICON_HELP = "icon.help"
     const val ICON_HELP_HOME = "icon.help.home"
     const val ICON_HELP_BACK = "icon.help.back"
     const val ICON_HELP_FORWARD = "icon.help.forward"
-    const val ICON_LOCK = "icon.status.lock"
-    const val ICON_UNLOCK = "icon.status.unlock"
+    private const val ICON_LOCK = "icon.status.lock"
+    private const val ICON_UNLOCK = "icon.status.unlock"
     const val TITLE_ABOUT_STED = "title.about.sted"
     const val TITLE_KEYPAD = "title.keypad"
     const val TITLE_MAPPING = "title.mapping"
@@ -60,12 +54,7 @@ object Resources {
     const val TITLE_TABLE_COLUMN_PRECEDED_BY = "title.table.column.preceded"
     const val TITLE_HELP = "title.help"
     const val HELP_INDEX = "help.index"
-    const val SETTINGS_STED_UI = "settings.sted.ui"
-    const val SETTINGS_STED_USER = "settings.sted.user"
-    const val SETTINGS_PATH = "sted.settings.path"
     const val STED_HOME_PATH = "sted.home.path"
-    const val RESOURCE_PATH = "sted.resource.path"
-    const val LOG_PATH = "sted.log.path"
     const val SAMPLE_INPUT_TEXT = "sample.input.text"
     const val ACTION_CONVERT_NAME = "Convert"
     const val ACTION_STOP_NAME = "Stop"
@@ -88,11 +77,7 @@ object Resources {
     const val ACTION_REDO_COMMAND = "Redo"
     const val ACTION_PASTE_COMMAND = "Paste"
     const val ACTION_SELECT_ALL_COMMAND = "Select All"
-    const val ACTION_VIEW_TOOLBAR_COMMAND = "ViewTool"
-    const val ACTION_VIEW_STATUS_COMMAND = "ViewStatus"
-    const val ACTION_VIEW_SAMPLE_COMMAND = "ViewSample"
     const val ACTION_VIEW_SAMPLE = "Mapping Preview"
-    const val ACTION_VIEW_MAPPING_COMMAND = "ViewMapping"
     const val ACTION_VIEW_MAPPING = "Mapping Rules"
     const val MENU_POPUP_MAPPING = "Mapping"
     const val FOLLOWED_BY = "Followed By: "
@@ -114,19 +99,13 @@ object Resources {
 
     // @since version 0.61
     const val MENUBAR_STED = "STED-MenuBar"
-    const val MENUBAR_FONTMAP = "FontMap-MenuBar"
 
     // @since version 0.62
     const val INPUT_FILE = "input.file"
     const val OUTPUT_FILE = "output.file"
-    const val ICON_GC = "icon.gc"
     const val ICON_GC2 = "icon.gc.rollover"
     const val DEFAULT_MENU_COUNT = 2
-    const val SAMPLE_FONTMAP = "sample.fontmap"
     const val MENU_SAMPLES_NAME = "Samples"
-
-    @JvmField
-    var SETTINGS_FILE_PATH_USER: String? = null
 
     @JvmField
     val imageIcons: MutableMap<String, ImageIcon?> = HashMap()
@@ -136,7 +115,6 @@ object Resources {
     var id = 0
         get() = ++field
         private set
-    private var RESOURCE_PATH_VAL: String? = null
 
     @JvmStatic
     val sTEDIcon: ImageIcon?
@@ -254,16 +232,15 @@ object Resources {
         return null
     }
 
+/*
     val sampleFontMap: String
         get() = prefixResourcePath(getResource(SAMPLE_FONTMAP))
-
     fun prefixResourcePath(path: String?): String {
-        return resourceDirPath +
+        return suffixFileSeparator(RESOURCE_PATH_VAL!!) +
                 path
     }
+*/
 
-    val resourceDirPath: String
-        get() = suffixFileSeparator(RESOURCE_PATH_VAL!!)
 
     @JvmStatic
     val fonts: MutableMap<String, FontInfo> = HashMap()
@@ -288,26 +265,15 @@ object Resources {
 
 
     init {
-        try {
-            resourceBundle = ResourceBundle.getBundle(STED_CONFIG_NAME, Locale.getDefault())
-            logger.info("retrieved resource bundle " + resourceBundle)
-        } catch (mre: MissingResourceException) {
-            logger.severe("Unable to load ResourceBundle " + mre.message)
+        resourceBundle = ResourceBundle.getBundle("config.sted", Locale.getDefault())
+        logger.info("retrieved resource bundle $resourceBundle")
+        var resource = getResource("settings.sted.ui")
+        if (!resource.isNullOrEmpty()) {
+            readSettings(resource)
         }
-        RESOURCE_PATH_VAL = System.getProperty(RESOURCE_PATH, "resource")
-        SETTINGS_FILE_PATH_USER = getResource(SETTINGS_STED_USER)
-        try {
-            readSettings(getResource(SETTINGS_STED_UI)!!)
-        } catch (e: Exception) {
-            logger.throwing("Resources", "static initializer block", e)
-            logger.severe("Unable to read settings - ParserConfigurationException " + e.message)
-        }
-        try {
-            readSettings(SETTINGS_FILE_PATH_USER!!)
-        } catch (e: Exception) {
-            logger.throwing("Resources", "static initializer block", e)
-            logger.severe("Unable to read settings - ParserConfigurationException " + e.message)
-            logger.info("NOTE: Safely ignore the user.xml not found error if starting STED for the first time")
+        resource = getResource("settings.sted.user")
+        if (!resource.isNullOrEmpty()) {
+            readSettings(resource)
         }
         imageIcons[ICON_STED] = getSystemResourceIcon(getResource(ICON_STED))
         // load all system fonts

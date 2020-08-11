@@ -16,25 +16,26 @@ import javax.xml.parsers.SAXParserFactory
  */
 class SettingsXMLHandler : DefaultHandler() {
     val settings: MutableMap<String, String> = HashMap()
-    private lateinit var stedSettingsFile: File
+    private lateinit var file: File
     private var key: String? = ""
     private var value = ""
-    fun init(stedSettings: File) {
-        stedSettingsFile = stedSettings
+    fun init(settingsFile: File) {
+        file = settingsFile
     }
 
     @Throws(IOException::class, ParserConfigurationException::class, SAXException::class)
     fun read() {
-        logger.entering(javaClass.name, "read", stedSettingsFile)
-        val saxParserFactory = SAXParserFactory.newInstance()
-        saxParserFactory.isValidating = true
-        val saxParser = saxParserFactory.newSAXParser()
-        logger.info(
-            "reading settings file - " +
-                    stedSettingsFile.absolutePath
-        )
-        val inputStream = getInputStream(stedSettingsFile)
-        saxParser.parse(inputStream, this)
+        logger.entering(javaClass.name, "read", file)
+        if (file.isFile && file.canRead()) {
+            val saxParserFactory = SAXParserFactory.newInstance()
+            saxParserFactory.isValidating = true
+            val saxParser = saxParserFactory.newSAXParser()
+            logger.info("reading settings file - " + file.absolutePath)
+            val inputStream = getInputStream(file)
+            saxParser.parse(inputStream, this)
+        } else {
+            logger.severe("Cannot read file: $file")
+        }
         logger.exiting(javaClass.name, "read")
     }
 
