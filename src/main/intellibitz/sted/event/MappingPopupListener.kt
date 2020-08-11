@@ -1,50 +1,39 @@
-package sted.event;
+package sted.event
 
-import sted.actions.TableRowsSelectAction;
-import sted.ui.MenuHandler;
-import sted.io.Resources;
+import sted.actions.TableRowsSelectAction
+import sted.ui.MenuHandler.Companion.menuHandler
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import javax.swing.JPopupMenu
+import javax.swing.JTable
 
-import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Map;
-
-public class MappingPopupListener
-        extends MouseAdapter {
-    private JPopupMenu popupMenu;
-
-    public MappingPopupListener() {
-        super();
+class MappingPopupListener : MouseAdapter() {
+    private var popupMenu: JPopupMenu? = null
+    fun load() {
+        popupMenu = menuHandler.getPopupMenu("Mapping")
     }
 
-    public void load() {
-        popupMenu = MenuHandler.getMenuHandler()
-                .getPopupMenu(Resources.MENU_POPUP_MAPPING);
+    override fun mousePressed(e: MouseEvent) {
+        maybeShowPopup(e)
     }
 
-    public void mousePressed(MouseEvent e) {
-        maybeShowPopup(e);
+    override fun mouseReleased(e: MouseEvent) {
+        maybeShowPopup(e)
     }
 
-    public void mouseReleased(MouseEvent e) {
-        maybeShowPopup(e);
-    }
-
-    private void maybeShowPopup(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-            setTableOnAction((JTable) e.getSource());
-            popupMenu.show(e.getComponent(), e.getX(), e.getY());
+    private fun maybeShowPopup(e: MouseEvent) {
+        if (e.isPopupTrigger) {
+            setTableOnAction(e.source as JTable)
+            popupMenu!!.show(e.component, e.x, e.y)
         }
     }
 
-    private void setTableOnAction(JTable table) {
-        final Map actions = MenuHandler.getMenuHandler().getActions();
-        for (Object o : actions.values()) {
-            final Object action = o;
-            if (TableRowsSelectAction.class.isInstance(action)) {
-                ((TableRowsSelectAction) action).setTable(table);
+    private fun setTableOnAction(table: JTable) {
+        val actions = menuHandler.actions
+        for (action in actions.values) {
+            if (action is TableRowsSelectAction) {
+                action.setTable(table)
             }
         }
     }
-
 }
