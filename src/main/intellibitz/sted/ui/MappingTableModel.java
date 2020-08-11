@@ -128,7 +128,7 @@ public class MappingTableModel
                             final FontMapEntry edited =
                                     (FontMapEntry) entry.clone();
                             edited.setTo(aValue.toString());
-                            if (!fontMapEntries.isValidEdit(edited)) {
+                            if (fontMapEntries.isValidEdit(edited)) {
                                 fireMessagePosted(
                                         "Already mapped - Invalid Edit");
                                 break;
@@ -149,7 +149,7 @@ public class MappingTableModel
                             final FontMapEntry edited =
                                     (FontMapEntry) entry.clone();
                             edited.setBeginsWith(begins);
-                            if (!fontMapEntries.isValidEdit(edited)) {
+                            if (fontMapEntries.isValidEdit(edited)) {
                                 fireMessagePosted(
                                         "Already mapped - Invalid Edit");
                                 break;
@@ -170,7 +170,7 @@ public class MappingTableModel
                             final FontMapEntry edited =
                                     (FontMapEntry) entry.clone();
                             edited.setEndsWith(ends);
-                            if (!fontMapEntries.isValidEdit(edited)) {
+                            if (fontMapEntries.isValidEdit(edited)) {
                                 fireMessagePosted(
                                         "Already mapped - Invalid Edit");
                                 break;
@@ -194,7 +194,7 @@ public class MappingTableModel
                             final FontMapEntry edited =
                                     (FontMapEntry) entry.clone();
                             edited.setFollowedBy(aValue.toString());
-                            if (!fontMapEntries.isValidEdit(edited)) {
+                            if (fontMapEntries.isValidEdit(edited)) {
                                 fireMessagePosted(
                                         "Already mapped - Invalid Edit");
                                 break;
@@ -218,7 +218,7 @@ public class MappingTableModel
                             final FontMapEntry edited =
                                     (FontMapEntry) entry.clone();
                             edited.setPrecededBy(aValue.toString());
-                            if (!fontMapEntries.isValidEdit(edited)) {
+                            if (fontMapEntries.isValidEdit(edited)) {
                                 fireMessagePosted(
                                         "Already mapped - Invalid Edit");
                                 break;

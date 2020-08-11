@@ -28,7 +28,7 @@ class FileSelectAction : TableModelListenerAction() {
         }
         val jFileChooser: JFileChooser
         val result: Int
-        if (file == null) {
+        if (file.path.isNullOrEmpty()) {
             jFileChooser = JFileChooser(System.getProperty("user.dir"))
             result = jFileChooser.showOpenDialog(stedWindow)
         } else {

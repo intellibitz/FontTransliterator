@@ -97,7 +97,8 @@ open class Converter : ThreadEventSourceBase() {
                 if (stopRequested) {
                     break
                 }
-                bufferedWriter.write(transliterate.parseLine(input)!!)
+                val parseLine = transliterate.parseLine(input!!)
+                bufferedWriter.write(parseLine)
                 bufferedWriter.newLine()
                 fireThreadRunning()
             }

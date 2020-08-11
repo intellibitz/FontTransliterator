@@ -34,7 +34,7 @@ class UndoAction : TableModelListenerAction(), FontMapChangeListener, ChangeList
         if (fontMapEntry.isAdded) {
             val current = fontMapEntries.remove(fontMapEntry.id)
             // change the status when pushing to the redo stack
-            current.setStatus(Resources.ENTRY_STATUS_DELETE)
+            current?.setStatus(Resources.ENTRY_STATUS_DELETE)
             fontMapEntries.redo.push(current)
         } else if (fontMapEntry.isEdited) {
             val current = fontMapEntries.remove(fontMapEntry.id)

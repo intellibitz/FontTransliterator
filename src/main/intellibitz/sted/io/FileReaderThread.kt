@@ -19,8 +19,8 @@ class FileReaderThread : ThreadEventSourceBase(), IStatusEventSource {
         fireThreadRunStarted()
         logger.entering(javaClass.name, "run")
         try {
-            if (!file.isFile) {
-                this.message = ("File is null")
+            if (file.path.isNullOrEmpty()) {
+                this.message = ("File path is empty")
                 fireThreadRunFailed()
             } else {
                 result = getFileContents(file)

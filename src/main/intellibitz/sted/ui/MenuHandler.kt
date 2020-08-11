@@ -39,8 +39,10 @@ class MenuHandler private constructor() : DefaultHandler() {
 
     val menuItems: Map<String, JMenuItem?>
         get() = Companion.menuItems
+/*
     val tooltips: Map<String, String>
         get() = toolTips
+*/
     val actions: Map<String, Action>
         get() = Companion.actions
     val imageIcons: Map<String, ImageIcon?>
@@ -125,27 +127,31 @@ class MenuHandler private constructor() : DefaultHandler() {
 
     @Throws(SAXException::class)
     override fun endElement(uri: String, localName: String, qName: String) {
-        if ("menubar" == qName) {
-            menuBars[menuBar!!.name] = menuBar
-            // moved from getToolBar block
-            toolBar!!.orientation = JToolBar.HORIZONTAL
-            toolBar!!.isFloatable = false
-            toolBar!!.isRollover = true
-            toolBar!!.add(Box.createVerticalGlue())
-            //
-            toolBars[toolBar!!.name] = toolBar
-        } else if ("menu" == qName) {
-            val menu = stack.pop()
-            if (stack.isEmpty()) {
-                toolBar!!.add(Box.createHorizontalStrut(5))
-                menuBar!!.add(menu)
-            } else {
-                val parent = stack.peek()
-                parent.add(menu)
+        when (qName) {
+            "menubar" -> {
+                menuBars[menuBar!!.name] = menuBar
+                // moved from getToolBar block
+                toolBar!!.orientation = JToolBar.HORIZONTAL
+                toolBar!!.isFloatable = false
+                toolBar!!.isRollover = true
+                toolBar!!.add(Box.createVerticalGlue())
+                //
+                toolBars[toolBar!!.name] = toolBar
             }
-            menus[menu.name] = menu
-        } else if ("popup_menu" == qName) {
-            popupMenus[popupMenu!!.name] = popupMenu
+            "menu" -> {
+                val menu = stack.pop()
+                if (stack.isEmpty()) {
+                    toolBar!!.add(Box.createHorizontalStrut(5))
+                    menuBar!!.add(menu)
+                } else {
+                    val parent = stack.peek()
+                    parent.add(menu)
+                }
+                menus[menu.name] = menu
+            }
+            "popup_menu" -> {
+                popupMenus[popupMenu!!.name] = popupMenu
+            }
         }
     }
 
@@ -200,7 +206,7 @@ class MenuHandler private constructor() : DefaultHandler() {
             val tooltip = attributes.getValue("tooltip")
             val shortcut = attributes.getValue("mnemonic")
             toolTips[name] = tooltip
-            val value = attributes.getValue("action")
+//            val value = attributes.getValue("action")
             val action = newActionInstance(name)
             action?.putValue(Action.NAME, name)
             if (ic != null) {
@@ -209,7 +215,7 @@ class MenuHandler private constructor() : DefaultHandler() {
                 action?.putValue(Action.SMALL_ICON, icon)
             }
             action?.putValue(Action.SHORT_DESCRIPTION, tooltip)
-            if (null != shortcut && shortcut.length > 0) {
+            if (null != shortcut && shortcut.isNotEmpty()) {
                 action?.putValue(Action.MNEMONIC_KEY, shortcut[0].toInt())
             }
             action?.putValue(
@@ -218,7 +224,7 @@ class MenuHandler private constructor() : DefaultHandler() {
             )
             val cmd = attributes.getValue("actionCommand")
             action?.putValue(Action.ACTION_COMMAND_KEY, cmd)
-            val listener = attributes.getValue("listener")
+//            val listener = attributes.getValue("listener")
             /*
             if (listener != null) {
                 action.addPropertyChangeListener((PropertyChangeListener) Class.forName(listener).newInstance());
@@ -241,13 +247,12 @@ class MenuHandler private constructor() : DefaultHandler() {
                 val component = Class.forName(button).getDeclaredConstructor().newInstance() as JComponent
                 component.toolTipText = tooltip
                 if (component is AbstractButton) {
-                    val abstractButton = component
-                    abstractButton.action = action
+                    component.action = action
                     if (action is ItemListener) {
-                        abstractButton.addItemListener(action as ItemListener)
+                        component.addItemListener(action as ItemListener)
                     }
                     if ("false".equals(buttonTextVisible, ignoreCase = true)) {
-                        abstractButton.text = ""
+                        component.text = ""
                     }
                 }
                 toolBar!!.add(component)
@@ -368,6 +373,7 @@ class MenuHandler private constructor() : DefaultHandler() {
             return toolTips
         }
 
+/*
         fun getToolButtons(): Map<String, AbstractButton> {
             return toolButtons
         }
@@ -387,9 +393,10 @@ class MenuHandler private constructor() : DefaultHandler() {
         fun getToolBars(): Map<String, JToolBar?> {
             return toolBars
         }
+*/
 
         private fun getAccelerator(key: String?): KeyStroke? {
-            return if (key != null && key.length > 0) {
+            return if (key != null && key.isNotEmpty()) {
                 KeyStroke.getKeyStroke(key)
             } else null
         }

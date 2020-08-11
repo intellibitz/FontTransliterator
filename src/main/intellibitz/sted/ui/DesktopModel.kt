@@ -46,7 +46,7 @@ class DesktopModel {
 
     val isReadyForTransliteration: Boolean
         get() {
-            return inputFile.isFile && outputFile.isFile
+            return !inputFile.path.isNullOrEmpty() && !outputFile.path.isNullOrEmpty()
         }
 
     fun addFontMapChangeListener(fontMapChangeListener: FontMapChangeListener?) {

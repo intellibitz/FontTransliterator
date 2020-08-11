@@ -26,7 +26,7 @@ class TransliterateAction : TableModelListenerAction() {
             .desktopModel.inputFile
         val convertedFile = stedWindow.desktop
             .desktopModel.outputFile
-        if (fileToConvert == null || convertedFile == null) {
+        if (fileToConvert.path.isNullOrEmpty() || convertedFile.path.isNullOrEmpty()) {
             fireMessagePosted("Select valid files for both input and output")
             return
         }
@@ -48,8 +48,8 @@ class TransliterateAction : TableModelListenerAction() {
         val converter = Converter()
         converter.init(
             desktop.fontMap,
-            desktop.desktopModel.inputFile!!,
-            desktop.desktopModel.outputFile!!
+            desktop.desktopModel.inputFile,
+            desktop.desktopModel.outputFile
         )
         val preserve = menuHandler.getMenuItem(
             Resources.ACTION_PRESERVE_TAGS

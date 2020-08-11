@@ -31,7 +31,7 @@ open class CutAction : TableModelListenerAction(), FontMapChangeListener {
         fireStatusPosted("Cut")
     }
 
-    fun pushUndo(entries: Collection<*>, undo: Stack<FontMapEntry?>) {
+    fun pushUndo(entries: Collection<*>, undo: Stack<FontMapEntry>) {
         for (entry in entries) {
             val fontMapEntry = entry as FontMapEntry
             fontMapEntry.setStatus(Resources.ENTRY_STATUS_DELETE)

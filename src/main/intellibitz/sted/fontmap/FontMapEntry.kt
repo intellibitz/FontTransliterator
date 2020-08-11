@@ -6,20 +6,21 @@ import sted.io.Resources
 /**
  * Represents a FontMap Entry. All Mappings are transformed to a FontMapEntry.
  */
-class FontMapEntry() : IEntry, Comparable<Any?>, Cloneable {
-    override var from: String? = null
-    override var to: String? = null
+class FontMapEntry : IEntry, Comparable<Any?>, Cloneable {
+    override lateinit var from: String
+    override lateinit var to: String
     var isBeginsWith = false
     var isEndsWith = false
 
     private var conditional = Resources.ENTRY_CONDITIONAL_AND
-    var id: String
+    lateinit var id: String
         private set
     private var status = -1
 
-    constructor(from: String?, to: String?) : this() {
+    fun init(from: String, to: String) {
         this.from = from
         this.to = to
+        id = Resources.id.toString()
     }
 
     val isAdded: Boolean
@@ -73,9 +74,7 @@ class FontMapEntry() : IEntry, Comparable<Any?>, Cloneable {
         }
 
     val isValid: Boolean
-        get() = (from != null && to != null && Resources.EMPTY_STRING != from
-                && Resources.EMPTY_STRING != to
-                && from != to)
+        get() = (from.isNotEmpty() && to.isNotEmpty() && from != to)
 
     fun setStatus(status: Int) {
         this.status = status
@@ -116,10 +115,10 @@ class FontMapEntry() : IEntry, Comparable<Any?>, Cloneable {
                 return 0 //To change body of implemented methods use Options | File Templates.
             } else {
                 if (from != other.from) {
-                    return from!!.compareTo(other.from!!)
+                    return from.compareTo(other.from)
                 }
                 if (to != other.to) {
-                    return to!!.compareTo(other.to!!)
+                    return to.compareTo(other.to)
                 }
                 if (isBeginsWith != other.isBeginsWith) {
                     return 1
@@ -200,7 +199,4 @@ class FontMapEntry() : IEntry, Comparable<Any?>, Cloneable {
         return 0
     }
 
-    init {
-        id = Resources.id.toString()
-    }
 }

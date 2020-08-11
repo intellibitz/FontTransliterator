@@ -5,8 +5,10 @@ import kotlin.test.Test
 class TestFontMapEntry {
     @Test
     fun testCompareTo1() {
-        val entry1 = FontMapEntry("a", "b")
-        val entry2 = FontMapEntry("a", "b")
+        val entry1 = FontMapEntry()
+        entry1.init("a", "b")
+        val entry2 = FontMapEntry()
+        entry2.init("a", "b")
         assert(entry1.compareTo(entry2) == 0)
         entry1.isBeginsWith = true
         assert(entry1.compareTo(entry2) != 0)
@@ -28,8 +30,10 @@ class TestFontMapEntry {
 
     @Test
     fun testCompareTo2() {
-        val entry1 = FontMapEntry("a", "b")
-        val entry2 = FontMapEntry("a", "b")
+        val entry1 = FontMapEntry()
+        entry1.init("a", "b")
+        val entry2 = FontMapEntry()
+        entry2.init("a", "b")
         entry1.precededBy = "a"
         assert(entry1.compareTo(entry2) != 0)
         entry2.precededBy = "a"
@@ -44,8 +48,10 @@ class TestFontMapEntry {
 
     @Test
     fun testEquals() {
-        val entry1 = FontMapEntry("a", "b")
-        val entry2 = FontMapEntry("a", "b")
+        val entry1 = FontMapEntry()
+        entry1.init("a", "b")
+        val entry2 = FontMapEntry()
+        entry2.init("a", "b")
         assert(entry1 == entry2)
         entry1.precededBy = "a"
         assert(entry1 != entry2)

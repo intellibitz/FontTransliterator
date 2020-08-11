@@ -35,10 +35,8 @@ public abstract class FontKeypad
     private JPanel keypad;
     private Font currentFont;
     private final ArrayList<JButton> keys = new ArrayList<JButton>();
-    private static final int KEY_COLUMNS = Integer.parseInt(
-            Resources.getSetting(Resources.KEYPAD_COLUMN_COUNT));
-    private static final int FONT_MAX_INDEX = Integer.parseInt(
-            Resources.getSetting(Resources.FONT_CHAR_MAXINDEX));
+    private int KEY_COLUMNS = 6;
+    private int FONT_MAX_INDEX = 65536;
     private KeypadEvent keypadEvent;
     private EventListenerList keypadListeners;
 
@@ -87,6 +85,10 @@ public abstract class FontKeypad
     }
 
     public void load() {
+        KEY_COLUMNS = Integer.parseInt(
+                Resources.getSetting("keypad.column.count"));
+        FONT_MAX_INDEX = Integer.parseInt(
+                Resources.getSetting("font.char.maxindex"));
     }
 
     public ArrayList<JButton> getKeys() {

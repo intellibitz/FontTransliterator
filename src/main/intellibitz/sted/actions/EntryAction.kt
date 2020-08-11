@@ -26,7 +26,8 @@ class EntryAction : STEDWindowAction() {
             val tabDesktop = stedWindow.desktop
             val fontMap = tabDesktop.fontMap
             val entries = fontMap.entries
-            val fontMapEntry = FontMapEntry(key1, key2)
+            val fontMapEntry = FontMapEntry()
+            fontMapEntry.init(key1, key2)
             if (entries.add(fontMapEntry)) {
                 // add it to the undo list too
                 fontMapEntry.setStatus(Resources.ENTRY_STATUS_ADD)

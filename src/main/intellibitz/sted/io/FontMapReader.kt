@@ -19,7 +19,7 @@ class FontMapReader  //
     private var fontMap = FontMap()
     fun init(fontMap: FontMap) {
         val file = fontMap.fontMapFile
-        require(file.isFile) { "Cannot Load - File is null" }
+        require(!file.path.isNullOrEmpty()) { "Cannot Load - File path is empty" }
         this.fontMap = fontMap
         // create a FontMapReadEvent.. Identifies the Event with FontMapReader
         threadEvent = FontMapReadEvent(this)
@@ -121,7 +121,9 @@ class FontMapReader  //
                             input.startsWith("/*"))
                 ) {
                     if (input.indexOf(COMMA) != -1) {
-                        fontMap.entries.add(createFontMapEntry(input))
+                        val entry = createFontMapEntry(input)
+                        if (entry != null)
+                            fontMap.entries.add(entry)
                         continue
                     }
                     val stringTokenizer = StringTokenizer(
@@ -154,7 +156,9 @@ class FontMapReader  //
                             fontMap.setFont2(token2)
                         }
                         else -> {
-                            fontMap.entries.add(FontMapEntry(token1, token2))
+                            val fontMapEntry = FontMapEntry()
+                            fontMapEntry.init(token1, token2)
+                            fontMap.entries.add(fontMapEntry)
                         }
                     }
                 }
