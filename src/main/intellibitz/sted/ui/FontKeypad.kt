@@ -1,279 +1,231 @@
-package sted.ui;
+package sted.ui
 
-import org.jetbrains.annotations.NotNull;
-import sted.actions.LoadFontAction;
-import sted.event.*;
-import sted.fontmap.FontInfo;
-import sted.fontmap.FontMap;
-import sted.io.Resources;
-
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.EventListenerList;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.logging.Logger;
+import sted.actions.LoadFontAction
+import sted.event.*
+import sted.fontmap.FontInfo
+import sted.fontmap.FontMap
+import sted.io.Resources
+import sted.io.Resources.fonts
+import sted.io.Resources.getFont
+import sted.io.Resources.getResource
+import sted.io.Resources.getSetting
+import java.awt.Font
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
+import java.awt.event.ItemEvent
+import java.awt.event.ItemListener
+import java.io.File
+import java.util.*
+import java.util.logging.Logger
+import javax.swing.*
+import javax.swing.border.TitledBorder
+import javax.swing.event.ChangeEvent
+import javax.swing.event.ChangeListener
+import javax.swing.event.EventListenerList
 
 /**
  * FontKeypad holds font dropdown and keypad for selecting characters
  */
-public abstract class FontKeypad
-        extends JPanel
-        implements ItemListener,
-        FontMapChangeListener,
-        IKeypadEventSource {
-    private final ArrayList<JButton> keys = new ArrayList<>();
-    private FontMap fontMap;
-    private FontList fontSelector;
-    private JPanel keypad;
-    private Font currentFont;
-    private int KEY_COLUMNS = 6;
-    private int FONT_MAX_INDEX = 65536;
-    private KeypadEvent keypadEvent;
-    private EventListenerList keypadListeners;
-
-    protected FontKeypad() {
-        super();
-    }
-
-    public void init() {
-        final TitledBorder titledBorder =
-                new TitledBorder(Resources.getResource(Resources.TITLE_KEYPAD));
-        titledBorder.setTitleJustification(TitledBorder.CENTER);
-        setBorder(titledBorder);
-        final GridBagLayout gridBagLayout = new GridBagLayout();
-        setLayout(gridBagLayout);
-        final GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 0;
-        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
-
-        JButton loadFont = new JButton(new LoadFontAction(this));
-        gridBagLayout.setConstraints(loadFont, gridBagConstraints);
-        add(loadFont);
-
-        fontSelector =
-                new FontList(new FontsListModel(Resources.getFonts()));
-        setCurrentFont((String) fontSelector.getItemAt(0));
-        fontSelector.setSelectedItem(currentFont);
-        fontSelector.addItemListener(this);
-        gridBagLayout.setConstraints(fontSelector, gridBagConstraints);
-        add(fontSelector);
+abstract class FontKeypad protected constructor() : JPanel(), ItemListener, FontMapChangeListener, IKeypadEventSource {
+    val keys = ArrayList<JButton>()
+    val fontSelector = FontList()
+    private val keypadListeners = EventListenerList()
+    private val keypad = JPanel()
+    var fontMap: FontMap? = null
+        private set
+    var currentFont: Font? = null
+        private set
+    private var keyColumns = 6
+    private var fontMaxIndex = 65536
+    fun init() {
+        val titledBorder = TitledBorder(getResource(Resources.TITLE_KEYPAD))
+        titledBorder.titleJustification = TitledBorder.CENTER
+        border = titledBorder
+        val gridBagLayout = GridBagLayout()
+        layout = gridBagLayout
+        val gridBagConstraints = GridBagConstraints()
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL
+        gridBagConstraints.weightx = 0.0
+        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER
+        val loadFont = JButton(LoadFontAction(this))
+        gridBagLayout.setConstraints(loadFont, gridBagConstraints)
+        add(loadFont)
+        val fonts: Map<String, FontInfo> = fonts
+        val fontsListModel = FontsListModel()
+        fontsListModel.setFonts(fonts)
+        fontSelector.model = fontsListModel
+        setCurrentFont(fontSelector.getItemAt(0) as String)
+        fontSelector.selectedItem = currentFont
+        fontSelector.addItemListener(this)
+        gridBagLayout.setConstraints(fontSelector, gridBagConstraints)
+        add(fontSelector)
 
         //
-
-        gridBagConstraints.weightx = GridBagConstraints.RELATIVE;
-        gridBagConstraints.weighty = 1;
-        gridBagConstraints.gridheight = GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
-
-        keypadListeners = new EventListenerList();
-        keypadEvent = new KeypadEvent(this);
-
-        final JComponent fontKeypad = getFontKeypad();
-        gridBagLayout.setConstraints(fontKeypad, gridBagConstraints);
+        gridBagConstraints.weightx = GridBagConstraints.RELATIVE.toDouble()
+        gridBagConstraints.weighty = 1.0
+        gridBagConstraints.gridheight = GridBagConstraints.REMAINDER
+        gridBagConstraints.fill = GridBagConstraints.BOTH
+        val fontKeypad: JComponent = fontKeypad
+        gridBagLayout.setConstraints(fontKeypad, gridBagConstraints)
         //
-        add(fontKeypad);
+        add(fontKeypad)
     }
 
-    public void load() {
-        String count = Resources.getSetting("keypad.column.count");
-        if (count != null)
-            KEY_COLUMNS = Integer.parseInt(count);
-        String max = Resources.getSetting("font.char.maxindex");
-        if (max != null)
-            FONT_MAX_INDEX = Integer.parseInt(max);
+    fun load() {
+        val count = getSetting("keypad.column.count")
+        if (count != null) keyColumns = count.toInt()
+        val max = getSetting("font.char.maxindex")
+        if (max != null) fontMaxIndex = max.toInt()
     }
 
-    public ArrayList<JButton> getKeys() {
-        return keys;
+    override fun itemStateChanged(e: ItemEvent) {
+        setCurrentFont(e.item.toString())
+        resetKeypad()
     }
 
-    public void itemStateChanged(ItemEvent e) {
-        setCurrentFont(e.getItem().toString());
-        resetKeypad();
+    override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent) {
+        fontMap = fontMapChangeEvent.fontMap
+        setCurrentFont()
+        resetKeypad()
     }
 
-    public void stateChanged(FontMapChangeEvent e) {
-        fontMap = e.getFontMap();
-        setCurrentFont();
-        resetKeypad();
-    }
+    val selectedFont: String?
+        get() {
+            val selectedItem = fontSelector.selectedItem ?: return null
+            return selectedItem.toString()
+        }
 
-    public String getSelectedFont() {
-        Object selectedItem = fontSelector.getSelectedItem();
-        if (selectedItem == null) return null;
-        return selectedItem.toString();
-    }
+    //        resetKeypad();
+    private val fontKeypad: JScrollPane
+        get() {
+            keypad.border = BorderFactory.createEmptyBorder()
+            //        resetKeypad();
+            val jScrollPane = JScrollPane()
+            jScrollPane.viewport.add(keypad)
+            return jScrollPane
+        }
 
-    private JScrollPane getFontKeypad() {
-        keypad = new JPanel();
-        keypad.setBorder(BorderFactory.createEmptyBorder());
-//        resetKeypad();
-        final JScrollPane jScrollPane = new JScrollPane();
-        jScrollPane.getViewport().add(keypad);
-        return jScrollPane;
-    }
-
-    private void resetKeypad() {
-        keypad.removeAll();
-        final GridBagLayout gridBagLayout = new GridBagLayout();
-        keypad.setLayout(gridBagLayout);
-        final GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 0;
-        gridBagConstraints.weighty = 0;
-        final int numOfGlyphs = currentFont.getNumGlyphs();
-        for (int i = 0, j = 0; i < FONT_MAX_INDEX && j < numOfGlyphs; i++) {
-            final char c = (char) i;
-            if (currentFont.canDisplay(c)) {
-                final String cmd = Resources.EMPTY_STRING + c;
-                final JButton keyButton;
-                if (!keys.isEmpty() && j < keys.size()) {
-                    keyButton = keys.get(j);
+    private fun resetKeypad() {
+        keypad.removeAll()
+        val gridBagLayout = GridBagLayout()
+        keypad.layout = gridBagLayout
+        val gridBagConstraints = GridBagConstraints()
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL
+        gridBagConstraints.weightx = 0.0
+        gridBagConstraints.weighty = 0.0
+        val numOfGlyphs = currentFont!!.numGlyphs
+        var i = 0
+        var j = 0
+        while (i < fontMaxIndex && j < numOfGlyphs) {
+            val c = i.toChar()
+            if (currentFont!!.canDisplay(c)) {
+                val cmd = Resources.EMPTY_STRING + c
+                val keyButton: JButton
+                if (keys.isNotEmpty() && j < keys.size) {
+                    keyButton = keys[j]
                 } else {
-                    keyButton = new JButton();
-                    keys.add(j, keyButton);
+                    keyButton = JButton()
+                    keys.add(j, keyButton)
                 }
                 // remove all the action listeners previously added
                 // only 1 action listener to be added per button
-                final ActionListener[] actionListeners =
-                        keyButton.getActionListeners();
-                if (actionListeners != null && actionListeners.length > 0) {
-                    for (final ActionListener newVar : actionListeners) {
-                        keyButton.removeActionListener(newVar);
+                val actionListeners = keyButton.actionListeners
+                if (actionListeners != null && actionListeners.isNotEmpty()) {
+                    for (newVar in actionListeners) {
+                        keyButton.removeActionListener(newVar)
                     }
                 }
-                keyButton.setFont(currentFont);
-                keyButton.setText(cmd);
-                gridBagConstraints.gridwidth = 1;
-                if ((j + 1) % KEY_COLUMNS == 0) {
-                    gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
+                keyButton.font = currentFont
+                keyButton.text = cmd
+                gridBagConstraints.gridwidth = 1
+                if ((j + 1) % keyColumns == 0) {
+                    gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER
                 }
-                gridBagLayout.setConstraints(keyButton, gridBagConstraints);
-                keypad.add(keyButton);
-                j++;
+                gridBagLayout.setConstraints(keyButton, gridBagConstraints)
+                keypad.add(keyButton)
+                j++
             }
+            i++
         }
-//        addKeypadListener();
-        fireKeypadReset();
-        keypad.updateUI();
+        //        addKeypadListener();
+        fireKeypadReset()
+        keypad.updateUI()
         // garbage collect
-        System.gc();
+        System.gc()
     }
 
     // Notify all listeners that have registered interest for
     // notification on this event type.  The event instance
     // is lazily created using the parameters passed into
     // the fire method.
-    public void fireKeypadReset() {
+    override fun fireKeypadReset() {
         // Guaranteed to return a non-null array
-        final Object[] listeners = keypadListeners.getListenerList();
+        val listeners = keypadListeners.listenerList
         // Process the listeners last to first, notifying
         // those that are interested in this event
-        for (int i = listeners.length - 2; i >= 0; i -= 2) {
-            if (listeners[i] == IKeypadListener.class) {
-                // Lazily create the event:
-                if (keypadEvent == null) {
-                    keypadEvent = new KeypadEvent(this);
-                }
-                ((IKeypadListener) listeners[i + 1])
-                        .keypadReset(keypadEvent);
+        var i = listeners.size - 2
+        val keypadEvent = KeypadEvent(this)
+        while (i >= 0) {
+            if (listeners[i] === IKeypadListener::class.java) {
+                (listeners[i + 1] as IKeypadListener)
+                    .keypadReset(keypadEvent)
             }
+            i -= 2
         }
     }
 
-    public void addKeypadListener(@NotNull IKeypadListener keypadListener) {
-        keypadListeners.add(IKeypadListener.class, keypadListener);
+    override fun addKeypadListener(keypadListener: IKeypadListener) {
+        keypadListeners.add(IKeypadListener::class.java, keypadListener)
     }
 
-    public void removeKeypadListener(IKeypadListener keypadListener) {
-        keypadListeners.remove(IKeypadListener.class, keypadListener);
+    fun removeKeypadListener(keypadListener: IKeypadListener?) {
+        keypadListeners.remove(IKeypadListener::class.java, keypadListener)
     }
 
-    FontMap getFontMap() {
-        return fontMap;
+    open fun setCurrentFont(fontName: String) {
+        val font = getFont(fontName)
+        if (font != null) setCurrentFont(font.font)
     }
 
-    Font getCurrentFont() {
-        return currentFont;
-    }
-
-    void setCurrentFont(String fontName) {
-        FontInfo font = Resources.getFont(fontName);
-        if (font != null)
-            setCurrentFont(font.getFont());
-    }
-
-    void setCurrentFont(Font font) {
+    fun setCurrentFont(font: Font?) {
         if (font == null) {
-            fontSelector.setSelectedIndex(0);
-            Object item = fontSelector.getSelectedItem();
+            fontSelector.selectedIndex = 0
+            val item = fontSelector.selectedItem
             if (item != null) {
-                FontInfo info = Resources
-                        .getFont(item.toString());
-                if (info != null)
-                    currentFont = info.getFont();
+                val info = getFont(item.toString())
+                if (info != null) currentFont = info.font
             }
         } else {
-            currentFont = font;
-            fontSelector.setSelectedItem(currentFont.getName());
+            currentFont = font
+            fontSelector.selectedItem = currentFont!!.name
         }
-        setFont(currentFont);
+        setFont(currentFont)
     }
 
-    public FontList getFontSelector() {
-        return fontSelector;
-    }
+    protected abstract fun setCurrentFont()
+    abstract fun loadFont(font: File)
 
-    abstract protected void setCurrentFont();
-
-    abstract public void loadFont(File font);
-
-/*
+    /*
     public void setStedWindow(STEDWindow stedWindow)
     {
         this.stedWindow = stedWindow;
     }
 */
-
-    static public class FontsListModel
-            extends DefaultComboBoxModel
-            implements ChangeListener {
-        private static final Logger logger = Logger.getLogger(
-                "sted.ui.FontKeypad$FontsListModel");
-        private Map<String, FontInfo> fonts;
-
-        public FontsListModel() {
-            super();
+    class FontsListModel : DefaultComboBoxModel<Any?>(), ChangeListener {
+        private var fonts: Map<String, FontInfo>? = null
+        fun setFonts(fonts: Map<String, FontInfo>?) {
+            logger.entering(javaClass.name, "setFonts")
+            this.fonts = fonts
+            refreshFonts()
         }
 
-        public FontsListModel(Map<String, FontInfo> fonts) {
-            this();
-            setFonts(fonts);
-        }
-
-        public void setFonts(Map<String, FontInfo> fonts) {
-            logger.entering(getClass().getName(), "setFonts");
-            this.fonts = fonts;
-            refreshFonts();
-        }
-
-        private void refreshFonts() {
-            logger.entering(getClass().getName(), "refreshFonts");
-            removeAllElements();
-            final Object[] contents = fonts.keySet().toArray();
-            Arrays.sort(contents);
-            for (final Object newVar : contents) {
-                addElement(newVar);
+        private fun refreshFonts() {
+            logger.entering(javaClass.name, "refreshFonts")
+            removeAllElements()
+            val contents: Array<Any> = fonts!!.keys.toTypedArray()
+            Arrays.sort(contents)
+            for (newVar in contents) {
+                addElement(newVar)
             }
         }
 
@@ -282,45 +234,40 @@ public abstract class FontKeypad
          *
          * @param e a ChangeEvent object
          */
-        public void stateChanged(ChangeEvent e) {
-            setFonts(Resources.getFonts());
-            fireContentsChanged(this, 0, fonts.size());
+        override fun stateChanged(e: ChangeEvent) {
+            setFonts(Resources.fonts)
+            fireContentsChanged(this, 0, fonts!!.size)
+        }
+
+        companion object {
+            private val logger = Logger.getLogger(
+                "sted.ui.FontKeypad\$FontsListModel"
+            )
         }
     }
 
-//    abstract protected void addKeypadListener();
-
-    static public class FontList
-            extends JComboBox
-            implements ChangeListener {
-        /**
-         * Creates a <code>JComboBox</code> that takes it's items from an
-         * existing <code>ComboBoxModel</code>.  Since the
-         * <code>ComboBoxModel</code> is provided, a combo box created using
-         * this constructor does not create a default combo box model and may
-         * impact how the insert, remove and add methods behave.
-         *
-         * @param aModel the <code>ComboBoxModel</code> that provides the
-         *               displayed list of items
-         * @see DefaultComboBoxModel
-         */
-        public FontList(ComboBoxModel aModel) {
-            super(aModel);    //To change body of overriden methods use Options | File Templates.
-        }
-
+    //    abstract protected void addKeypadListener();
+    class FontList
+    /**
+     * Creates a `JComboBox` that takes it's items from an
+     * existing `ComboBoxModel`.  Since the
+     * `ComboBoxModel` is provided, a combo box created using
+     * this constructor does not create a default combo box model and may
+     * impact how the insert, remove and add methods behave.
+     *
+     * @see DefaultComboBoxModel
+     */
+        : JComboBox<Any?>(), ChangeListener {
         /**
          * Invoked when the target of the listener has changed its state.
          *
          * @param e a ChangeEvent object
          */
-        public void stateChanged(ChangeEvent e) {
-            ((FontsListModel) getModel()).stateChanged(e);
-            Font font = ((FontListChangeEvent) e).getFontChanged();
-            if (font != null)
-                setSelectedItem(font.getName());
-            updateUI();
+        override fun stateChanged(e: ChangeEvent) {
+            (model as FontsListModel).stateChanged(e)
+            val font = (e as FontListChangeEvent).fontChanged
+            if (font != null) selectedItem = font.name
+            updateUI()
         }
     }
-
 }
-

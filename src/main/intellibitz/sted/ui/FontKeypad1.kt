@@ -1,37 +1,24 @@
-package sted.ui;
+package sted.ui
 
-import sted.event.FontListChangeEvent;
-import sted.fontmap.FontMap;
+import sted.event.FontListChangeEvent
+import java.io.File
+import javax.swing.event.ChangeEvent
+import javax.swing.event.ChangeListener
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.io.File;
-
-public class FontKeypad1
-        extends FontKeypad
-        implements ChangeListener {
-
-    public FontKeypad1() {
-        super();
+class FontKeypad1 : FontKeypad(), ChangeListener {
+    override fun setCurrentFont() {
+        super.setCurrentFont(fontMap?.font1)
     }
 
-    protected void setCurrentFont() {
-        super.setCurrentFont(getFontMap().getFont1());
+    override fun loadFont(font: File) {
+        val fontMap = fontMap
+        fontMap?.setFont1(font)
     }
 
-    public void loadFont(File font) {
-        final FontMap fontMap = getFontMap();
-        if (fontMap != null) {
-            fontMap.setFont1(font);
-        }
-    }
-
-    protected void setCurrentFont(String font) {
-        super.setCurrentFont(font);
-        final FontMap fontMap = getFontMap();
-        if (fontMap != null) {
-            fontMap.setFont1(getCurrentFont());
-        }
+    override fun setCurrentFont(fontName: String) {
+        super.setCurrentFont(fontName)
+        val fontMap = fontMap
+        fontMap?.setFont1(currentFont!!)
     }
 
     /**
@@ -39,11 +26,10 @@ public class FontKeypad1
      *
      * @param e a ChangeEvent object
      */
-    public void stateChanged(ChangeEvent e) {
-        if (((FontListChangeEvent) e).getFontIndex() == 1) {
-            getFontSelector().stateChanged(e);
-            updateUI();
+    override fun stateChanged(e: ChangeEvent) {
+        if ((e as FontListChangeEvent).fontIndex == 1) {
+            fontSelector.stateChanged(e)
+            updateUI()
         }
     }
-
 }

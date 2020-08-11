@@ -565,14 +565,10 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
     private fun saveFontMap() {
         val desktopFrame = selectedFrame
         var fontMap = desktopFrame.desktopModel.fontMap
-        fontMap.setFont1(
-            desktopFrame.mapperPanel
-                .fontKeypad1.selectedFont
-        )
-        fontMap.setFont2(
-            desktopFrame.mapperPanel
-                .fontKeypad2.selectedFont
-        )
+        val fontKeypad1 = desktopFrame.mapperPanel.fontKeypad1
+        fontMap.setFont1(fontKeypad1.selectedFont!!)
+        val fontKeypad2 = desktopFrame.mapperPanel.fontKeypad2
+        fontMap.setFont2(fontKeypad2.selectedFont!!)
         try {
             fontMap = desktopFrame.desktopModel.saveFontMap()
             //add it to cache
