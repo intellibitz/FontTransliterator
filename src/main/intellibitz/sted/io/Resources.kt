@@ -168,29 +168,31 @@ object Resources {
 
     @JvmStatic
     fun getResource(name: String): String? {
-        var `val`: String? = null
+        var value: String? = null
         try {
-            if (resourceBundle != null) `val` = resourceBundle!!.getString(name)
+            value = resourceBundle?.getString(name)
         } catch (e: MissingResourceException) {
             // ignore, since we will try alternates
-            // if not from resource bundle.. try system property.. or the settings file
-            `val` = getPropertySettings(name)
         }
-        if (`val` == null) {
+        // if not from resource bundle.. try system property.. or the settings file
+        if (value == null) {
+            value = getPropertySettings(name)
+        }
+        if (value == null) {
             logger.severe("Resource not found for: $name")
         }
-        return `val`
+        return value
     }
 
     private fun getPropertySettings(name: String): String? {
         // try the system property - might come from command line
         // system property will override the options in the settings file
-        var `val` = System.getProperty(name)
-        if (`val` == null) {
+        var value = System.getProperty(name)
+        if (value == null) {
             // read from the settings file
-            `val` = getSetting(name)
+            value = getSetting(name)
         }
-        return `val`
+        return value
     }
 
     @JvmStatic
@@ -213,8 +215,9 @@ object Resources {
     }
 
     @Throws(IOException::class, SAXException::class, ParserConfigurationException::class)
-    private fun readSettings(path: String?) {
-        val settingsXMLHandler = SettingsXMLHandler(File(path))
+    private fun readSettings(path: String) {
+        val settingsXMLHandler = SettingsXMLHandler()
+        settingsXMLHandler.init(File(path))
         settingsXMLHandler.read()
         settings.putAll(settingsXMLHandler.settings)
     }
@@ -287,20 +290,20 @@ object Resources {
     init {
         try {
             resourceBundle = ResourceBundle.getBundle(STED_CONFIG_NAME, Locale.getDefault())
-            logger.finest("retrieved resource bundle " + resourceBundle)
+            logger.info("retrieved resource bundle " + resourceBundle)
         } catch (mre: MissingResourceException) {
             logger.severe("Unable to load ResourceBundle " + mre.message)
         }
         RESOURCE_PATH_VAL = System.getProperty(RESOURCE_PATH, "resource")
         SETTINGS_FILE_PATH_USER = getResource(SETTINGS_STED_USER)
         try {
-            readSettings(getResource(SETTINGS_STED_UI))
+            readSettings(getResource(SETTINGS_STED_UI)!!)
         } catch (e: Exception) {
             logger.throwing("Resources", "static initializer block", e)
             logger.severe("Unable to read settings - ParserConfigurationException " + e.message)
         }
         try {
-            readSettings(SETTINGS_FILE_PATH_USER)
+            readSettings(SETTINGS_FILE_PATH_USER!!)
         } catch (e: Exception) {
             logger.throwing("Resources", "static initializer block", e)
             logger.severe("Unable to read settings - ParserConfigurationException " + e.message)

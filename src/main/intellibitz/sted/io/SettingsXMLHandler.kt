@@ -1,82 +1,62 @@
-package sted.io;
+package sted.io
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
+import org.xml.sax.Attributes
+import org.xml.sax.SAXException
+import org.xml.sax.helpers.DefaultHandler
+import sted.io.FileHelper.getInputStream
+import java.io.File
+import java.io.IOException
+import java.util.*
+import java.util.logging.Logger
+import javax.xml.parsers.ParserConfigurationException
+import javax.xml.parsers.SAXParserFactory
 
 /**
  * Reads the Settings XML file
  */
-public class SettingsXMLHandler
-        extends DefaultHandler {
-    private File stedSettingsFile;
-    private final Map<String, String> settings = new HashMap<String, String>();
-    private String key;
-    private String value;
-    private static final Logger logger =
-            Logger.getLogger("sted.io.SettingsXMLHandler");
-
-    public SettingsXMLHandler() {
-        super();
+class SettingsXMLHandler : DefaultHandler() {
+    val settings: MutableMap<String, String> = HashMap()
+    private lateinit var stedSettingsFile: File
+    private var key: String? = ""
+    private var value = ""
+    fun init(stedSettings: File) {
+        stedSettingsFile = stedSettings
     }
 
-    public SettingsXMLHandler(File stedSettings) {
-        this();
-        stedSettingsFile = stedSettings;
+    @Throws(IOException::class, ParserConfigurationException::class, SAXException::class)
+    fun read() {
+        logger.entering(javaClass.name, "read", stedSettingsFile)
+        val saxParserFactory = SAXParserFactory.newInstance()
+        saxParserFactory.isValidating = true
+        val saxParser = saxParserFactory.newSAXParser()
+        logger.info(
+            "reading settings file - " +
+                    stedSettingsFile.absolutePath
+        )
+        val inputStream = getInputStream(stedSettingsFile)
+        saxParser.parse(inputStream, this)
+        logger.exiting(javaClass.name, "read")
     }
 
-    public void read()
-            throws IOException, ParserConfigurationException, SAXException {
-        logger.entering(getClass().getName(), "read", stedSettingsFile);
-        final SAXParserFactory saxParserFactory =
-                SAXParserFactory.newInstance();
-        saxParserFactory.setValidating(true);
-        final SAXParser saxParser = saxParserFactory.newSAXParser();
-        logger.info("reading settings file - " +
-                stedSettingsFile.getAbsolutePath());
-        final InputStream inputStream =
-                FileHelper.getInputStream(stedSettingsFile);
-        if (inputStream == null) {
-            logger.severe(
-                    "InputStream NULL - Cannot Read File: " + stedSettingsFile);
-            throw new IOException(
-                    "InputStream NULL - Cannot Read File: " + stedSettingsFile);
-        } else {
-            saxParser.parse(inputStream, this);
-        }
-        logger.exiting(getClass().getName(), "read");
-    }
-
-    public void startElement(String uri, String localName, String qName,
-                             Attributes attributes)
-            throws SAXException {
-        if ("settings".equals(qName)) {
-        } else if ("option".equals(qName)) {
-            key = attributes.getValue("name");
-            value = attributes.getValue("value");
+    override fun startElement(
+        uri: String, localName: String, qName: String,
+        attributes: Attributes
+    ) {
+        if ("option" == qName) {
+            key = attributes.getValue("name")
+            value = attributes.getValue("value")
         }
     }
 
-    public void endElement(String uri, String localName, String qName)
-            throws SAXException {
-        if ("option".equals(qName)) {
+    override fun endElement(uri: String, localName: String, qName: String) {
+        if ("option" == qName) {
             if (key != null) {
-                settings.put(key, value);
+                settings[key!!] = value
             }
         }
     }
 
-    public Map<String, String> getSettings() {
-        return settings;
+    companion object {
+        private val logger = Logger.getLogger("sted.io.SettingsXMLHandler")
     }
 }

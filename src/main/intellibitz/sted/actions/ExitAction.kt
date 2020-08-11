@@ -13,7 +13,7 @@ class ExitAction : STEDWindowAction() {
             stedWindow.desktop.saveDirty()
         ) {
             try {
-                SettingsXMLWriter.writeUserSettings(stedWindow)
+                SettingsXMLWriter.writeUserSettings()
             } catch (ex: TransformerException) {
                 logger.severe(
                     "Unable to write User Settings - TransformerException " +
