@@ -1,6 +1,6 @@
 package sted.actions
 
-import org.junit.Test
+import kotlin.test.Test
 import javax.swing.Action
 
 class TestViewAction {

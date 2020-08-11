@@ -1,11 +1,10 @@
 package sted.ui
 
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.Test
 
 class FontMapperDesktopFrameTest {
     private val stedWindow: STEDWindow? = null
-    @Before
+//    @Before
     fun testSTEDWindow() {
 //        stedWindow = new STEDWindow();
 //        stedWindow.load();

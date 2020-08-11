@@ -1,6 +1,6 @@
 package sted.fontmap
 
-import org.junit.Test
+import kotlin.test.Test
 
 class TestFontMapEntry {
     @Test

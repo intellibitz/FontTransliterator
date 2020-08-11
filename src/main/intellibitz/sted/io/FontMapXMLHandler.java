@@ -25,11 +25,6 @@ class FontMapXMLHandler
         super();
     }
 
-    FontMapXMLHandler(FontMap fontMap) {
-        this();
-        this.fontMap = fontMap;
-    }
-
     public void read(FontMap fontMap)
             throws IOException, ParserConfigurationException, SAXException {
         logger.entering(getClass().getName(), "read", fontMap);

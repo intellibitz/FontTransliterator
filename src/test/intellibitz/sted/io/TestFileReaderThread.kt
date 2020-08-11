@@ -1,6 +1,6 @@
 package sted.io
 
-import org.junit.Test
+import kotlin.test.Test
 
 class TestFileReaderThread {
     @Test
