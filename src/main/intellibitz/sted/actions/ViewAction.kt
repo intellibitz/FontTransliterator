@@ -39,7 +39,7 @@ open class ViewAction : ItemListenerAction() {
             val splitPane: JSplitPane = stedWindow
                 .desktop
                 .fontMapperDesktopFrame
-                .mapperPanel.mappingEntryPanel.getSplitPane()
+                .mapperPanel.mappingEntryPanel.splitPane
             splitPane.bottomComponent.isVisible = ItemEvent.SELECTED == e.stateChange
             splitPane.resetToPreferredSizes()
             splitPane.validate()

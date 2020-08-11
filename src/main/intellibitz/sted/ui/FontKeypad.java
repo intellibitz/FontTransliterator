@@ -30,11 +30,11 @@ public abstract class FontKeypad
         implements ItemListener,
         FontMapChangeListener,
         IKeypadEventSource {
+    private final ArrayList<JButton> keys = new ArrayList<>();
     private FontMap fontMap;
     private FontList fontSelector;
     private JPanel keypad;
     private Font currentFont;
-    private final ArrayList<JButton> keys = new ArrayList<JButton>();
     private int KEY_COLUMNS = 6;
     private int FONT_MAX_INDEX = 65536;
     private KeypadEvent keypadEvent;
@@ -85,10 +85,12 @@ public abstract class FontKeypad
     }
 
     public void load() {
-        KEY_COLUMNS = Integer.parseInt(
-                Resources.getSetting("keypad.column.count"));
-        FONT_MAX_INDEX = Integer.parseInt(
-                Resources.getSetting("font.char.maxindex"));
+        String count = Resources.getSetting("keypad.column.count");
+        if (count != null)
+            KEY_COLUMNS = Integer.parseInt(count);
+        String max = Resources.getSetting("font.char.maxindex");
+        if (max != null)
+            FONT_MAX_INDEX = Integer.parseInt(max);
     }
 
     public ArrayList<JButton> getKeys() {
@@ -100,32 +102,16 @@ public abstract class FontKeypad
         resetKeypad();
     }
 
-    void setCurrentFont(String fontName) {
-        setCurrentFont(Resources.getFont(fontName).getFont());
-    }
-
-    void setCurrentFont(Font font) {
-        if (font == null) {
-            fontSelector.setSelectedIndex(0);
-            currentFont = Resources
-                    .getFont(fontSelector.getSelectedItem().toString())
-                    .getFont();
-        } else {
-            currentFont = font;
-            fontSelector.setSelectedItem(currentFont.getName());
-        }
-        setFont(currentFont);
-    }
-
     public void stateChanged(FontMapChangeEvent e) {
         fontMap = e.getFontMap();
         setCurrentFont();
         resetKeypad();
     }
 
-
     public String getSelectedFont() {
-        return fontSelector.getSelectedItem().toString();
+        Object selectedItem = fontSelector.getSelectedItem();
+        if (selectedItem == null) return null;
+        return selectedItem.toString();
     }
 
     private JScrollPane getFontKeypad() {
@@ -213,7 +199,6 @@ public abstract class FontKeypad
         keypadListeners.remove(IKeypadListener.class, keypadListener);
     }
 
-
     FontMap getFontMap() {
         return fontMap;
     }
@@ -222,16 +207,50 @@ public abstract class FontKeypad
         return currentFont;
     }
 
+    void setCurrentFont(String fontName) {
+        FontInfo font = Resources.getFont(fontName);
+        if (font != null)
+            setCurrentFont(font.getFont());
+    }
+
+    void setCurrentFont(Font font) {
+        if (font == null) {
+            fontSelector.setSelectedIndex(0);
+            Object item = fontSelector.getSelectedItem();
+            if (item != null) {
+                FontInfo info = Resources
+                        .getFont(item.toString());
+                if (info != null)
+                    currentFont = info.getFont();
+            }
+        } else {
+            currentFont = font;
+            fontSelector.setSelectedItem(currentFont.getName());
+        }
+        setFont(currentFont);
+    }
+
     public FontList getFontSelector() {
         return fontSelector;
     }
 
+    abstract protected void setCurrentFont();
+
+    abstract public void loadFont(File font);
+
+/*
+    public void setStedWindow(STEDWindow stedWindow)
+    {
+        this.stedWindow = stedWindow;
+    }
+*/
+
     static public class FontsListModel
             extends DefaultComboBoxModel
             implements ChangeListener {
-        private Map<String, FontInfo> fonts;
         private static final Logger logger = Logger.getLogger(
                 "sted.ui.FontKeypad$FontsListModel");
+        private Map<String, FontInfo> fonts;
 
         public FontsListModel() {
             super();
@@ -269,6 +288,8 @@ public abstract class FontKeypad
         }
     }
 
+//    abstract protected void addKeypadListener();
+
     static public class FontList
             extends JComboBox
             implements ChangeListener {
@@ -294,24 +315,12 @@ public abstract class FontKeypad
          */
         public void stateChanged(ChangeEvent e) {
             ((FontsListModel) getModel()).stateChanged(e);
-            setSelectedItem(
-                    ((FontListChangeEvent) e).getFontChanged().getName());
+            Font font = ((FontListChangeEvent) e).getFontChanged();
+            if (font != null)
+                setSelectedItem(font.getName());
             updateUI();
         }
     }
-
-/*
-    public void setStedWindow(STEDWindow stedWindow)
-    {
-        this.stedWindow = stedWindow;
-    }
-*/
-
-    abstract protected void setCurrentFont();
-
-//    abstract protected void addKeypadListener();
-
-    abstract public void loadFont(File font);
 
 }
 

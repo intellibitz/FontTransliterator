@@ -1,337 +1,278 @@
-package sted.ui;
+package sted.ui
 
-import sted.actions.EntryAction;
-import sted.actions.EntryClearAction;
-import sted.actions.TableModelListenerAction;
-import sted.actions.TableRowsSelectAction;
-import sted.event.FontMapChangeEvent;
-import sted.event.FontMapChangeListener;
-import sted.event.MappingPopupListener;
-import sted.fontmap.FontMap;
-import sted.fontmap.FontMapEntry;
-import sted.io.Resources;
-import sted.widgets.DocumentListenerButton;
-import sted.widgets.FontChangeTextField;
+import sted.actions.EntryAction
+import sted.actions.EntryClearAction
+import sted.actions.TableModelListenerAction
+import sted.actions.TableRowsSelectAction
+import sted.event.FontMapChangeEvent
+import sted.event.FontMapChangeListener
+import sted.event.MappingPopupListener
+import sted.fontmap.FontMap
+import sted.fontmap.FontMapEntry
+import sted.io.Resources
+import sted.io.Resources.getResource
+import sted.ui.MenuHandler.Companion.menuHandler
+import sted.widgets.DocumentListenerButton
+import sted.widgets.FontChangeTextField
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
+import java.awt.event.ItemEvent
+import java.awt.event.ItemListener
+import javax.swing.*
+import javax.swing.border.TitledBorder
+import javax.swing.event.*
 
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.Iterator;
-import java.util.Map;
+class MappingEntryPanel : JPanel(), FontMapChangeListener, ItemListener, ListSelectionListener, DocumentListener {
+    private val followedCombo: JComboBox<String> = JComboBox<String>()
+    private val precededCombo: JComboBox<String> = JComboBox<String>()
+    private val sym1Combo: JComboBox<String> = JComboBox<String>()
+    private val sym2Combo: JComboBox<String> = JComboBox<String>()
+    val mappingTableModel = MappingTableModel()
+    val mappingRules = MappingRulesPanel()
+    val word1 = FontChangeTextField()
+    val word2 = FontChangeTextField()
+    val clearButton = DocumentListenerButton()
+    private val addButton = DocumentListenerButton()
+    val entryAction = EntryAction()
+    private val entryTable = JTable()
+    val splitPane = JSplitPane()
+    private val directMapPopupListener = MappingPopupListener()
+    lateinit var fontMap: FontMap
 
-public class MappingEntryPanel
-        extends JPanel
-        implements FontMapChangeListener,
-        ItemListener,
-        ListSelectionListener,
-        DocumentListener {
-    private FontMap fontMap;
-    private JTable entryTable;
-    private JComboBox followedCombo;
-    private JComboBox precededCombo;
-    private JComboBox sym1Combo;
-    private JComboBox sym2Combo;
-    private JSplitPane splitPane;
-    private MappingTableModel mappingTableModel;
-    private MappingRulesPanel mappingRules;
-    private FontChangeTextField word1;
-    private FontChangeTextField word2;
-    private DocumentListenerButton clearButton;
-    private DocumentListenerButton addButton;
-    private MappingPopupListener directMapPopupListener;
-    private EntryAction entryAction;
-
-    public MappingEntryPanel() {
-        super();
-    }
-
-    public void init() {
-        final TitledBorder titledBorder = BorderFactory.createTitledBorder(
-                Resources.getResource(Resources.TITLE_MAPPING));
-        titledBorder.setTitleJustification(TitledBorder.CENTER);
-        setBorder(titledBorder);
-        final GridBagLayout gridBagLayout = new GridBagLayout();
-        setLayout(gridBagLayout);
-        final GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1;
-        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
-        final JPanel preview = createWordEntryPanel();
-        gridBagLayout.setConstraints(preview, gridBagConstraints);
+    fun init() {
+        val titledBorder = BorderFactory.createTitledBorder(
+            getResource(Resources.TITLE_MAPPING)
+        )
+        titledBorder.titleJustification = TitledBorder.CENTER
+        border = titledBorder
+        val gridBagLayout = GridBagLayout()
+        layout = gridBagLayout
+        val gridBagConstraints = GridBagConstraints()
+        gridBagConstraints.fill = GridBagConstraints.BOTH
+        gridBagConstraints.weightx = 1.0
+        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER
+        val preview = createWordEntryPanel()
+        gridBagLayout.setConstraints(preview, gridBagConstraints)
         //
-        add(preview);
-        splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        splitPane.setOneTouchExpandable(false);
-        splitPane.setDividerLocation(0.7d);
-        splitPane.setDividerSize(0);
+        add(preview)
+        splitPane.orientation = JSplitPane.VERTICAL_SPLIT
+        splitPane.isOneTouchExpandable = false
+        splitPane.setDividerLocation(0.7)
+        splitPane.dividerSize = 0
         // the top component gets all the extra spaces
-        splitPane.setResizeWeight(1);
-        initTable();
-        final JScrollPane scroller = new JScrollPane(entryTable);
-        gridBagConstraints.weighty = 1;
-        gridBagLayout.setConstraints(splitPane, gridBagConstraints);
+        splitPane.resizeWeight = 1.0
+        initTable()
+        val scroller = JScrollPane(entryTable)
+        gridBagConstraints.weighty = 1.0
+        gridBagLayout.setConstraints(splitPane, gridBagConstraints)
         //
-        splitPane.setTopComponent(scroller);
-        mappingRules = new MappingRulesPanel();
-        mappingRules.init();
-        mappingTableModel.addTableModelListener(mappingRules);
-        entryTable.getSelectionModel().addListSelectionListener(this);
-        entryTable.getSelectionModel().addListSelectionListener(mappingRules);
+        splitPane.topComponent = scroller
+        mappingRules.init()
+        mappingTableModel.addTableModelListener(mappingRules)
+        entryTable.selectionModel.addListSelectionListener(this)
+        entryTable.selectionModel.addListSelectionListener(mappingRules)
         //
-        splitPane.setBottomComponent(mappingRules);
-        add(splitPane);
-        word1.requestFocus();
+        splitPane.bottomComponent = mappingRules
+        add(splitPane)
+        word1.requestFocus()
     }
 
-    public void load() {
-        mappingRules.load();
-        directMapPopupListener.load();
-        loadTable();
-        entryTable.getSelectionModel().addListSelectionListener(this);
-        entryTable.getSelectionModel().addListSelectionListener(mappingRules);
-        word1.requestFocus();
+    fun load() {
+        mappingRules.load()
+        directMapPopupListener.load()
+        loadTable()
+        entryTable.selectionModel.addListSelectionListener(this)
+        entryTable.selectionModel.addListSelectionListener(mappingRules)
+        word1.requestFocus()
     }
 
-    private void initTable() {
+    private fun initTable() {
         // Create a model of the data.
-        mappingTableModel = new MappingTableModel();
-        entryTable = new JTable(mappingTableModel);
-        entryTable.setDefaultRenderer
-                (Object.class, new MappingTableRenderer());
-        entryTable.setCellSelectionEnabled(true);
-        entryTable.setColumnSelectionAllowed(false);
-        entryTable.setShowVerticalLines(false);
-        entryTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        entryTable.getTableHeader().setReorderingAllowed(false);
-        sym1Combo = new JComboBox();
-        sym1Combo.setEditable(true);
-        sym2Combo = new JComboBox();
-        sym2Combo.setEditable(true);
-        followedCombo = new JComboBox();
-        followedCombo.setEditable(true);
-        precededCombo = new JComboBox();
-        precededCombo.setEditable(true);
-        entryTable.getColumnModel().getColumn(0)
-                .setCellEditor(new DefaultCellEditor(sym1Combo));
-        entryTable.getColumnModel().getColumn(2)
-                .setCellEditor(new DefaultCellEditor(sym2Combo));
-        entryTable.getColumnModel().getColumn(5)
-                .setCellEditor(new DefaultCellEditor(followedCombo));
-        entryTable.getColumnModel().getColumn(6)
-                .setCellEditor(new DefaultCellEditor(precededCombo));
-        directMapPopupListener =
-                new MappingPopupListener();
-        entryTable.addMouseListener(directMapPopupListener);
-        mappingTableModel.addTableModelListener(mappingRules);
-        mappingTableModel.addTableModelListener(word1);
+        entryTable.model = mappingTableModel
+        entryTable.setDefaultRenderer(Any::class.java, MappingTableRenderer())
+        entryTable.cellSelectionEnabled = true
+        entryTable.columnSelectionAllowed = false
+        entryTable.showVerticalLines = false
+        entryTable.autoResizeMode = JTable.AUTO_RESIZE_ALL_COLUMNS
+        entryTable.tableHeader.reorderingAllowed = false
+        sym1Combo.isEditable = true
+        sym2Combo.isEditable = true
+        followedCombo.isEditable = true
+        precededCombo.isEditable = true
+        entryTable.columnModel.getColumn(0).cellEditor = DefaultCellEditor(sym1Combo)
+        entryTable.columnModel.getColumn(2).cellEditor = DefaultCellEditor(sym2Combo)
+        entryTable.columnModel.getColumn(5).cellEditor = DefaultCellEditor(followedCombo)
+        entryTable.columnModel.getColumn(6).cellEditor = DefaultCellEditor(precededCombo)
+        entryTable.addMouseListener(directMapPopupListener)
+        mappingTableModel.addTableModelListener(mappingRules)
+        mappingTableModel.addTableModelListener(word1)
     }
 
-    public void loadTable() {
-        addTableModelListeners();
-        setTableColumnWidth();
+    private fun loadTable() {
+        addTableModelListeners()
+        setTableColumnWidth()
     }
 
-    public MappingRulesPanel getMappingRules() {
-        return mappingRules;
-    }
-
-    private void addTableModelListeners() {
-        final Map<String, Action> actions =
-                MenuHandler.getMenuHandler().getActions();
-        for (Action action : actions.values()) {
-            if (TableModelListenerAction.class.isInstance(action)) {
-                addTableModelListener((TableModelListener) action);
+    private fun addTableModelListeners() {
+        val actions = menuHandler.actions
+        for (action in actions.values) {
+            if (TableModelListenerAction::class.java.isInstance(action)) {
+                addTableModelListener(action as TableModelListener)
             }
-            if (TableRowsSelectAction.class.isInstance(action)) {
-                addListSelectionListener((ListSelectionListener) action);
-                ((TableRowsSelectAction) action).setTable(entryTable);
+            if (TableRowsSelectAction::class.java.isInstance(action)) {
+                addListSelectionListener(action as ListSelectionListener)
+                (action as TableRowsSelectAction).table = entryTable
             }
         }
     }
 
-    public void addTableModelListener(TableModelListener tableModelListener) {
-        mappingTableModel.addTableModelListener(tableModelListener);
+    fun addTableModelListener(tableModelListener: TableModelListener?) {
+        mappingTableModel.addTableModelListener(tableModelListener)
     }
 
-    public void addListSelectionListener(
-            ListSelectionListener listSelectionListener) {
-        entryTable.getSelectionModel()
-                .addListSelectionListener(listSelectionListener);
+    private fun addListSelectionListener(
+        listSelectionListener: ListSelectionListener?
+    ) {
+        entryTable.selectionModel
+            .addListSelectionListener(listSelectionListener)
     }
 
-    private void setTableColumnWidth() {
-        final int count = mappingTableModel.getColumnCount();
-        for (int i = 0; i < count; i++) {
-            switch (i) {
-                default:
-                    entryTable.getColumnModel().getColumn(i).setPreferredWidth
-                            (mappingTableModel.getColumnName(i).length());
-                    entryTable.getColumnModel().getColumn(i).sizeWidthToFit();
-                    entryTable.getTableHeader().getColumnModel().getColumn(i)
-                            .setPreferredWidth
-                                    (mappingTableModel
-                                            .getColumnName(i).length());
-                    entryTable.getTableHeader().getColumnModel().getColumn(i)
-                            .sizeWidthToFit();
-
+    private fun setTableColumnWidth() {
+        val count = mappingTableModel.columnCount
+        for (i in 0 until count) when {
+            else -> {
+                entryTable.columnModel.getColumn(i).preferredWidth = mappingTableModel.getColumnName(i).length
+                entryTable.columnModel.getColumn(i).sizeWidthToFit()
+                entryTable.tableHeader.columnModel.getColumn(i).preferredWidth = mappingTableModel
+                    .getColumnName(i).length
+                entryTable.tableHeader.columnModel.getColumn(i)
+                    .sizeWidthToFit()
             }
         }
     }
 
-    public void setFontMap(FontMap fontMap) {
-        this.fontMap = fontMap;
-        reset();
-        firePreviewTableDataChanged();
-        sym1Combo.updateUI();
-        sym2Combo.updateUI();
-        precededCombo.updateUI();
-        followedCombo.updateUI();
-        updateUI();
+/*
+    fun setFontMap(fontMap: FontMap?) {
+        this.fontMap = fontMap
+    }
+*/
+
+    fun updateUIData() {
+        reset()
+        firePreviewTableDataChanged()
+        sym1Combo.updateUI()
+        sym2Combo.updateUI()
+        precededCombo.updateUI()
+        followedCombo.updateUI()
+        updateUI()
     }
 
-    private void reset() {
-        clear();
-        word1.setFont(fontMap.getFont1());
-        word2.setFont(fontMap.getFont2());
-        precededCombo.addItem(Resources.EMPTY_STRING);
-        followedCombo.addItem(Resources.EMPTY_STRING);
-        sym1Combo.addItem(Resources.EMPTY_STRING);
-        sym2Combo.addItem(Resources.EMPTY_STRING);
-        final Iterator<String> iterator = fontMap.getEntries().getAllWords();
+    private fun reset() {
+        clear()
+        word1.font = fontMap.font1
+        word2.font = fontMap.font2
+        precededCombo.addItem("")
+        followedCombo.addItem("")
+        sym1Combo.addItem("")
+        sym2Combo.addItem("")
+        val iterator = fontMap.entries.allWords
         while (iterator.hasNext()) {
-            final Object next = iterator.next();
-            sym2Combo.addItem(next);
-            precededCombo.addItem(next);
-            followedCombo.addItem(next);
+            val next = iterator.next()
+            sym2Combo.addItem(next)
+            precededCombo.addItem(next)
+            followedCombo.addItem(next)
         }
-        final Iterator<String> iter = fontMap.getEntries().getWord2();
-        while (iter.hasNext()) {
-            sym1Combo.addItem(iter.next());
+        val iterator2 = fontMap.entries.getWord2()
+        while (iterator2.hasNext()) {
+            sym1Combo.addItem(iterator2.next())
         }
-        sym1Combo.setFont(fontMap.getFont1());
-        sym2Combo.setFont(fontMap.getFont2());
-        precededCombo.setFont(fontMap.getFont1());
-        followedCombo.setFont(fontMap.getFont1());
-//        mappingTableModel.setFontMap(fontMap);
-        mappingTableModel.loadFontMapEntries(fontMap);
-        final MappingTableRenderer fontPreviewTableRenderer =
-                new MappingTableRenderer();
-        fontPreviewTableRenderer.setFontMap(fontMap);
-        entryTable.setDefaultRenderer(Object.class, fontPreviewTableRenderer);
-        setTableColumnWidth();
+        sym1Combo.font = fontMap.font1
+        sym2Combo.font = fontMap.font2
+        precededCombo.font = fontMap.font1
+        followedCombo.font = fontMap.font1
+        //        mappingTableModel.setFontMap(fontMap);
+        mappingTableModel.loadFontMapEntries(fontMap)
+        val fontPreviewTableRenderer = MappingTableRenderer()
+        fontPreviewTableRenderer.fontMap = fontMap
+        entryTable.setDefaultRenderer(Any::class.java, fontPreviewTableRenderer)
+        setTableColumnWidth()
     }
 
-    public void clear() {
-        sym1Combo.removeAllItems();
-        sym2Combo.removeAllItems();
-        followedCombo.removeAllItems();
-        precededCombo.removeAllItems();
+    fun clear() {
+        sym1Combo.removeAllItems()
+        sym2Combo.removeAllItems()
+        followedCombo.removeAllItems()
+        precededCombo.removeAllItems()
     }
 
-
-    private JPanel createWordEntryPanel() {
-        final JPanel jPanel = new JPanel();
-        jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.X_AXIS));
-        word1 = new FontChangeTextField();
-        word1.setHorizontalAlignment(JTextField.RIGHT);
+    private fun createWordEntryPanel(): JPanel {
+        val jPanel = JPanel()
+        jPanel.layout = BoxLayout(jPanel, BoxLayout.X_AXIS)
+        word1.horizontalAlignment = JTextField.RIGHT
         //
-        jPanel.add(word1);
-        final JLabel jLabel = new JLabel(" = ");
-        jLabel.setHorizontalAlignment(JLabel.CENTER);
+        jPanel.add(word1)
+        val jLabel = JLabel(" = ")
+        jLabel.horizontalAlignment = JLabel.CENTER
         //
-        jPanel.add(jLabel);
-        word2 = new FontChangeTextField();
-        word2.setHorizontalAlignment(JTextField.LEFT);
+        jPanel.add(jLabel)
+        word2.horizontalAlignment = JTextField.LEFT
         //
-        jPanel.add(word2);
-        addButton = new DocumentListenerButton();
-        final String sAdd = Resources.getResource(Resources.LABEL_ADD);
-        addButton.setText(sAdd);
-        addButton.setEnabled(false);
-        entryAction = new EntryAction();
-        entryAction.putValue(Action.NAME, sAdd);
-        entryAction.putValue(Action.SHORT_DESCRIPTION, "Add Mapping");
-        entryAction.putValue(Action.MNEMONIC_KEY, (int) 'A');
-        entryAction.putValue(Action.ACTION_COMMAND_KEY, sAdd);
-        entryAction.setMappingEntryPanel(this);
-        addButton.addActionListener(entryAction);
-        addButton.addKeyListener(entryAction);
+        jPanel.add(word2)
+        val sAdd = getResource(Resources.LABEL_ADD)
+        addButton.text = sAdd
+        addButton.isEnabled = false
+        entryAction.putValue(Action.NAME, sAdd)
+        entryAction.putValue(Action.SHORT_DESCRIPTION, "Add Mapping")
+        entryAction.putValue(Action.MNEMONIC_KEY, 'A'.toInt())
+        entryAction.putValue(Action.ACTION_COMMAND_KEY, sAdd)
+        entryAction.mappingEntryPanel = this
+        addButton.addActionListener(entryAction)
+        addButton.addKeyListener(entryAction)
         //
-        jPanel.add(addButton);
-        clearButton = new DocumentListenerButton();
-        final String sClear = Resources.getResource(Resources.LABEL_CLEAR);
-        clearButton.setText(sClear);
-        clearButton.setEnabled(false);
-        final EntryClearAction clearFontMapEntryInPreviewAction =
-                new EntryClearAction();
-        clearFontMapEntryInPreviewAction.putValue(Action.NAME, sClear);
+        jPanel.add(addButton)
+        val sClear = getResource(Resources.LABEL_CLEAR)
+        clearButton.text = sClear
+        clearButton.isEnabled = false
+        val clearFontMapEntryInPreviewAction = EntryClearAction()
+        clearFontMapEntryInPreviewAction.putValue(Action.NAME, sClear)
         clearFontMapEntryInPreviewAction
-                .putValue(Action.SHORT_DESCRIPTION, "Clear Mapping");
+            .putValue(Action.SHORT_DESCRIPTION, "Clear Mapping")
         clearFontMapEntryInPreviewAction
-                .putValue(Action.MNEMONIC_KEY, (int) 'C');
+            .putValue(Action.MNEMONIC_KEY, 'C'.toInt())
         clearFontMapEntryInPreviewAction
-                .putValue(Action.ACTION_COMMAND_KEY, sClear);
-        clearFontMapEntryInPreviewAction.setMappingEntryPanel(this);
-        clearButton.addActionListener(clearFontMapEntryInPreviewAction);
+            .putValue(Action.ACTION_COMMAND_KEY, sClear)
+        clearFontMapEntryInPreviewAction.mappingEntryPanel = this
+        clearButton.addActionListener(clearFontMapEntryInPreviewAction)
         //
-        jPanel.add(clearButton);
-
-        word1.getDocument().addDocumentListener(clearButton);
-        word2.getDocument().addDocumentListener(clearButton);
-        word1.getDocument().addDocumentListener(this);
-        word2.getDocument().addDocumentListener(this);
-
-        word2.addKeyListener(entryAction);
-        return jPanel;
+        jPanel.add(clearButton)
+        word1.document.addDocumentListener(clearButton)
+        word2.document.addDocumentListener(clearButton)
+        word1.document.addDocumentListener(this)
+        word2.document.addDocumentListener(this)
+        word2.addKeyListener(entryAction)
+        return jPanel
     }
 
-    public MappingTableModel getMappingTableModel() {
-        return mappingTableModel;
+    val listSelectionModel: ListSelectionModel
+        get() = entryTable.selectionModel
+
+    fun clearPreviewDisplay() {
+        word1.text = Resources.EMPTY_STRING
+        word2.text = Resources.EMPTY_STRING
     }
 
-    public ListSelectionModel getListSelectionModel() {
-        return entryTable.getSelectionModel();
+    private fun firePreviewTableDataChanged() {
+        clearPreviewDisplay()
+        (entryTable.model as MappingTableModel).fireTableDataChanged()
     }
 
-    public DocumentListenerButton getClearButton() {
-        return clearButton;
+    override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent) {
+        fontMap = fontMapChangeEvent.fontMap
+        updateUIData()
     }
 
-    public EntryAction getEntryAction() {
-        return entryAction;
-    }
-
-    public void clearPreviewDisplay() {
-        word1.setText(Resources.EMPTY_STRING);
-        word2.setText(Resources.EMPTY_STRING);
-    }
-
-    private void firePreviewTableDataChanged() {
-        clearPreviewDisplay();
-        ((MappingTableModel) entryTable.getModel()).fireTableDataChanged();
-    }
-
-    public JSplitPane getSplitPane() {
-        return splitPane;
-    }
-
-    public FontChangeTextField getWord1() {
-        return word1;
-    }
-
-    public FontChangeTextField getWord2() {
-        return word2;
-    }
-
-    public void stateChanged(FontMapChangeEvent e) {
-        setFontMap(e.getFontMap());
-    }
-
-    public void itemStateChanged(ItemEvent e) {
-        reset();
+    override fun itemStateChanged(e: ItemEvent) {
+        reset()
     }
 
     /**
@@ -339,18 +280,17 @@ public class MappingEntryPanel
      *
      * @param e the event that characterizes the change.
      */
-    public void valueChanged(ListSelectionEvent e) {
-        final ListSelectionModel listSelectionModel =
-                (ListSelectionModel) e.getSource();
-        final int row = listSelectionModel.getMinSelectionIndex();
+    override fun valueChanged(e: ListSelectionEvent) {
+        val listSelectionModel = e.source as ListSelectionModel
+        val row = listSelectionModel.minSelectionIndex
         if (row > -1) {
-            showEntry(mappingTableModel.getValueAt(row));
+            showEntry(mappingTableModel.getValueAt(row))
         }
     }
 
-    private void showEntry(FontMapEntry valueAt) {
-        word1.setText(valueAt.getFrom());
-        word2.setText(valueAt.getTo());
+    private fun showEntry(valueAt: FontMapEntry?) {
+        word1.text = valueAt!!.from
+        word2.text = valueAt.to
     }
 
     /**
@@ -358,8 +298,8 @@ public class MappingEntryPanel
      *
      * @param e the document event
      */
-    public void changedUpdate(DocumentEvent e) {
-        toggleAdd();
+    override fun changedUpdate(e: DocumentEvent) {
+        toggleAdd()
     }
 
     /**
@@ -368,8 +308,8 @@ public class MappingEntryPanel
      *
      * @param e the document event
      */
-    public void insertUpdate(DocumentEvent e) {
-        toggleAdd();
+    override fun insertUpdate(e: DocumentEvent) {
+        toggleAdd()
     }
 
     /**
@@ -379,15 +319,12 @@ public class MappingEntryPanel
      *
      * @param e the document event
      */
-    public void removeUpdate(DocumentEvent e) {
-        toggleAdd();
+    override fun removeUpdate(e: DocumentEvent) {
+        toggleAdd()
     }
 
-    private void toggleAdd() {
-        addButton.setEnabled(word1.getText().length() > 0 &&
-                word2.getText().length() > 0);
+    private fun toggleAdd() {
+        addButton.isEnabled = word1.text.isNotEmpty() &&
+                word2.text.isNotEmpty()
     }
-
 }
-
-

@@ -4,7 +4,6 @@ import sted.event.FontMapChangeEvent
 import sted.event.FontMapChangeListener
 import sted.fontmap.FontMapEntry
 import sted.io.Resources
-import sted.ui.MappingTableModel
 import java.awt.event.ActionEvent
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.TableModelEvent
@@ -52,7 +51,10 @@ class PasteAction : TableModelListenerAction(), FontMapChangeListener {
             if (fontMap.isNew) {
                 stedWindow.desktop
                     .fontMapperDesktopFrame
-                    .mapperPanel.mappingEntryPanel.setFontMap(fontMap)
+                    .mapperPanel.mappingEntryPanel.fontMap = fontMap
+                stedWindow.desktop
+                    .fontMapperDesktopFrame
+                    .mapperPanel.mappingEntryPanel.updateUIData()
             } else {
                 tableModel.fontMap = fontMap
             }

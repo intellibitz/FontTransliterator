@@ -9,6 +9,6 @@ class EntryClearAction : AbstractAction() {
 
     override fun actionPerformed(e: ActionEvent) {
         mappingEntryPanel.clearPreviewDisplay()
-        mappingEntryPanel.clearButton?.isEnabled = false
+        mappingEntryPanel.clearButton.isEnabled = false
     }
 }
