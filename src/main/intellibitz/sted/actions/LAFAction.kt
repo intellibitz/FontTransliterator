@@ -15,10 +15,8 @@ class LAFAction : STEDWindowAction() {
         try {
             val collection: MutableCollection<Component> = ArrayList()
             collection.add(stedWindow)
-            val help = HelpWindow.getInstance()
-            if (null != help) {
-                collection.add(help)
-            }
+            val help = HelpWindow.instance
+            collection.add(help)
             val aboutDialog = AboutSTED.instance
             collection.add(aboutDialog)
             val component: Component? = MenuHandler.menuHandler

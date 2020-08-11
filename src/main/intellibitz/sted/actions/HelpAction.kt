@@ -5,6 +5,6 @@ import java.awt.event.ActionEvent
 
 class HelpAction : STEDWindowAction() {
     override fun actionPerformed(e: ActionEvent) {
-        HelpWindow.getInstance().isVisible = true
+        HelpWindow.instance.isVisible = true
     }
 }

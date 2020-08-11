@@ -1,243 +1,220 @@
-package sted.ui;
+package sted.ui
 
-import org.jetbrains.annotations.NotNull;
-import sted.event.IMessageEventSource;
-import sted.event.IMessageListener;
-import sted.event.MessageEvent;
-import sted.io.FileHelper;
-import sted.io.Resources;
+import sted.event.IMessageEventSource
+import sted.event.IMessageListener
+import sted.event.MessageEvent
+import sted.io.Resources.getResource
+import sted.io.Resources.getSystemResourceIcon
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
+import java.io.File
+import java.io.IOException
+import java.net.URL
+import java.util.*
+import java.util.logging.Logger
+import javax.swing.*
+import javax.swing.event.HyperlinkEvent
+import javax.swing.event.HyperlinkListener
+import javax.swing.text.html.HTMLEditorKit
 
-import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.text.html.HTMLEditorKit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Stack;
-import java.util.logging.Logger;
-
-public class HelpWindow
-        extends JFrame
-        implements HyperlinkListener,
-        IMessageEventSource {
-    private final JTextPane textPane;
-    private final Stack<URL> currentPages;
-    private final Stack<URL> backPages;
-    private final Stack<URL> forwardPages;
-    private final JButton backButton;
-    private final JButton forwardButton;
-    private final JButton homeButton;
-    private URL homepage;
-
-    private static final String HELP_INDEX = FileHelper.suffixFileSeparator
-            (System.getProperty(Resources.STED_HOME_PATH, "./")) + Resources
-            .getResource(Resources.HELP_INDEX);
-    private static final Logger logger =
-            Logger.getLogger(HelpWindow.class.getName());
-
-    private static HelpWindow helpWindow;
-    private MessageEvent messageEvent;
-    private IMessageListener messageListener;
-
-    public static synchronized HelpWindow getInstance() {
-        if (helpWindow == null) {
-            helpWindow = new HelpWindow();
-            helpWindow.setSize(600, 800);
-        }
-        return helpWindow;
-    }
-
-
-    private HelpWindow() {
-        super(Resources.getResource(Resources.TITLE_HELP));
-        setIconImage(Resources.getSystemResourceIcon(
-                Resources.getResource(Resources.ICON_HELP)).getImage());
-        currentPages = new Stack<URL>();
-        backPages = new Stack<URL>();
-        forwardPages = new Stack<URL>();
-        final JToolBar jToolBar = new JToolBar(JToolBar.HORIZONTAL);
-        jToolBar.setFloatable(false);
-        homeButton = new JButton(Resources.getSystemResourceIcon(
-                Resources.getResource(Resources.ICON_HELP_HOME)));
-        homeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                goHome();
-            }
-        });
-        homeButton.setToolTipText("Table Of Contents");
+class HelpWindow private constructor() : JFrame(), HyperlinkListener, IMessageEventSource {
+    private val textPane = JTextPane()
+    private val currentPages = Stack<URL>()
+    private val backPages = Stack<URL>()
+    private val forwardPages = Stack<URL>()
+    private val backButton = JButton()
+    private val forwardButton = JButton()
+    private val homeButton = JButton()
+    private val messageEvent = MessageEvent(this)
+    private var homepage: URL? = null
+    private var messageListener: IMessageListener? = null
+    private fun load() {
+        title = getResource("title.help")
+        val imageIcon = getSystemResourceIcon(
+            getResource("icon.help")
+        )
+        if (imageIcon != null) iconImage = imageIcon.image
+        val jToolBar = JToolBar(JToolBar.HORIZONTAL)
+        jToolBar.isFloatable = false
+        homeButton.icon = getSystemResourceIcon(
+            getResource("icon.help.home")
+        )
+        homeButton.addActionListener { goHome() }
+        homeButton.toolTipText = "Table Of Contents"
         //
-        jToolBar.add(homeButton);
-        backButton = new JButton(Resources.getSystemResourceIcon(
-                Resources.getResource(Resources.ICON_HELP_BACK)));
-        backButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                goBack();
-            }
-        });
-        backButton.setToolTipText("Back");
+        jToolBar.add(homeButton)
+        backButton.icon = getSystemResourceIcon(
+            getResource("icon.help.back")
+        )
+        backButton.addActionListener { goBack() }
+        backButton.toolTipText = "Back"
         //
-        jToolBar.add(backButton);
-        forwardButton = new JButton(
-                Resources.getSystemResourceIcon(
-                        Resources.getResource(Resources.ICON_HELP_FORWARD)));
-        forwardButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                goForward();
-            }
-        });
-        forwardButton.setToolTipText("Forward");
+        jToolBar.add(backButton)
+        forwardButton.icon = getSystemResourceIcon(
+            getResource("icon.help.forward")
+        )
+        forwardButton.addActionListener { goForward() }
+        forwardButton.toolTipText = "Forward"
         //
-        jToolBar.add(forwardButton);
+        jToolBar.add(forwardButton)
         // add the toolbar
         // NOTE: "North" is required.. else the toolbar is not visible.
-        getContentPane().add("North", jToolBar);
-        textPane = new JTextPane();
-        textPane.setEditable(false);
-        textPane.setSize(400, 400);
-        textPane.setEditorKit(new HTMLEditorKit());
-        textPane.addHyperlinkListener(this);
-        final JScrollPane scroller = new JScrollPane();
-        scroller.getViewport().add(textPane);
-        getContentPane().add(scroller);
-        goHome();
-        setSize(textPane.getSize());
-        setDefaultLookAndFeelDecorated(true);
-        setState(JFrame.MAXIMIZED_HORIZ);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                setVisible(false);
+        contentPane.add("North", jToolBar)
+        textPane.isEditable = false
+        textPane.setSize(400, 400)
+        textPane.editorKit = HTMLEditorKit()
+        textPane.addHyperlinkListener(this)
+        val scroller = JScrollPane()
+        scroller.viewport.add(textPane)
+        contentPane.add(scroller)
+        val resource = getResource("help.index")
+        if (!resource.isNullOrEmpty())
+            HELP_INDEX = resource
+        goHome()
+        size = textPane.size
+        setDefaultLookAndFeelDecorated(true)
+        state = MAXIMIZED_HORIZ
+        extendedState = MAXIMIZED_BOTH
+        defaultCloseOperation = DO_NOTHING_ON_CLOSE
+        addWindowListener(object : WindowAdapter() {
+            override fun windowClosing(e: WindowEvent) {
+                isVisible = false
             }
-        });
+        })
 
-        messageEvent = new MessageEvent(this);
-        pack();
+//        messageEvent = new MessageEvent(this);
+        pack()
     }
 
-    public void fireMessagePosted(String message) {
-        messageEvent.setMessage(message);
-        messageListener.messagePosted(messageEvent);
+    fun fireMessagePosted(message: String?) {
+        messageEvent.message = message
+        messageListener!!.messagePosted(messageEvent)
     }
 
-    public void fireMessagePosted() {
-        messageListener.messagePosted(messageEvent);
+    override fun fireMessagePosted() {
+        messageListener!!.messagePosted(messageEvent)
     }
 
-    public void addMessageListener(@NotNull IMessageListener messageListener) {
-        this.messageListener = messageListener;
+    override fun addMessageListener(messageListener: IMessageListener) {
+        this.messageListener = messageListener
     }
 
-    private void goHome() {
+    private fun goHome() {
         // if first time, then should be the startup
         if (homepage == null) {
-            go(HELP_INDEX);
-            homepage = textPane.getPage();
+            go(HELP_INDEX)
+            homepage = textPane.page
         } else {
-            setURL(homepage);
+            setURL(homepage!!)
         }
     }
 
-    private void goBack() {
-        final URL url = backPages.pop();
+    private fun goBack() {
+        val url = backPages.pop()
         // push the current page into the forward stack
         if (currentPages.isEmpty()) {
-            forwardPages.push(url);
+            forwardPages.push(url)
         } else {
-            forwardPages.push(currentPages.pop());
+            forwardPages.push(currentPages.pop())
         }
-        setPage(url);
+        setPage(url)
     }
 
-    private void goForward() {
-        final URL url = forwardPages.pop();
+    private fun goForward() {
+        val url = forwardPages.pop()
         // push the current page into the forward stack
         if (currentPages.isEmpty()) {
-            backPages.push(url);
+            backPages.push(url)
         } else {
-            backPages.push(currentPages.pop());
+            backPages.push(currentPages.pop())
         }
-        setPage(url);
+        setPage(url)
     }
 
-    private void setPage(URL url) {
+    private fun setPage(url: URL) {
         try {
-            textPane.setPage(url);
+            textPane.page = url
             // push the current page
-            currentPages.push(url);
-            setButtonState();
-        } catch (IOException e) {
-            logger.severe(e.getMessage());
-            fireMessagePosted("Cannot set page " + e.getMessage());
+            currentPages.push(url)
+            setButtonState()
+        } catch (e: IOException) {
+            logger.severe(e.message)
+            fireMessagePosted("Cannot set page " + e.message)
         }
     }
 
-    private void setURL(URL url) {
+    private fun setURL(url: URL) {
         try {
-            textPane.setPage(url);
+            textPane.page = url
             // pop the previous page and push it into back
             if (!currentPages.isEmpty()) {
-                backPages.push(currentPages.pop());
+                backPages.push(currentPages.pop())
             }
             // clear the forward currentPages
-            forwardPages.clear();
+            forwardPages.clear()
             // push the current page
-            currentPages.push(url);
-        } catch (IOException e) {
-            logger.severe("Cannot set page " + url);
-            fireMessagePosted("Cannot set page " + url);
+            currentPages.push(url)
+        } catch (e: IOException) {
+            logger.severe("Cannot set page $url")
+            fireMessagePosted("Cannot set page $url")
         }
-        setButtonState();
+        setButtonState()
     }
 
-    private void setButtonState() {
-        backButton.setEnabled(!backPages.isEmpty());
-        forwardButton.setEnabled(!forwardPages.isEmpty());
-        final URL index = textPane.getPage();
-        homeButton.setEnabled(
-                index != null && index.getPath().indexOf(HELP_INDEX) == -1);
+    private fun setButtonState() {
+        backButton.isEnabled = !backPages.isEmpty()
+        forwardButton.isEnabled = !forwardPages.isEmpty()
+        val index = textPane.page
+        homeButton.isEnabled = index != null && !index.path.contains(HELP_INDEX)
     }
 
-
-    private void go(String path) {
+    private fun go(path: String?) {
         try {
             if (path != null) {
                 // check if the path is relative or absolute
                 // if relative, then get the absolute path.. this happens the first time showing Help
-                if (path.indexOf(":") == -1) {
-                    final File file = new File(path);
-                    setURL(new URL("file:///" + file.getAbsolutePath()));
+                if (!path.contains(":")) {
+                    val file = File(path)
+                    setURL(URL("file:///" + file.absolutePath))
                 } else {
-                    setURL(new URL("file:///" + path));
+                    setURL(URL("file:///$path"))
                 }
             }
-        } catch (IOException e) {
-            logger.throwing(getClass().getName(), "actionPerformed", e);
-            fireMessagePosted("Cannot go to page - IOException occured: " +
-                    e.getMessage());
+        } catch (e: IOException) {
+            logger.throwing(javaClass.name, "actionPerformed", e)
+            fireMessagePosted(
+                "Cannot go to page - IOException occured: " +
+                        e.message
+            )
         }
     }
 
-    private void go(URL url) {
-        if (url.getProtocol().startsWith("file")) {
-            go(url.getPath());
-        } else if (url.getProtocol().startsWith("http")) {
-            // TODO: NEED TO IMPLEMENT
+    private fun go(url: URL) {
+        if (url.protocol.startsWith("file")) {
+            go(url.path)
         } else {
-            setURL(url);
+            setURL(url)
         }
     }
 
-    public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            go(e.getURL());
+    override fun hyperlinkUpdate(e: HyperlinkEvent) {
+        if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
+            go(e.url)
         }
     }
 
+    companion object {
+        private val logger = Logger.getLogger(HelpWindow::class.java.name)
+        private var HELP_INDEX: String = "index.html"
+        private lateinit var helpWindow: HelpWindow
+
+        @get:Synchronized
+        val instance: HelpWindow
+            get() {
+                helpWindow = HelpWindow()
+                helpWindow.load()
+                helpWindow.setSize(600, 800)
+                return helpWindow
+            }
+    }
 }
