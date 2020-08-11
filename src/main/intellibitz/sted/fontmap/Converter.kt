@@ -35,7 +35,7 @@ open class Converter : ThreadEventSourceBase() {
         fireThreadRunStarted()
         if (!initialized) {
             throw IllegalThreadStateException(
-                "Thread should be initialized.. Call init method before invoking run"
+                "Thread should be initialized.. Call load method before invoking run"
             )
         }
         convertFile()

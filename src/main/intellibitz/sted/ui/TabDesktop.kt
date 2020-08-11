@@ -105,7 +105,8 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
     }
 
     private fun initTabComponent(i: Int, title: String) {
-        val buttonTabComponent = ButtonTabComponent("TabComponent $i", this)
+        val buttonTabComponent = ButtonTabComponent()
+        buttonTabComponent.load("TabComponent $i", this)
         buttonTabComponent.tabTitle.icon = cleanIcon
         buttonTabComponent.tabTitle.text = title
         buttonTabComponent.addActionListener(this)
@@ -515,7 +516,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
             var desktopFrame = frameCache[selectedFile.absolutePath]
             if (desktopFrame == null) {
                 desktopFrame = createFontMapperDesktopFrame()
-                //todo: repeat the logic of the frame creation, init and load
+                //todo: repeat the logic of the frame creation, load and load
                 loadFontMap(desktopFrame, selectedFile)
                 val desktopModel = desktopFrame.desktopModel
                 val fontMap = desktopModel.fontMap

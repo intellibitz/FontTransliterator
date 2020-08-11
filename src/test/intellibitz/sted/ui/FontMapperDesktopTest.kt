@@ -19,7 +19,7 @@ class FontMapperDesktopTest {
         tabDesktop.isVisible = true
         testFrame.contentPane.add(tabDesktop)
         testFrame.isVisible = true
-        //        tabDesktop.init();
+        //        tabDesktop.load();
     }
 
     companion object {
