@@ -32,7 +32,7 @@ class MappingPopupListener : MouseAdapter() {
         val actions = menuHandler.actions
         for (action in actions.values) {
             if (action is TableRowsSelectAction) {
-                action.setTable(table)
+                action.table = table
             }
         }
     }

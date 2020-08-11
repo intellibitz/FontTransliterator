@@ -26,9 +26,8 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
     // desktop to show fontmap
     val desktop: TabDesktop = TabDesktop()
     val statusPanel: StatusPanel = StatusPanel()
-    lateinit var statusEvent: StatusEvent
-        private set
-    lateinit var statusListener: IStatusListener
+    private lateinit var statusEvent: StatusEvent
+    private lateinit var statusListener: IStatusListener
 
     val logger: Logger = Logger.getLogger(STEDWindow::class.java.name)
     fun init() {
@@ -202,34 +201,34 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         val desktop = e.source as TabDesktop
         val index = desktop.selectedIndex
         if (index > -1) {
-            val dframe = desktop.getComponentAt(
+            val desktopFrame = desktop.getComponentAt(
                 index
             ) as DesktopFrame
-            dframe.inputFileViewer.addThreadListener(this)
-            dframe.outputFileViewer.addThreadListener(this)
+            desktopFrame.inputFileViewer.addThreadListener(this)
+            desktopFrame.outputFileViewer.addThreadListener(this)
 
             // update the lock icon
-            val desktopModel = dframe.desktopModel
+            val desktopModel = desktopFrame.desktopModel
             val fontMap = desktopModel.fontMap
             fontMap.removeFontMapChangeListener(statusPanel)
             fontMap.addFontMapChangeListener(statusPanel)
             statusPanel.setLockFlag(!fontMap.isFileWritable)
             // update the clean/dirty flag
             statusPanel.setNeatness(fontMap)
-            dframe.mapperPanel.mappingEntryPanel.entryAction
+            desktopFrame.mapperPanel.mappingEntryPanel.entryAction
                 .addStatusListener(statusPanel)
-            dframe.mapperPanel.mappingEntryPanel.entryAction
+            desktopFrame.mapperPanel.mappingEntryPanel.entryAction
                 .addMessageListener(this)
-            dframe.mapperPanel.mappingEntryPanel
+            desktopFrame.mapperPanel.mappingEntryPanel
                 .mappingTableModel.addMessageListener(this)
 
             // remove and add.. so getting added only once
-            dframe.mapperPanel.mappingEntryPanel.mappingTableModel
+            desktopFrame.mapperPanel.mappingEntryPanel.mappingTableModel
                 .removeTableModelListener(statusPanel)
-            dframe.mapperPanel.mappingEntryPanel.listSelectionModel
+            desktopFrame.mapperPanel.mappingEntryPanel.listSelectionModel
                 .removeListSelectionListener(statusPanel)
-            dframe.mapperPanel.mappingEntryPanel.mappingTableModel.addTableModelListener(statusPanel)
-            dframe.mapperPanel.mappingEntryPanel.listSelectionModel
+            desktopFrame.mapperPanel.mappingEntryPanel.mappingTableModel.addTableModelListener(statusPanel)
+            desktopFrame.mapperPanel.mappingEntryPanel.listSelectionModel
                 .addListSelectionListener(statusPanel)
         }
     }

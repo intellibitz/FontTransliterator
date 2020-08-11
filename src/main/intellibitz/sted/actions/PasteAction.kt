@@ -54,7 +54,7 @@ class PasteAction : TableModelListenerAction(), FontMapChangeListener {
                     .fontMapperDesktopFrame
                     .mapperPanel.mappingEntryPanel.setFontMap(fontMap)
             } else {
-                (tableModel as MappingTableModel).fontMap = fontMap
+                tableModel.fontMap = fontMap
             }
         }
     }

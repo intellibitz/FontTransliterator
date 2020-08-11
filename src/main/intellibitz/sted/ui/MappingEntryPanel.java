@@ -215,7 +215,8 @@ public class MappingEntryPanel
         sym2Combo.setFont(fontMap.getFont2());
         precededCombo.setFont(fontMap.getFont1());
         followedCombo.setFont(fontMap.getFont1());
-        mappingTableModel.setFontMap(fontMap);
+//        mappingTableModel.setFontMap(fontMap);
+        mappingTableModel.loadFontMapEntries(fontMap);
         final MappingTableRenderer fontPreviewTableRenderer =
                 new MappingTableRenderer();
         fontPreviewTableRenderer.setFontMap(fontMap);
