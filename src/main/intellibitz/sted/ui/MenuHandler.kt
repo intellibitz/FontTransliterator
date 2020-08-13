@@ -9,7 +9,6 @@ import sted.io.Resources.getResourceIcon
 import java.awt.event.ItemListener
 import java.io.IOException
 import java.util.*
-import java.util.logging.Logger
 import javax.swing.*
 import javax.xml.parsers.ParserConfigurationException
 import javax.xml.parsers.SAXParserFactory
@@ -53,25 +52,18 @@ object MenuHandler : DefaultHandler() {
             popupMenu.name = attributes.getValue("name")
         } else if ("menu" == qName) {
             isPopup = false
-            createMenu(attributes)
+            stack.push(createMenu(attributes))
         } else if ("menuitem" == qName) {
             if (isPopup) {
-                createMenuItem(attributes, popupMenu)
+                createPopupMenuItem(attributes)
             } else {
                 createMenuItem(attributes, stack.peek())
             }
         } else if ("menuitemref" == qName) {
             if (isPopup) {
-                createMenuItemRef(attributes, popupMenu)
+                createPopupMenuItemRef(attributes)
             } else {
                 createMenuItemRef(attributes, stack.peek())
-            }
-        } else if ("seperator" == qName) {
-            if (isPopup) {
-                popupMenu.addSeparator()
-            } else {
-                val menu = stack.peek()
-                menu.addSeparator()
             }
         }
     }
@@ -120,7 +112,6 @@ object MenuHandler : DefaultHandler() {
             actions[name] = action!!
         }
         menu.isEnabled = java.lang.Boolean.parseBoolean(attributes.getValue("actionEnabled"))
-        stack.push(menu)
         return menu
     }
 
@@ -149,15 +140,6 @@ object MenuHandler : DefaultHandler() {
         }
     }
 
-    private fun createMenuItemRef(attributes: Attributes, menu: JPopupMenu) {
-        val name = attributes.getValue("name")
-        if ("::separator" == name) {
-            menu.addSeparator()
-        } else {
-            menu.add(createMenuItemRef(attributes))
-        }
-    }
-
     private fun createMenuItem(attributes: Attributes, menu: JMenu) {
         val name = attributes.getValue("name")
         if ("::separator" == name) {
@@ -167,12 +149,21 @@ object MenuHandler : DefaultHandler() {
         }
     }
 
-    private fun createMenuItem(attributes: Attributes, menu: JPopupMenu) {
+    private fun createPopupMenuItemRef(attributes: Attributes) {
         val name = attributes.getValue("name")
         if ("::separator" == name) {
-            menu.addSeparator()
+            popupMenu.addSeparator()
         } else {
-            menu.add(createMenuItem(attributes))
+            popupMenu.add(createMenuItemRef(attributes))
+        }
+    }
+
+    private fun createPopupMenuItem(attributes: Attributes) {
+        val name = attributes.getValue("name")
+        if ("::separator" == name) {
+            popupMenu.addSeparator()
+        } else {
+            popupMenu.add(createMenuItem(attributes))
         }
     }
 
