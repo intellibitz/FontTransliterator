@@ -17,9 +17,10 @@ import javax.xml.parsers.ParserConfigurationException
 import javax.xml.parsers.SAXParserFactory
 
 class MenuHandler private constructor() : DefaultHandler() {
-    private var menuBar: JMenuBar? = null
-    private var toolBar: JToolBar? = null
-    private var popupMenu: JPopupMenu? = null
+    private lateinit var menuBar: JMenuBar
+    private lateinit var toolBar: JToolBar
+    private lateinit var popupMenu: JPopupMenu
+    private var isPopup = false
 
     @Throws(SAXException::class, ParserConfigurationException::class, IOException::class)
     private fun loadMenu(xml: String?) {
@@ -37,16 +38,19 @@ class MenuHandler private constructor() : DefaultHandler() {
         return toolBars[name]
     }
 
-    val menuItems: Map<String, JMenuItem?>
+    val menuItems: Map<String, JMenuItem>
         get() = Companion.menuItems
-/*
-    val tooltips: Map<String, String>
-        get() = toolTips
-*/
+
+    /*
+        val tooltips: Map<String, String>
+            get() = toolTips
+    */
     val actions: Map<String, Action>
         get() = Companion.actions
+/*
     val imageIcons: Map<String, ImageIcon?>
         get() = Resources.imageIcons
+*/
 
     fun getAction(name: String): Action? {
         return Companion.actions[name]
@@ -85,14 +89,15 @@ class MenuHandler private constructor() : DefaultHandler() {
     ) {
         if ("menubar" == qName) {
             menuBar = JMenuBar()
-            menuBar!!.name = attributes.getValue("name")
+            menuBar.name = attributes.getValue("name")
             val toolBarName = attributes.getValue("toolBarName")
-            toolBar = toolBars[toolBarName]
-            if (toolBar == null) {
-                toolBar = JToolBar(JToolBar.HORIZONTAL)
-                toolBar!!.name = toolBarName
+            if (toolBars[toolBarName] == null) {
+                toolBar = JToolBar()
+                toolBar.orientation = JToolBar.HORIZONTAL
+                toolBar.name = toolBarName
             }
         } else if ("menu" == qName) {
+            isPopup = false
             try {
                 stack.push(createMenu(attributes))
             } catch (e: Exception) {
@@ -100,27 +105,26 @@ class MenuHandler private constructor() : DefaultHandler() {
                 e.printStackTrace() //To change body of catch statement use Options | File Templates.
             }
         } else if ("popup_menu" == qName) {
+            isPopup = true
             popupMenu = createPopupMenu(attributes)
         } else if ("menuitem" == qName) {
-            if (popupMenu == null) {
-                val menu = stack.peek()
-                menu.add(createMenuItem(attributes))
+            if (isPopup) {
+                createMenuItem(attributes, popupMenu)
             } else {
-                popupMenu!!.add(createMenuItem(attributes))
+                createMenuItem(attributes, stack.peek())
             }
         } else if ("menuitemref" == qName) {
-            if (popupMenu == null) {
-                val menu = stack.peek()
-                menu.add(createMenuItemRef(attributes))
+            if (isPopup) {
+                createMenuItemRef(attributes, popupMenu)
             } else {
-                popupMenu!!.add(createMenuItemRef(attributes))
+                createMenuItemRef(attributes, stack.peek())
             }
         } else if ("seperator" == qName) {
-            if (popupMenu == null) {
+            if (isPopup) {
+                popupMenu.addSeparator()
+            } else {
                 val menu = stack.peek()
                 menu.addSeparator()
-            } else {
-                popupMenu!!.addSeparator()
             }
         }
     }
@@ -129,20 +133,20 @@ class MenuHandler private constructor() : DefaultHandler() {
     override fun endElement(uri: String, localName: String, qName: String) {
         when (qName) {
             "menubar" -> {
-                menuBars[menuBar!!.name] = menuBar
+                menuBars[menuBar.name] = menuBar
                 // moved from getToolBar block
-                toolBar!!.orientation = JToolBar.HORIZONTAL
-                toolBar!!.isFloatable = false
-                toolBar!!.isRollover = true
-                toolBar!!.add(Box.createVerticalGlue())
+                toolBar.orientation = JToolBar.HORIZONTAL
+                toolBar.isFloatable = false
+                toolBar.isRollover = true
+                toolBar.add(Box.createVerticalGlue())
                 //
-                toolBars[toolBar!!.name] = toolBar
+                toolBars[toolBar.name] = toolBar
             }
             "menu" -> {
                 val menu = stack.pop()
                 if (stack.isEmpty()) {
-                    toolBar!!.add(Box.createHorizontalStrut(5))
-                    menuBar!!.add(menu)
+                    toolBar.add(Box.createHorizontalStrut(5))
+                    menuBar.add(menu)
                 } else {
                     val parent = stack.peek()
                     parent.add(menu)
@@ -150,7 +154,7 @@ class MenuHandler private constructor() : DefaultHandler() {
                 menus[menu.name] = menu
             }
             "popup_menu" -> {
-                popupMenus[popupMenu!!.name] = popupMenu
+                popupMenus[popupMenu.name] = popupMenu
             }
         }
     }
@@ -176,7 +180,7 @@ class MenuHandler private constructor() : DefaultHandler() {
     }
 
     private fun createPopupMenu(attributes: Attributes): JPopupMenu {
-        val menu = JPopupMenu(attributes.getValue("name"))
+        val menu = JPopupMenu()
         menu.name = attributes.getValue("name")
         return menu
     }
@@ -195,6 +199,42 @@ class MenuHandler private constructor() : DefaultHandler() {
             }
         }
         return cloned
+    }
+
+    private fun createMenuItemRef(attributes: Attributes, menu: JMenu) {
+        val name = attributes.getValue("name")
+        if ("::separator" == name) {
+            menu.addSeparator()
+        } else {
+            menu.add(createMenuItemRef(attributes))
+        }
+    }
+
+    private fun createMenuItemRef(attributes: Attributes, menu: JPopupMenu) {
+        val name = attributes.getValue("name")
+        if ("::separator" == name) {
+            menu.addSeparator()
+        } else {
+            menu.add(createMenuItemRef(attributes))
+        }
+    }
+
+    private fun createMenuItem(attributes: Attributes, menu: JMenu) {
+        val name = attributes.getValue("name")
+        if ("::separator" == name) {
+            menu.addSeparator()
+        } else {
+            menu.add(createMenuItem(attributes))
+        }
+    }
+
+    private fun createMenuItem(attributes: Attributes, menu: JPopupMenu) {
+        val name = attributes.getValue("name")
+        if ("::separator" == name) {
+            menu.addSeparator()
+        } else {
+            menu.add(createMenuItem(attributes))
+        }
     }
 
     private fun createMenuItem(attributes: Attributes): JMenuItem? {
@@ -255,7 +295,7 @@ class MenuHandler private constructor() : DefaultHandler() {
                         component.text = ""
                     }
                 }
-                toolBar!!.add(component)
+                toolBar.add(component)
                 if (component is AbstractButton) {
                     toolButtons[name] = component
                 }
@@ -359,11 +399,11 @@ class MenuHandler private constructor() : DefaultHandler() {
         private val actions: MutableMap<String, Action> = HashMap()
         private val toolTips: MutableMap<String, String> = HashMap()
         private val toolButtons: MutableMap<String, AbstractButton> = HashMap()
-        private val menuItems: MutableMap<String, JMenuItem?> = HashMap()
+        private val menuItems: MutableMap<String, JMenuItem> = HashMap()
         private val menus: MutableMap<String, JMenu> = HashMap()
-        private val popupMenus: MutableMap<String, JPopupMenu?> = HashMap()
-        private val menuBars: MutableMap<String, JMenuBar?> = HashMap()
-        private val toolBars: MutableMap<String, JToolBar?> = HashMap()
+        private val popupMenus: MutableMap<String, JPopupMenu> = HashMap()
+        private val menuBars: MutableMap<String, JMenuBar> = HashMap()
+        private val toolBars: MutableMap<String, JToolBar> = HashMap()
         private val stack = Stack<JMenu>()
         private val logger = Logger.getLogger("sted.ui.MenuHandler")
 
