@@ -2,11 +2,11 @@
 <!DOCTYPE
         menubar
         [
-                <!ELEMENT menubar (menu+, popup_menu*)    >
-                <!ELEMENT menuitem EMPTY>
+                <!ELEMENT menubar (menu+, menupopup*)    >
+                <!ELEMENT menuitem (menuitem*)*>
                 <!ELEMENT menuitemref EMPTY>
                 <!ELEMENT menu (menuitem*, menuitemref*, menu*)*>
-                <!ELEMENT popup_menu (menuitem*, menuitemref*, menu*)*    >
+                <!ELEMENT menupopup (menuitem*, menuitemref*, menu*)*    >
                 <!ATTLIST menubar
                         name ID #REQUIRED
                         toolBarName CDATA #IMPLIED
@@ -31,13 +31,15 @@
                 <!ATTLIST menuitemref
                         name CDATA #REQUIRED
                         >
-                <!ATTLIST popup_menu
+                <!ATTLIST menupopup
                         name ID #REQUIRED
                         >
                 <!ATTLIST menu
                         name ID #REQUIRED
+                        type CDATA "javax.swing.JMenu"
                         mnemonic CDATA #REQUIRED
                         action CDATA #IMPLIED
+                        toolButtonVisible (true|false) "false"
                         actionEnabled (true|false) "true"
                         >
                 ]>
@@ -73,9 +75,11 @@
                 name="::separator"/>
         <menu
                 name="ReOpen"
+                type="javax.swing.JMenu"
                 mnemonic="O"
                 action="sted.actions.ReOpenAction"
                 actionEnabled="false"
+                toolButtonVisible="false"
         >
             <menuitem
                     name="::separator"/>
@@ -390,7 +394,7 @@
         />
     </menu>
 
-    <popup_menu name="Mapping">
+    <menupopup name="Mapping">
         <menuitemref
                 name="Undo"
         />
@@ -418,7 +422,7 @@
         <menuitemref
                 name="Delete"
         />
-    </popup_menu>
+    </menupopup>
 </menubar>
 
 

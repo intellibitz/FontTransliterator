@@ -15,9 +15,9 @@ import javax.xml.parsers.ParserConfigurationException
 import javax.xml.parsers.SAXParserFactory
 
 object MenuHandler : DefaultHandler() {
-    private lateinit var menuBar: JMenuBar
-    private lateinit var toolBar: JToolBar
-    private lateinit var popupMenu: JPopupMenu
+    private val menuBar: JMenuBar = JMenuBar()
+    private val toolBar: JToolBar = JToolBar()
+    private val popupMenu: JPopupMenu = JPopupMenu()
     private var isPopup = false
 
     val actions: MutableMap<String, Action> = HashMap()
@@ -34,37 +34,32 @@ object MenuHandler : DefaultHandler() {
 
     @Throws(SAXException::class, ParserConfigurationException::class, IOException::class)
     internal fun loadMenu(xml: String) {
-        val saxParserFactory = SAXParserFactory.newInstance()
+        val saxParserFactory = SAXParserFactory.newDefaultNSInstance()
         saxParserFactory.isValidating = true
+        saxParserFactory.isNamespaceAware = true
         val saxParser = saxParserFactory.newSAXParser()
         saxParser.parse(ClassLoader.getSystemResourceAsStream(xml), this)
     }
 
     @Throws(SAXException::class)
-    override fun startElement(
-        uri: String, localName: String,
-        qName: String, attributes: Attributes
-    ) {
+    override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
         if ("menubar" == qName) {
-            menuBar = JMenuBar()
             menuBar.name = attributes.getValue("name")
-            val toolBarName = attributes.getValue("toolBarName")
-            if (toolBars[toolBarName] == null) {
-                toolBar = JToolBar()
-                toolBar.orientation = JToolBar.HORIZONTAL
-                toolBar.name = toolBarName
-            }
+            toolBar.name = attributes.getValue("toolBarName")
+            toolBar.orientation = JToolBar.HORIZONTAL
+            toolBar.isFloatable = false
+            toolBar.isRollover = true
+        } else if ("menupopup" == qName) {
+            isPopup = true
+            popupMenu.name = attributes.getValue("name")
         } else if ("menu" == qName) {
             isPopup = false
             try {
-                stack.push(createMenu(attributes))
+                createMenu(attributes)
             } catch (e: Exception) {
                 logger.severe("Unable to create Menu Item: " + e.message)
                 e.printStackTrace() //To change body of catch statement use Options | File Templates.
             }
-        } else if ("popup_menu" == qName) {
-            isPopup = true
-            popupMenu = createPopupMenu(attributes)
         } else if ("menuitem" == qName) {
             if (isPopup) {
                 createMenuItem(attributes, popupMenu)
@@ -92,12 +87,7 @@ object MenuHandler : DefaultHandler() {
         when (qName) {
             "menubar" -> {
                 menuBars[menuBar.name] = menuBar
-                // moved from getToolBar block
-                toolBar.orientation = JToolBar.HORIZONTAL
-                toolBar.isFloatable = false
-                toolBar.isRollover = true
                 toolBar.add(Box.createVerticalGlue())
-                //
                 toolBars[toolBar.name] = toolBar
             }
             "menu" -> {
@@ -111,7 +101,9 @@ object MenuHandler : DefaultHandler() {
                 }
                 menus[menu.name] = menu
             }
-            "popup_menu" -> {
+            "menuitem" -> {
+            }
+            "menupopup" -> {
                 popupMenus[popupMenu.name] = popupMenu
             }
         }
@@ -134,12 +126,7 @@ object MenuHandler : DefaultHandler() {
             actions[name] = action!!
         }
         menu.isEnabled = java.lang.Boolean.parseBoolean(attributes.getValue("actionEnabled"))
-        return menu
-    }
-
-    private fun createPopupMenu(attributes: Attributes): JPopupMenu {
-        val menu = JPopupMenu()
-        menu.name = attributes.getValue("name")
+        stack.push(menu)
         return menu
     }
 
@@ -237,7 +224,13 @@ object MenuHandler : DefaultHandler() {
             menuItem.action = action
             menuItem.isSelected = "on".equals(attributes.getValue("actionMode"), ignoreCase = true)
             actions[name] = action!!
-            menuItems[name] = menuItem
+// sub menu can be coming in as menuitem from xml, or json
+            if (menuItem is JMenu) {
+                menus[name] = menuItem
+//                stack.push(menuItem)
+            } else {
+                menuItems[name] = menuItem
+            }
             val button = attributes.getValue("toolButton")
             val buttonVisible = attributes.getValue("toolButtonVisible")
             val buttonTextVisible = attributes.getValue("toolButtonTextVisible")
