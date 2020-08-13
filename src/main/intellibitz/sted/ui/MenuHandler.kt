@@ -21,30 +21,24 @@ object MenuHandler : DefaultHandler() {
     private lateinit var popupMenu: JPopupMenu
     private var isPopup = false
 
+    val actions: MutableMap<String, Action> = HashMap()
+    val toolTips: MutableMap<String, String> = HashMap()
+    val toolButtons: MutableMap<String, AbstractButton> = HashMap()
+    val menuItems: MutableMap<String, JMenuItem> = HashMap()
+    val menus: MutableMap<String, JMenu> = HashMap()
+    val popupMenus: MutableMap<String, JPopupMenu> = HashMap()
+    val menuBars: MutableMap<String, JMenuBar> = HashMap()
+    val toolBars: MutableMap<String, JToolBar> = HashMap()
+    private val stack = Stack<JMenu>()
+    private val logger = Logger.getLogger("sted.ui.MenuHandler")
+
+
     @Throws(SAXException::class, ParserConfigurationException::class, IOException::class)
     internal fun loadMenu(xml: String) {
         val saxParserFactory = SAXParserFactory.newInstance()
         saxParserFactory.isValidating = true
         val saxParser = saxParserFactory.newSAXParser()
         saxParser.parse(ClassLoader.getSystemResourceAsStream(xml), this)
-    }
-
-    fun getMenu(name: String): JMenu? {
-        return menus[name]
-    }
-
-    fun getMenuItem(name: String): JMenuItem? {
-        return menuItems[name]
-    }
-
-    fun removeMenuItem(name: String) {
-        menuItems.remove(name)
-    }
-
-    fun addMenuItem(menuItem: JMenuItem) {
-        if (!menuItems.containsKey(menuItem.name)) {
-            menuItems[menuItem.name] = menuItem
-        }
     }
 
     @Throws(SAXException::class)
@@ -151,7 +145,7 @@ object MenuHandler : DefaultHandler() {
     }
 
     private fun createMenuItemRef(attributes: Attributes): JMenuItem {
-        val menuItem = getMenuItem(attributes.getValue("name"))
+        val menuItem = menuItems[attributes.getValue("name")]
         val cloned = JMenuItem(menuItem!!.action)
         cloned.name = menuItem.name
         cloned.text = menuItem.text
@@ -360,44 +354,6 @@ object MenuHandler : DefaultHandler() {
         return action
     }
 
-    val actions: MutableMap<String, Action> = HashMap()
-    val toolTips: MutableMap<String, String> = HashMap()
-    val toolButtons: MutableMap<String, AbstractButton> = HashMap()
-    val menuItems: MutableMap<String, JMenuItem> = HashMap()
-    val menus: MutableMap<String, JMenu> = HashMap()
-    val popupMenus: MutableMap<String, JPopupMenu> = HashMap()
-    val menuBars: MutableMap<String, JMenuBar> = HashMap()
-    val toolBars: MutableMap<String, JToolBar> = HashMap()
-    private val stack = Stack<JMenu>()
-    private val logger = Logger.getLogger("sted.ui.MenuHandler")
-
-
-/*
-        fun getToolTips(): Map<String, String> {
-            return toolTips
-        }
-
-        fun getToolButtons(): Map<String, AbstractButton> {
-            return toolButtons
-        }
-
-        fun getMenus(): Map<String, JMenu> {
-            return menus
-        }
-
-        fun getPopupMenus(): Map<String, JPopupMenu?> {
-            return popupMenus
-        }
-
-        fun getMenuBars(): Map<String, JMenuBar?> {
-            return menuBars
-        }
-
-        fun getToolBars(): Map<String, JToolBar?> {
-            return toolBars
-        }
-*/
-
     private fun getAccelerator(key: String?): KeyStroke? {
         return if (key != null && key.isNotEmpty()) {
             KeyStroke.getKeyStroke(key)
@@ -405,13 +361,13 @@ object MenuHandler : DefaultHandler() {
     }
 
     fun clearReOpenItems() {
-        val menu = getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
+        val menu = menus["ReOpen"]
         val sz = menu!!.menuComponentCount
         var i = sz - 2
         while (i > 0) {
             val menuItem = menu.getMenuComponent(0)
             menu.remove(0)
-            removeMenuItem(menuItem.name)
+            menuItems.remove(menuItem.name)
             i--
         }
         menu.isEnabled = false
@@ -429,7 +385,7 @@ object MenuHandler : DefaultHandler() {
         fileName: String?, action: Action = ReOpenFontMapAction(), checkInCache: Boolean = true
     ) {
         require(!fileName.isNullOrBlank()) { "Invalid File name: $fileName" }
-        var menuItem = getMenuItem(fileName)
+        var menuItem = menuItems[fileName]
         // check if the menu item already exists.. if not add new
         // this check is done only if cachecheck is enabled.. opensamplefontmap does not require this
         if (!checkInCache || menuItem == null) {
@@ -441,7 +397,7 @@ object MenuHandler : DefaultHandler() {
             )
             menuItem.name = fileName
             menuItem.action = action
-            addMenuItem(menuItem)
+            menuItems[menuItem.name] = menuItem
             // always insert as the first item
             menu.insert(menuItem, 0)
             menu.isEnabled = true
@@ -450,7 +406,7 @@ object MenuHandler : DefaultHandler() {
 
     fun disableMenuItem(fileName: String) {
         disableMenuItem(
-            getMenu("ReOpen"),
+            menus["ReOpen"],
             fileName
         )
     }
@@ -468,7 +424,7 @@ object MenuHandler : DefaultHandler() {
 
     fun enableReOpenItems() {
         enableReOpenItems(
-            getMenu("ReOpen")
+            menus["ReOpen"]
         )
     }
 
@@ -486,7 +442,7 @@ object MenuHandler : DefaultHandler() {
     fun enableItemsInReOpenMenu(
         fontMap: FontMap
     ) {
-        val menu = getMenu("ReOpen")
+        val menu = menus["ReOpen"]
         if (fontMap.isNew) {
             enableReOpenItems(menu)
         } else {
@@ -531,12 +487,12 @@ object MenuHandler : DefaultHandler() {
             )
             menuItem.name = lookAndFeelInfo.name
             menuItem.action = lafAction
-            addMenuItem(menuItem)
+            menuItems[menuItem.name] = menuItem
             if (menuItem.name == curLookAndFeel.name) {
                 menuItem.isSelected = true
             }
             buttonGroup.add(menuItem)
-            val menu = getMenu(Resources.ACTION_VIEW_LAF)
+            val menu = menus["Look & Feel"]
             menu!!.add(menuItem)
         }
     }
