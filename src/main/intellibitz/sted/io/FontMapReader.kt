@@ -102,7 +102,7 @@ class FontMapReader  //
         @Throws(IOException::class, SAXException::class, ParserConfigurationException::class)
         fun read(fontMap: FontMap) {
             val file = fontMap.fontMapFile
-            if (file.name.toLowerCase().endsWith(Resources.XML)) {
+            if (file.name.toLowerCase().endsWith("xml")) {
                 FontMapXMLHandler().read(fontMap)
             } else {
                 readOldFormat(fontMap)

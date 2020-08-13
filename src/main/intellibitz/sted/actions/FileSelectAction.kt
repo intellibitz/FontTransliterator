@@ -1,7 +1,6 @@
 package sted.actions
 
 import sted.STEDGUI
-import sted.io.Resources
 import java.awt.event.ActionEvent
 import java.io.File
 import javax.swing.JFileChooser
@@ -10,9 +9,9 @@ class FileSelectAction : TableModelListenerAction() {
     override fun actionPerformed(e: ActionEvent) {
         val cmd = e.actionCommand
         var isInput = true
-        if (Resources.ACTION_SELECT_INPUT_FILE_COMMAND.equals(cmd, ignoreCase = true)) {
+        if ("Input".equals(cmd, ignoreCase = true)) {
             isInput = true
-        } else if (Resources.ACTION_SELECT_OUTPUT_FILE_COMMAND.equals(cmd, ignoreCase = true)) {
+        } else if ("Output".equals(cmd, ignoreCase = true)) {
             isInput = false
         }
         var file: File?

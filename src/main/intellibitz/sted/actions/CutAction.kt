@@ -3,7 +3,6 @@ package sted.actions
 import sted.event.FontMapChangeEvent
 import sted.event.FontMapChangeListener
 import sted.fontmap.FontMapEntry
-import sted.io.Resources
 import java.awt.event.ActionEvent
 import java.util.*
 import javax.swing.ListSelectionModel
@@ -23,7 +22,7 @@ open class CutAction : TableModelListenerAction(), FontMapChangeListener {
 
     override fun actionPerformed(e: ActionEvent) {
         val entries = cut()
-        stedWindow.desktop.addToClipboard(Resources.ENTRIES, entries)
+        stedWindow.desktop.addToClipboard("entries", entries)
         val fontMap = stedWindow.desktop.fontMap
         pushUndo(entries, fontMap.entries.undo)
         fontMap.isDirty = !entries.isEmpty()
@@ -34,7 +33,7 @@ open class CutAction : TableModelListenerAction(), FontMapChangeListener {
     fun pushUndo(entries: Collection<*>, undo: Stack<FontMapEntry>) {
         for (entry in entries) {
             val fontMapEntry = entry as FontMapEntry
-            fontMapEntry.setStatus(Resources.ENTRY_STATUS_DELETE)
+            fontMapEntry.setStatus(3)
             undo.push(fontMapEntry)
         }
     }

@@ -1,8 +1,8 @@
 package sted.actions
 
-import javax.swing.AbstractAction
 import sted.fontmap.Converter
 import java.awt.event.ActionEvent
+import javax.swing.AbstractAction
 
 class TransliterateStopAction : AbstractAction() {
     private var converter: Converter? = null

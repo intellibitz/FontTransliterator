@@ -1,7 +1,6 @@
 package sted.fontmap
 
 import sted.fontmap.ITransliterate.IEntries
-import sted.io.Resources
 import java.util.*
 
 class DefaultTransliterator : ITransliterate {
@@ -31,13 +30,13 @@ class DefaultTransliterator : ITransliterate {
             // break the word into more word, for HTML parsing
             val st = StringTokenizer(
                 word,
-                Resources.HTML_TAG_START +
-                        Resources.HTML_TAG_END
+                "<" +
+                        ">"
                         +
-                        Resources.HTML_TAG_START_ESCAPE +
-                        Resources.HTML_TAG_END_ESCAPE
+                        "&" +
+                        ";"
                         +
-                        Resources.SPACE,
+                        " ",
                 true
             )
             while (st.hasMoreTokens()) {
@@ -51,12 +50,12 @@ class DefaultTransliterator : ITransliterate {
 
     private fun parseWord(word: String, prevWord: String, output: StringBuffer) {
         // if its a space, do not parse
-        if (Resources.SPACE == word) {
+        if (" " == word) {
             output.append(word)
             return
         }
-        val b = Resources.HTML_TAG_END == word || Resources.HTML_TAG_END_ESCAPE == word
-        if ((Resources.HTML_TAG_START == word || Resources.HTML_TAG_START_ESCAPE == word)
+        val b = ">" == word || ";" == word
+        if (("<" == word || "&" == word)
             && isHTMLAware
         ) {
             isParseMode = false
@@ -65,7 +64,7 @@ class DefaultTransliterator : ITransliterate {
         } else if (b
             && isHTMLAware
         ) {
-            isParseMode = Resources.HTML_TAG_END_ESCAPE != word ||
+            isParseMode = ";" != word ||
                     "lt" != prevWord
             output.append(word)
             return
@@ -79,8 +78,8 @@ class DefaultTransliterator : ITransliterate {
         }
         converted = 0
         convertWord(
-            word, output, word, word.length, Resources.EMPTY_STRING,
-            Resources.EMPTY_STRING, word
+            word, output, word, word.length, "",
+            "", word
         )
     }
 
@@ -113,7 +112,7 @@ class DefaultTransliterator : ITransliterate {
             converted += remaining
             // now try the leftover remaining word
             val remaining2 = chopped.substring(remaining.length)
-            remains = Resources.EMPTY_STRING
+            remains = ""
             convertWord(
                 remaining2, output, remaining2, wordLen, converted,
                 remains, original

@@ -29,11 +29,11 @@ internal class FontMapXMLReader : XMLReader {
         contentHandler!!.startDocument()
         val atts = AttributesImpl()
         atts.addAttribute(
-            nsu, Resources.EMPTY_STRING, "name", "ID",
+            nsu, "", "name", "ID",
             bufferedReader.readLine()
         )
         atts.addAttribute(
-            nsu, Resources.EMPTY_STRING, "version", "CDATA",
+            nsu, "", "version", "CDATA",
             bufferedReader.readLine()
         )
         contentHandler!!.startElement(nsu, rootElement, rootElement, atts)
@@ -64,13 +64,13 @@ internal class FontMapXMLReader : XMLReader {
 
     private fun getFontAttributes(line: String): Attributes {
         val atts = AttributesImpl()
-        val stringTokenizer = StringTokenizer(line, Resources.SYMBOL_ASTERISK)
+        val stringTokenizer = StringTokenizer(line, "*")
         atts.addAttribute(
-            nsu, Resources.EMPTY_STRING, "value", "CDATA",
+            nsu, "", "value", "CDATA",
             stringTokenizer.nextToken()
         )
         atts.addAttribute(
-            nsu, Resources.EMPTY_STRING, "path", "CDATA",
+            nsu, "", "path", "CDATA",
             stringTokenizer.nextToken()
         )
         return atts
@@ -110,13 +110,13 @@ internal class FontMapXMLReader : XMLReader {
             EMPTY_ATTRIBUTES
         )
         newLine()
-        val stringTokenizer = StringTokenizer(entry, Resources.ENTRY_TOSTRING_DELIMITER)
+        val stringTokenizer = StringTokenizer(entry, ":")
         var i = 0
         while (stringTokenizer.hasMoreElements()) {
             val token = stringTokenizer.nextToken()
             if (!(token.toLowerCase().startsWith("null")
                         || token.toLowerCase().startsWith("false")
-                        || Resources.EMPTY_STRING == token)
+                        || "" == token)
             ) {
                 when (i) {
                     0 -> {

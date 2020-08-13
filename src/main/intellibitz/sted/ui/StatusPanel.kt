@@ -5,7 +5,6 @@ import sted.event.FontMapChangeListener
 import sted.event.IStatusListener
 import sted.event.StatusEvent
 import sted.fontmap.FontMap
-import sted.io.Resources
 import sted.io.Resources.cleanIcon
 import sted.io.Resources.dirtyIcon
 import sted.io.Resources.getSetting
@@ -73,7 +72,7 @@ class StatusPanel : JPanel(), TableModelListener, ListSelectionListener, FontMap
         val gcButton = GCButton()
         gcButton.load(
             imageIcon, getSystemResourceIcon(
-                getSetting(Resources.ICON_GC2)
+                getSetting("icon.gc.rollover")
             )
         )
         gridBagLayout.setConstraints(gcButton, gridBagConstraints)
@@ -95,11 +94,11 @@ class StatusPanel : JPanel(), TableModelListener, ListSelectionListener, FontMap
     }
 
     fun setStatus(msg: String?) {
-        status.text = Resources.SPACE + msg
+        status.text = " " + msg
     }
 
     private fun clearStatus() {
-        status.text = Resources.EMPTY_STRING
+        status.text = ""
     }
 
     fun clearProgress() {
@@ -117,14 +116,14 @@ class StatusPanel : JPanel(), TableModelListener, ListSelectionListener, FontMap
         if (total < 1) {
             initCounter()
         } else {
-            val stringTokenizer = StringTokenizer(counter.text, Resources.COLON)
+            val stringTokenizer = StringTokenizer(counter.text, ":")
             val stringBuffer = StringBuilder()
             if (stringTokenizer.hasMoreTokens()) {
                 stringBuffer.append(stringTokenizer.nextToken())
             } else {
                 stringBuffer.append(0)
             }
-            stringBuffer.append(Resources.COLON)
+            stringBuffer.append(":")
             stringBuffer.append(total)
             counter.text = stringBuffer.toString()
         }
@@ -134,8 +133,8 @@ class StatusPanel : JPanel(), TableModelListener, ListSelectionListener, FontMap
         if (curr >= 0) {
             val stringBuffer = StringBuilder()
             stringBuffer.append(curr + 1)
-            stringBuffer.append(Resources.COLON)
-            val stringTokenizer = StringTokenizer(counter.text, Resources.COLON)
+            stringBuffer.append(":")
+            val stringTokenizer = StringTokenizer(counter.text, ":")
             if (stringTokenizer.hasMoreTokens()) {
                 // skip the current count
                 stringTokenizer.nextToken()

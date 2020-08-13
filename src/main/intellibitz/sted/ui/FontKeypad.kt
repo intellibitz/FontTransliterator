@@ -38,7 +38,7 @@ abstract class FontKeypad protected constructor() : JPanel(), ItemListener, Font
     private var keyColumns = 6
     private var fontMaxIndex = 65536
     fun init() {
-        val titledBorder = TitledBorder(getResource(Resources.TITLE_KEYPAD))
+        val titledBorder = TitledBorder(getResource("title.keypad"))
         titledBorder.titleJustification = TitledBorder.CENTER
         border = titledBorder
         val gridBagLayout = GridBagLayout()
@@ -119,7 +119,7 @@ abstract class FontKeypad protected constructor() : JPanel(), ItemListener, Font
         while (i < fontMaxIndex && j < numOfGlyphs) {
             val c = i.toChar()
             if (currentFont!!.canDisplay(c)) {
-                val cmd = Resources.EMPTY_STRING + c
+                val cmd = "" + c
                 val keyButton: JButton
                 if (keys.isNotEmpty() && j < keys.size) {
                     keyButton = keys[j]

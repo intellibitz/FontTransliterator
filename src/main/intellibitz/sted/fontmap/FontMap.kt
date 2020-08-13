@@ -6,7 +6,6 @@ import sted.event.FontMapChangeListener
 import sted.io.FileHelper.alertAndOpenFont
 import sted.io.FileHelper.getInputStream
 import sted.io.FileHelper.openFont
-import sted.io.Resources
 import sted.io.Resources.fonts
 import sted.io.Resources.getFont
 import java.awt.Font
@@ -411,17 +410,17 @@ class FontMap {
         val stringBuffer = StringBuffer()
         var f = getFont(font1Name)
         stringBuffer.append(
-            font1Name + Resources.SYMBOL_ASTERISK + f!!.path
+            font1Name + "*" + f!!.path
         )
-        stringBuffer.append(Resources.NEWLINE_DELIMITER)
+        stringBuffer.append("\n")
         f = getFont(font2Name)
         stringBuffer.append(
-            font2Name + Resources.SYMBOL_ASTERISK + f!!.path
+            font2Name + "*" + f!!.path
         )
-        stringBuffer.append(Resources.NEWLINE_DELIMITER)
+        stringBuffer.append("\n")
         for (o in entries.values()) {
             stringBuffer.append(o.toString())
-            stringBuffer.append(Resources.NEWLINE_DELIMITER)
+            stringBuffer.append("\n")
         }
         return stringBuffer.toString()
     }

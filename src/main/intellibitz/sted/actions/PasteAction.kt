@@ -3,7 +3,6 @@ package sted.actions
 import sted.event.FontMapChangeEvent
 import sted.event.FontMapChangeListener
 import sted.fontmap.FontMapEntry
-import sted.io.Resources
 import java.awt.event.ActionEvent
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.TableModelEvent
@@ -25,7 +24,7 @@ class PasteAction : TableModelListenerAction(), FontMapChangeListener {
 
     override fun actionPerformed(e: ActionEvent) {
         paste()
-        fireStatusPosted(Resources.ACTION_PASTE_COMMAND)
+        fireStatusPosted("Paste")
     }
 
     override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent) {
@@ -34,7 +33,7 @@ class PasteAction : TableModelListenerAction(), FontMapChangeListener {
     }
 
     private fun paste() {
-        val entries = stedWindow.desktop.getClipboard()[Resources.ENTRIES]
+        val entries = stedWindow.desktop.getClipboard()["entries"]
         if (entries != null && !entries.isEmpty()) {
             val fontMap = stedWindow.desktop
                 .fontMap

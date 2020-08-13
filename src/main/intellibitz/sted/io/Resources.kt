@@ -12,71 +12,9 @@ import javax.swing.ImageIcon
 import javax.xml.parsers.ParserConfigurationException
 
 object Resources {
-    const val COLON = ":"
-    const val EMPTY_STRING = ""
-    const val SPACE = " "
-    const val EQUALS = "="
-    const val SYMBOL_ASTERISK = "*"
-    const val NEWLINE_DELIMITER = "\n"
-    private const val STED_VERSION = "sted.version"
-    const val FONTMAP_FILE = "fontmap.file"
-    const val LABEL_ADD = "label.add"
-    const val LABEL_CLEAR = "label.clear"
-    const val LABEL_FONT_LOAD = "label.font.load"
-    const val ICON_FILE_INPUT = "icon.file.input"
     const val ICON_FILE_OUTPUT = "icon.file.output"
-    private const val ICON_FILE_NORMAL_STATE = "icon.file.normal.state"
-    private const val ICON_FILE_EDIT_STATE = "icon.file.edit.state"
-    private const val ICON_STED = "icon.sted"
-    private const val ICON_LOCK = "icon.status.lock"
-    private const val ICON_UNLOCK = "icon.status.unlock"
-    const val TITLE_ABOUT_STED = "title.about.sted"
-    const val TITLE_KEYPAD = "title.keypad"
-    const val TITLE_MAPPING = "title.mapping"
-    const val TITLE_MAPPING_RULE = "title.mapping.rule"
-    const val TITLE_MAPPING_PREVIEW = "title.mapping.preview"
     const val FONT_CHAR_MAXINDEX = "font.char.maxindex"
-    const val TITLE_TAB_INPUT = "title.tab.input"
     const val TITLE_TAB_OUTPUT = "title.tab.output"
-    const val TITLE_TAB_FONTMAP = "title.tab.fontmap"
-    const val TIP_TAB_FONTMAP = "tip.tab.fontmap"
-    const val TITLE_TABLE_COLUMN_FIRST_LETTER = "title.table.column.letter1"
-    const val TITLE_TABLE_COLUMN_LAST_LETTER = "title.table.column.letter2"
-    const val SAMPLE_INPUT_TEXT = "sample.input.text"
-    const val ACTION_CONVERT_NAME = "Convert"
-    const val ACTION_VIEW_LAF = "Look & Feel"
-    const val ACTION_FILE_NEW_COMMAND = "New"
-    const val ACTION_FILE_REOPEN_COMMAND = "ReOpen"
-    const val ACTION_SELECT_INPUT_FILE_COMMAND = "Input"
-    const val ACTION_SELECT_OUTPUT_FILE_COMMAND = "Output"
-    const val ACTION_DELETE_COMMAND = "Delete"
-    const val ACTION_CUT_COMMAND = "Cut"
-    const val ACTION_COPY_COMMAND = "Copy"
-    const val ACTION_PASTE_COMMAND = "Paste"
-    const val ACTION_SELECT_ALL_COMMAND = "Select All"
-    const val ACTION_VIEW_SAMPLE = "Mapping Preview"
-    const val ACTION_VIEW_MAPPING = "Mapping Rules"
-    const val MENU_POPUP_MAPPING = "Mapping"
-    const val XML = "xml"
-    const val ENTRIES = "entries"
-    const val ENTRY_CONDITIONAL_AND = "AND"
-    const val ENTRY_CONDITIONAL_OR = "OR"
-    const val ENTRY_CONDITIONAL_NOT = "NOT"
-    const val ENTRY_TOSTRING_DELIMITER = ":"
-    const val HTML_TAG_START = "<"
-    const val HTML_TAG_START_ESCAPE = "&"
-    const val HTML_TAG_END = ">"
-    const val HTML_TAG_END_ESCAPE = ";"
-    const val RULE_TITLE = " If <> is: "
-    const val ENTRY_STATUS_ADD = 1
-    const val ENTRY_STATUS_EDIT = 2
-    const val ENTRY_STATUS_DELETE = 3
-
-    // @since version 0.62
-    const val INPUT_FILE = "input.file"
-    const val OUTPUT_FILE = "output.file"
-    const val ICON_GC2 = "icon.gc.rollover"
-    const val DEFAULT_MENU_COUNT = 2
 
     @JvmField
     val imageIcons: MutableMap<String, ImageIcon?> = HashMap()
@@ -89,31 +27,31 @@ object Resources {
 
     @JvmStatic
     val sTEDIcon: ImageIcon?
-        get() = getSystemResourceIcon(getSetting(ICON_STED))
+        get() = getSystemResourceIcon(getSetting("icon.sted"))
 
     @JvmStatic
     val cleanIcon: ImageIcon?
         get() = getSystemResourceIcon(
-            getResource(ICON_FILE_NORMAL_STATE)
+            getResource("icon.file.normal.state")
         )
 
     @JvmStatic
     val dirtyIcon: ImageIcon?
         get() = getSystemResourceIcon(
-            getResource(ICON_FILE_EDIT_STATE)
+            getResource("icon.file.edit.state")
         )
 
     @JvmStatic
     val lockIcon: ImageIcon?
-        get() = getSystemResourceIcon(getResource(ICON_LOCK))
+        get() = getSystemResourceIcon(getResource("icon.status.lock"))
 
     @JvmStatic
     val unLockIcon: ImageIcon?
-        get() = getSystemResourceIcon(getResource(ICON_UNLOCK))
+        get() = getSystemResourceIcon(getResource("icon.status.unlock"))
 
     @JvmStatic
     val version: String?
-        get() = getResource(STED_VERSION)
+        get() = getResource("sted.version")
 
     @JvmStatic
     fun getResource(name: String): String? {
@@ -246,7 +184,7 @@ object Resources {
         if (!resource.isNullOrEmpty()) {
             readSettings(resource)
         }
-        imageIcons[ICON_STED] = getSystemResourceIcon(getResource(ICON_STED))
+        imageIcons["icon.sted"] = getSystemResourceIcon(getResource("icon.sted"))
         // load all system fonts
         loadFonts(GraphicsEnvironment.getLocalGraphicsEnvironment().allFonts)
     }

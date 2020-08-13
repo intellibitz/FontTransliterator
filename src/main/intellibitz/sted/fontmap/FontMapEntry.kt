@@ -12,7 +12,7 @@ class FontMapEntry : IEntry, Comparable<Any?>, Cloneable {
     var isBeginsWith = false
     var isEndsWith = false
 
-    private var conditional = Resources.ENTRY_CONDITIONAL_AND
+    private var conditional = "AND"
     lateinit var id: String
         private set
     private var status = -1
@@ -24,11 +24,11 @@ class FontMapEntry : IEntry, Comparable<Any?>, Cloneable {
     }
 
     val isAdded: Boolean
-        get() = Resources.ENTRY_STATUS_ADD == status
+        get() = 1 == status
     val isEdited: Boolean
-        get() = Resources.ENTRY_STATUS_EDIT == status
+        get() = 2 == status
     val isDeleted: Boolean
-        get() = Resources.ENTRY_STATUS_DELETE == status
+        get() = 3 == status
 
     private fun getConditional(): String {
         return conditional
@@ -36,14 +36,14 @@ class FontMapEntry : IEntry, Comparable<Any?>, Cloneable {
 
     fun setConditional(conditional: String?) {
         when {
-            Resources.ENTRY_CONDITIONAL_AND.equals(conditional, ignoreCase = true) -> {
-                this.conditional = Resources.ENTRY_CONDITIONAL_AND
+            "AND".equals(conditional, ignoreCase = true) -> {
+                this.conditional = "AND"
             }
-            Resources.ENTRY_CONDITIONAL_OR.equals(conditional, ignoreCase = true) -> {
-                this.conditional = Resources.ENTRY_CONDITIONAL_OR
+            "OR".equals(conditional, ignoreCase = true) -> {
+                this.conditional = "OR"
             }
-            Resources.ENTRY_CONDITIONAL_NOT.equals(conditional, ignoreCase = true) -> {
-                this.conditional = Resources.ENTRY_CONDITIONAL_NOT
+            "NOT".equals(conditional, ignoreCase = true) -> {
+                this.conditional = "NOT"
             }
             else -> {
                 throw IllegalArgumentException(conditional)
@@ -95,17 +95,17 @@ class FontMapEntry : IEntry, Comparable<Any?>, Cloneable {
      */
     override fun toString(): String {
         return from +
-                Resources.ENTRY_TOSTRING_DELIMITER +
+                ":" +
                 to +
-                Resources.ENTRY_TOSTRING_DELIMITER +
+                ":" +
                 isBeginsWith +
-                Resources.ENTRY_TOSTRING_DELIMITER +
+                ":" +
                 isEndsWith +
-                Resources.ENTRY_TOSTRING_DELIMITER +
+                ":" +
                 followedBy +
-                Resources.ENTRY_TOSTRING_DELIMITER +
+                ":" +
                 precededBy +
-                Resources.ENTRY_TOSTRING_DELIMITER +
+                ":" +
                 getConditional()
     }
 

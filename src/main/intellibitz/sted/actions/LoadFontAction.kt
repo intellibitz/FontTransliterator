@@ -1,7 +1,6 @@
 package sted.actions
 
 import sted.io.FileHelper.openFont
-import sted.io.Resources
 import sted.io.Resources.getSetting
 import sted.ui.FontKeypad
 import java.awt.event.ActionEvent
@@ -24,7 +23,7 @@ class LoadFontAction(fontSelectPanel: FontKeypad) : STEDWindowAction() {
     }
 
     init {
-        putValue(NAME, getSetting(Resources.LABEL_FONT_LOAD))
+        putValue(NAME, getSetting("label.font.load"))
         fontKeypad = fontSelectPanel
     }
 }

@@ -9,7 +9,6 @@ import sted.event.FontMapChangeListener
 import sted.event.MappingPopupListener
 import sted.fontmap.FontMap
 import sted.fontmap.FontMapEntry
-import sted.io.Resources
 import sted.io.Resources.getResource
 import sted.widgets.DocumentListenerButton
 import sted.widgets.FontChangeTextField
@@ -40,7 +39,7 @@ class MappingEntryPanel : JPanel(), FontMapChangeListener, ItemListener, ListSel
 
     fun init() {
         val titledBorder = BorderFactory.createTitledBorder(
-            getResource(Resources.TITLE_MAPPING)
+            getResource("title.mapping")
         )
         titledBorder.titleJustification = TitledBorder.CENTER
         border = titledBorder
@@ -216,7 +215,7 @@ class MappingEntryPanel : JPanel(), FontMapChangeListener, ItemListener, ListSel
         word2.horizontalAlignment = JTextField.LEFT
         //
         jPanel.add(word2)
-        val sAdd = getResource(Resources.LABEL_ADD)
+        val sAdd = getResource("label.add")
         addButton.text = sAdd
         addButton.isEnabled = false
         entryAction.putValue(Action.NAME, sAdd)
@@ -228,7 +227,7 @@ class MappingEntryPanel : JPanel(), FontMapChangeListener, ItemListener, ListSel
         addButton.addKeyListener(entryAction)
         //
         jPanel.add(addButton)
-        val sClear = getResource(Resources.LABEL_CLEAR)
+        val sClear = getResource("label.clear")
         clearButton.text = sClear
         clearButton.isEnabled = false
         val clearFontMapEntryInPreviewAction = EntryClearAction()
@@ -255,8 +254,8 @@ class MappingEntryPanel : JPanel(), FontMapChangeListener, ItemListener, ListSel
         get() = entryTable.selectionModel
 
     fun clearPreviewDisplay() {
-        word1.text = Resources.EMPTY_STRING
-        word2.text = Resources.EMPTY_STRING
+        word1.text = ""
+        word2.text = ""
     }
 
     private fun firePreviewTableDataChanged() {

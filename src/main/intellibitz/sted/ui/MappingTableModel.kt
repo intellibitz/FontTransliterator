@@ -6,7 +6,6 @@ import sted.event.MessageEvent
 import sted.fontmap.FontMap
 import sted.fontmap.FontMapEntries
 import sted.fontmap.FontMapEntry
-import sted.io.Resources
 import sted.io.Resources.getResource
 import java.util.*
 import javax.swing.table.AbstractTableModel
@@ -27,7 +26,7 @@ class MappingTableModel : AbstractTableModel(), IMessageEventSource {
 
     override fun getValueAt(row: Int, col: Int): Any {
         if (col == 1) {
-            return Resources.EQUALS
+            return "="
         }
         if (entries.isNotEmpty()) {
             val entry = entries[row]
@@ -50,16 +49,16 @@ class MappingTableModel : AbstractTableModel(), IMessageEventSource {
                 }
                 5 -> {
                     val `val` = entry.followedBy
-                    return `val` ?: Resources.EMPTY_STRING
+                    return `val` ?: ""
                 }
                 6 -> {
                     val `val` = entry.precededBy
-                    return `val` ?: Resources.EMPTY_STRING
+                    return `val` ?: ""
                 }
-                else -> return Resources.EQUALS
+                else -> return "="
             }
         }
-        return Resources.EQUALS
+        return "="
     }
 
     fun getValueAt(row: Int): FontMapEntry? {
@@ -80,10 +79,10 @@ class MappingTableModel : AbstractTableModel(), IMessageEventSource {
                     return
                 }
                 edited.from = entry.from
-                edited.setStatus(Resources.ENTRY_STATUS_EDIT)
+                edited.setStatus(2)
                 fontMapEntries.undo.add(edited)
                 entry.from = aValue.toString()
-                entry.setStatus(Resources.ENTRY_STATUS_EDIT)
+                entry.setStatus(2)
                 fontMapEntries.reKey(edited, entry)
                 fontMap.isDirty = true
                 super.fireTableCellUpdated(rowIndex, columnIndex)
@@ -96,10 +95,10 @@ class MappingTableModel : AbstractTableModel(), IMessageEventSource {
                     return
                 }
                 edited.to = entry.to
-                edited.setStatus(Resources.ENTRY_STATUS_EDIT)
+                edited.setStatus(2)
                 fontMapEntries.undo.add(edited)
                 entry.to = aValue.toString()
-                entry.setStatus(Resources.ENTRY_STATUS_EDIT)
+                entry.setStatus(2)
                 fontMapEntries.reKey(edited, entry)
                 fontMap.isDirty = true
                 super.fireTableCellUpdated(rowIndex, columnIndex)
@@ -114,10 +113,10 @@ class MappingTableModel : AbstractTableModel(), IMessageEventSource {
                         return
                     }
                     edited.isBeginsWith = entry.isBeginsWith
-                    edited.setStatus(Resources.ENTRY_STATUS_EDIT)
+                    edited.setStatus(2)
                     fontMapEntries.undo.add(edited)
                     entry.isBeginsWith = begins
-                    entry.setStatus(Resources.ENTRY_STATUS_EDIT)
+                    entry.setStatus(2)
                     fontMapEntries.reKey(edited, entry)
                     fontMap.isDirty = true
                     super.fireTableCellUpdated(rowIndex, columnIndex)
@@ -133,17 +132,17 @@ class MappingTableModel : AbstractTableModel(), IMessageEventSource {
                         return
                     }
                     edited.isEndsWith = entry.isEndsWith
-                    edited.setStatus(Resources.ENTRY_STATUS_EDIT)
+                    edited.setStatus(2)
                     fontMapEntries.undo.add(edited)
                     entry.isEndsWith = ends
-                    entry.setStatus(Resources.ENTRY_STATUS_EDIT)
+                    entry.setStatus(2)
                     fontMapEntries.reKey(edited, entry)
                     fontMap.isDirty = true
                     super.fireTableCellUpdated(rowIndex, columnIndex)
                 }
             }
             5 -> if (aValue != entry.followedBy) {
-                if (entry.followedBy == null && Resources.EMPTY_STRING == aValue) {
+                if (entry.followedBy == null && "" == aValue) {
                     return
                 }
                 val edited = entry.clone() as FontMapEntry
@@ -153,16 +152,16 @@ class MappingTableModel : AbstractTableModel(), IMessageEventSource {
                     return
                 }
                 edited.followedBy = entry.followedBy
-                edited.setStatus(Resources.ENTRY_STATUS_EDIT)
+                edited.setStatus(2)
                 fontMapEntries.undo.add(edited)
                 entry.followedBy = aValue.toString()
-                entry.setStatus(Resources.ENTRY_STATUS_EDIT)
+                entry.setStatus(2)
                 fontMapEntries.reKey(edited, entry)
                 fontMap.isDirty = true
                 super.fireTableCellUpdated(rowIndex, columnIndex)
             }
             6 -> if (aValue != entry.precededBy) {
-                if (entry.precededBy == null && Resources.EMPTY_STRING == aValue) {
+                if (entry.precededBy == null && "" == aValue) {
                     return
                 }
                 val edited = entry.clone() as FontMapEntry
@@ -172,10 +171,10 @@ class MappingTableModel : AbstractTableModel(), IMessageEventSource {
                     return
                 }
                 edited.precededBy = entry.precededBy
-                edited.setStatus(Resources.ENTRY_STATUS_EDIT)
+                edited.setStatus(2)
                 fontMapEntries.undo.add(edited)
                 entry.precededBy = aValue.toString()
-                entry.setStatus(Resources.ENTRY_STATUS_EDIT)
+                entry.setStatus(2)
                 fontMapEntries.reKey(edited, entry)
                 fontMap.isDirty = true
                 super.fireTableCellUpdated(rowIndex, columnIndex)

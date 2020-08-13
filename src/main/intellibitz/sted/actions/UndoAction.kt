@@ -3,7 +3,6 @@ package sted.actions
 import sted.event.FontMapChangeEvent
 import sted.event.FontMapChangeListener
 import sted.fontmap.FontMap
-import sted.io.Resources
 import sted.ui.DesktopFrame
 import sted.ui.STEDWindow
 import sted.ui.TabDesktop
@@ -34,7 +33,7 @@ class UndoAction : TableModelListenerAction(), FontMapChangeListener, ChangeList
         if (fontMapEntry.isAdded) {
             val current = fontMapEntries.remove(fontMapEntry.id)
             // change the status when pushing to the redo stack
-            current?.setStatus(Resources.ENTRY_STATUS_DELETE)
+            current?.setStatus(3)
             fontMapEntries.redo.push(current)
         } else if (fontMapEntry.isEdited) {
             val current = fontMapEntries.remove(fontMapEntry.id)
@@ -42,7 +41,7 @@ class UndoAction : TableModelListenerAction(), FontMapChangeListener, ChangeList
             fontMapEntries.add(fontMapEntry)
         } else if (fontMapEntry.isDeleted) {
             // change the status when pushing to the redo stack
-            fontMapEntry.setStatus(Resources.ENTRY_STATUS_ADD)
+            fontMapEntry.setStatus(1)
             fontMapEntries.add(fontMapEntry)
             fontMapEntries.redo.push(fontMapEntry)
         }

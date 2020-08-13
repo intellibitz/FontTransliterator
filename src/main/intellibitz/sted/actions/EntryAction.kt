@@ -1,7 +1,6 @@
 package sted.actions
 
 import sted.fontmap.FontMapEntry
-import sted.io.Resources
 import sted.ui.MappingEntryPanel
 import java.awt.event.ActionEvent
 import java.awt.event.KeyEvent
@@ -30,7 +29,7 @@ class EntryAction : STEDWindowAction() {
             fontMapEntry.init(key1, key2)
             if (entries.add(fontMapEntry)) {
                 // add it to the undo list too
-                fontMapEntry.setStatus(Resources.ENTRY_STATUS_ADD)
+                fontMapEntry.setStatus(1)
                 entries.undo.push(fontMapEntry)
                 fontMap.isDirty = true
                 fontMap.fireUndoEvent()

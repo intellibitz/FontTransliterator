@@ -6,7 +6,6 @@ import sted.event.ThreadEvent
 import sted.fontmap.Converter
 import sted.fontmap.FontMap
 import sted.io.FontMapReader
-import sted.io.Resources
 import java.io.File
 import java.util.logging.Logger
 import kotlin.system.exitProcess
@@ -59,9 +58,9 @@ object STEDConsole : IThreadListener {
     }
 
     private fun loadArgs(args: Array<String>) {
-        fontMapName = System.getProperty(Resources.FONTMAP_FILE)
-        inputFileName = System.getProperty(Resources.INPUT_FILE)
-        outputFileName = System.getProperty(Resources.OUTPUT_FILE)
+        fontMapName = System.getProperty("fontmap.file")
+        inputFileName = System.getProperty("input.file")
+        outputFileName = System.getProperty("output.file")
         for (param in args) {
             when {
                 param.startsWith("-map=") -> {

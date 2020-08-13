@@ -4,7 +4,6 @@ import sted.event.FontMapChangeEvent
 import sted.event.FontMapChangeListener
 import sted.fontmap.FontMap
 import sted.fontmap.FontMapEntry
-import sted.io.Resources
 import sted.io.Resources.getResource
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -30,7 +29,7 @@ class MappingRulesPanel : JPanel(), TableModelListener, FontMapChangeListener, L
     private var tableModel: TableModel? = null
     fun init() {
         val titledBorder = BorderFactory.createTitledBorder(
-            getResource(Resources.TITLE_MAPPING_RULE)
+            getResource("title.mapping.rule")
         )
         titledBorder.titleJustification = TitledBorder.CENTER
         border = titledBorder
@@ -74,7 +73,7 @@ class MappingRulesPanel : JPanel(), TableModelListener, FontMapChangeListener, L
         gridBagConstraints.gridx = 0
         //        gridBagConstraints.gridwidth = 2;
         beginsWithCheck.text = getResource(
-            Resources.TITLE_TABLE_COLUMN_FIRST_LETTER
+            "title.table.column.letter1"
         )
         beginsWithCheck.isEnabled = false
         gridBagLayout.setConstraints(beginsWithCheck, gridBagConstraints)
@@ -82,7 +81,7 @@ class MappingRulesPanel : JPanel(), TableModelListener, FontMapChangeListener, L
         gridBagConstraints.gridx = 2
         //        gridBagConstraints.gridwidth = 2;
         endsWithCheck.text = getResource(
-            Resources.TITLE_TABLE_COLUMN_LAST_LETTER
+            "title.table.column.letter2"
         )
         endsWithCheck.isEnabled = false
         gridBagLayout.setConstraints(endsWithCheck, gridBagConstraints)
@@ -131,13 +130,13 @@ class MappingRulesPanel : JPanel(), TableModelListener, FontMapChangeListener, L
     }
 
     private fun clear() {
-        word1.text = Resources.EMPTY_STRING
-        word2.text = Resources.EMPTY_STRING
-        followedText.text = Resources.EMPTY_STRING
-        precededText.text = Resources.EMPTY_STRING
+        word1.text = ""
+        word2.text = ""
+        followedText.text = ""
+        precededText.text = ""
         beginsWithCheck.isSelected = false
         endsWithCheck.isSelected = false
-        ruleTitle.text = Resources.RULE_TITLE
+        ruleTitle.text = " If <> is: "
     }
 
     private fun load(entry: FontMapEntry?) {

@@ -5,7 +5,6 @@ import org.xml.sax.SAXException
 import org.xml.sax.helpers.DefaultHandler
 import sted.actions.*
 import sted.fontmap.FontMap
-import sted.io.Resources
 import sted.io.Resources.getSystemResourceIcon
 import java.awt.event.ItemListener
 import java.io.IOException
@@ -393,7 +392,7 @@ object MenuHandler : DefaultHandler() {
             action.putValue(Action.NAME, fileName)
             action.putValue(
                 Action.ACTION_COMMAND_KEY,
-                Resources.ACTION_FILE_REOPEN_COMMAND
+                "ReOpen"
             )
             menuItem.name = fileName
             menuItem.action = action
@@ -414,12 +413,12 @@ object MenuHandler : DefaultHandler() {
     private fun disableMenuItem(menu: JMenu?, name: String) {
         var count = menu!!.itemCount
         var i = 0
-        while (count > Resources.DEFAULT_MENU_COUNT) {
+        while (count > 2) {
             val menuItem = menu.getItem(i++)
             menuItem.isEnabled = name != menuItem.name
             count--
         }
-        menu.isEnabled = menu.itemCount > Resources.DEFAULT_MENU_COUNT
+        menu.isEnabled = menu.itemCount > 2
     }
 
     fun enableReOpenItems() {
@@ -431,12 +430,12 @@ object MenuHandler : DefaultHandler() {
     fun enableReOpenItems(menu: JMenu?) {
         var count = menu!!.itemCount
         var i = 0
-        while (count > Resources.DEFAULT_MENU_COUNT) {
+        while (count > 2) {
             val menuItem = menu.getItem(i++)
             menuItem.isEnabled = true
             count--
         }
-        menu.isEnabled = menu.itemCount > Resources.DEFAULT_MENU_COUNT
+        menu.isEnabled = menu.itemCount > 2
     }
 
     fun enableItemsInReOpenMenu(
@@ -460,14 +459,14 @@ object MenuHandler : DefaultHandler() {
                 val action = menuItem!!.action
                 if (action is ItemListenerAction) {
                     userOptions.append(name)
-                    userOptions.append(Resources.SYMBOL_ASTERISK)
+                    userOptions.append("*")
                     userOptions.append(menuItem.isSelected)
-                    userOptions.append(Resources.NEWLINE_DELIMITER)
+                    userOptions.append("\n")
                 } else if (action is ReOpenFontMapAction) {
-                    userOptions.append(Resources.ACTION_FILE_REOPEN_COMMAND + name.hashCode())
-                    userOptions.append(Resources.SYMBOL_ASTERISK)
+                    userOptions.append("ReOpen" + name.hashCode())
+                    userOptions.append("*")
                     userOptions.append(name)
-                    userOptions.append(Resources.NEWLINE_DELIMITER)
+                    userOptions.append("\n")
                 }
             }
             return userOptions.toString()

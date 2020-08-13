@@ -5,7 +5,6 @@ import sted.event.FontMapChangeListener
 import sted.event.FontMapEntriesChangeEvent
 import sted.event.IFontMapEntriesChangeListener
 import sted.fontmap.FontMap
-import sted.io.Resources
 import sted.io.Resources.cleanIcon
 import sted.io.Resources.dirtyIcon
 import sted.io.Resources.getResource
@@ -49,19 +48,19 @@ class DesktopFrame : JInternalFrame(), TableModelListener, FontMapChangeListener
         tabbedPane.border = BorderFactory.createRaisedBevelBorder()
         // adds the font mapper panel as one of the tab
         tabbedPane.addTab(
-            getResource(Resources.TITLE_TAB_FONTMAP),
+            getResource("title.tab.fontmap"),
             sTEDIcon,
             mapperPanel,
-            getResource(Resources.TIP_TAB_FONTMAP)
+            getResource("tip.tab.fontmap")
         )
         inputFileViewer.frameIcon = getSystemResourceIcon(getResource("icon.file.input"))
 
         // adds the input file viewer as one of the tab
         tabbedPane.addTab(
-            getResource(Resources.TITLE_TAB_INPUT),
+            getResource("title.tab.input"),
             getSystemResourceIcon(
                 getResource(
-                    Resources.ICON_FILE_INPUT
+                    "icon.file.input"
                 )
             ),
             inputFileViewer
@@ -71,10 +70,10 @@ class DesktopFrame : JInternalFrame(), TableModelListener, FontMapChangeListener
 
         // adds the output file viewer as one of the tab
         tabbedPane.addTab(
-            getResource(Resources.TITLE_TAB_OUTPUT),
+            getResource("title.tab.output"),
             getSystemResourceIcon(
                 getResource(
-                    Resources.ICON_FILE_OUTPUT
+                    "icon.file.output"
                 )
             ),
             outputFileViewer
@@ -103,7 +102,7 @@ class DesktopFrame : JInternalFrame(), TableModelListener, FontMapChangeListener
         mapperPanel.mappingEntryPanel.addTableModelListener(this)
         mapperPanel.outputText.fontMap = desktopModel.fontMap
         mapperPanel.setSampleInput(
-            getResource(Resources.SAMPLE_INPUT_TEXT)
+            getResource("sample.input.text")
         )
         tabbedPane.setToolTipTextAt(1, MenuHandler.toolTips["Input"])
         tabbedPane.setToolTipTextAt(2, MenuHandler.toolTips["Output"])
@@ -120,7 +119,7 @@ class DesktopFrame : JInternalFrame(), TableModelListener, FontMapChangeListener
     fun clear() {
         mapperPanel.clear()
         desktopModel.clear()
-        setTitle(Resources.EMPTY_STRING)
+        setTitle("")
         setNormalIcon()
     }
 
@@ -170,13 +169,13 @@ class DesktopFrame : JInternalFrame(), TableModelListener, FontMapChangeListener
     fun close() {
         hideFrame()
         enableTabs(false)
-        MenuHandler.menus[Resources.ACTION_VIEW_MAPPING]?.isEnabled = false
-        MenuHandler.menus[Resources.ACTION_VIEW_SAMPLE]?.isEnabled = false
-        MenuHandler.menus[Resources.ACTION_PASTE_COMMAND]?.isEnabled = false
-        MenuHandler.menus[Resources.ACTION_DELETE_COMMAND]?.isEnabled = false
-        MenuHandler.menus[Resources.ACTION_SELECT_ALL_COMMAND]?.isEnabled = false
-        MenuHandler.menus[Resources.ACTION_CUT_COMMAND]?.isEnabled = false
-        MenuHandler.menus[Resources.ACTION_COPY_COMMAND]?.isEnabled = false
+        MenuHandler.menus["Mapping Rules"]?.isEnabled = false
+        MenuHandler.menus["Mapping Preview"]?.isEnabled = false
+        MenuHandler.menus["Paste"]?.isEnabled = false
+        MenuHandler.menus["Delete"]?.isEnabled = false
+        MenuHandler.menus["Select All"]?.isEnabled = false
+        MenuHandler.menus["Cut"]?.isEnabled = false
+        MenuHandler.menus["Copy"]?.isEnabled = false
     }
 
     fun setEnabledFontMapTab(flag: Boolean) {
@@ -224,7 +223,7 @@ class DesktopFrame : JInternalFrame(), TableModelListener, FontMapChangeListener
 
     fun enableConverterIfFilesLoaded(): Boolean {
         val flag = desktopModel.isReadyForTransliteration
-        MenuHandler.actions[Resources.ACTION_CONVERT_NAME]!!.isEnabled = flag
+        MenuHandler.actions["Convert"]!!.isEnabled = flag
         return flag
     }
 

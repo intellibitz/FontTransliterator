@@ -6,7 +6,6 @@ import sted.actions.STEDWindowAction
 import sted.event.*
 import sted.io.FileHelper.getSampleFontMapPaths
 import sted.io.FileReaderThread
-import sted.io.Resources
 import sted.io.Resources.getResource
 import sted.io.Resources.getSetting
 import sted.io.Resources.getSettingBeginsWith
@@ -147,13 +146,13 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
                 }
             }
         }
-        val reopenItems = getSettingBeginsWith(Resources.ACTION_FILE_REOPEN_COMMAND)
+        val reopenItems = getSettingBeginsWith("ReOpen")
         if (reopenItems.isNotEmpty()) {
             val menu = MenuHandler.menus["ReOpen"]
             for (reopenItem in reopenItems) {
                 MenuHandler.addReOpenItem(menu!!, reopenItem)
             }
-            menu!!.isEnabled = menu.itemCount > Resources.DEFAULT_MENU_COUNT
+            menu!!.isEnabled = menu.itemCount > 2
         }
 
         // set the sample fontmap action

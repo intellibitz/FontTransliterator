@@ -28,11 +28,11 @@ internal class SettingsXMLReader : XMLReader {
         contentHandler!!.startDocument()
         val atts = AttributesImpl()
         atts.addAttribute(
-            nsu, Resources.EMPTY_STRING, "name", "ID",
+            nsu, "", "name", "ID",
             bufferedReader.readLine()
         )
         atts.addAttribute(
-            nsu, Resources.EMPTY_STRING, "version", "CDATA",
+            nsu, "", "version", "CDATA",
             bufferedReader.readLine()
         )
         contentHandler!!.startElement(nsu, rootElement, rootElement, atts)
@@ -66,17 +66,17 @@ internal class SettingsXMLReader : XMLReader {
 
     @Throws(SAXException::class)
     private fun writeOption(entry: String) {
-        val stringTokenizer = StringTokenizer(entry, Resources.SYMBOL_ASTERISK)
+        val stringTokenizer = StringTokenizer(entry, "*")
         while (stringTokenizer.hasMoreElements()) {
             val atts = AttributesImpl()
             val name = stringTokenizer.nextToken()
             val value = stringTokenizer.nextToken()
             atts.addAttribute(
-                nsu, Resources.EMPTY_STRING, "name", "ID",
+                nsu, "", "name", "ID",
                 name
             )
             atts.addAttribute(
-                nsu, Resources.EMPTY_STRING, "value", "CDATA",
+                nsu, "", "value", "CDATA",
                 value
             )
             writeElement(atts)

@@ -2,7 +2,6 @@ package sted.ui
 
 import sted.event.FontMapChangeEvent
 import sted.event.FontMapChangeListener
-import sted.io.Resources
 import sted.io.Resources.getResource
 import sted.widgets.FontChangeTextField
 import java.awt.Color
@@ -51,7 +50,7 @@ class MapperPanel : JPanel(), FontMapChangeListener {
         gridBagLayout.setConstraints(fontKeypad2, gridBagConstraints)
         add(fontKeypad2)
         val titledBorder = BorderFactory.createTitledBorder(
-            getResource(Resources.TITLE_MAPPING_PREVIEW)
+            getResource("title.mapping.preview")
         )
         titledBorder.titleJustification = TitledBorder.CENTER
         previewPanel.border = titledBorder

@@ -2,7 +2,6 @@ package sted.actions
 
 import sted.event.FontMapChangeEvent
 import sted.event.FontMapChangeListener
-import sted.io.Resources
 import java.awt.event.ActionEvent
 import javax.swing.ListSelectionModel
 import javax.swing.event.ListSelectionEvent
@@ -23,7 +22,7 @@ class CopyAction : TableModelListenerAction(), FontMapChangeListener {
     }
 
     override fun actionPerformed(e: ActionEvent) {
-        stedWindow.desktop.addToClipboard(Resources.ENTRIES, copySelectedRows())
+        stedWindow.desktop.addToClipboard("entries", copySelectedRows())
     }
 
     override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent) {

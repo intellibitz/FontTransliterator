@@ -8,7 +8,7 @@ class AboutSTED(title: String?, aboutDescriptor: Component?) : AboutDialog(title
     companion object {
         val instance: AboutSTED by lazy {
             AboutSTED(
-                Resources.getResource(Resources.TITLE_ABOUT_STED),
+                Resources.getResource("title.about.sted"),
                 AboutText.instance
             )
         }
