@@ -16,6 +16,7 @@ import sted.ui.MenuHandler.Companion.addSampleFontMapMenuItem
 import sted.ui.MenuHandler.Companion.loadLookAndFeelMenu
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
+import java.util.logging.LogManager
 import java.util.logging.Logger
 import javax.swing.JFrame
 import javax.swing.JOptionPane
@@ -28,6 +29,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
     val statusPanel: StatusPanel = StatusPanel()
     private lateinit var statusEvent: StatusEvent
     private lateinit var statusListener: IStatusListener
+    lateinit var logManager: LogManager
 
     val logger: Logger = Logger.getLogger(STEDWindow::class.java.name)
     fun init() {
@@ -39,6 +41,13 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         val imageIcon = getSystemResourceIcon(getSetting("icon.sted"))
         if (imageIcon != null) iconImage = imageIcon.image
         statusEvent = StatusEvent(this)
+        logManager.addLogger(logger)
+        val xml = getResource("config.menu")
+        if (xml == null) {
+            logger.severe("Load menu file not found: please check config.menu property to set menu file")
+        } else {
+            MenuHandler.menuHandler.loadMenu(xml)
+        }
         val menuBar = MenuHandler.menuHandler.getMenuBar("STED-MenuBar")
         loadLookAndFeelMenu()
 

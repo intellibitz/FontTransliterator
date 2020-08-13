@@ -6,7 +6,6 @@ import org.xml.sax.helpers.DefaultHandler
 import sted.actions.*
 import sted.fontmap.FontMap
 import sted.io.Resources
-import sted.io.Resources.getResource
 import sted.io.Resources.getSystemResourceIcon
 import java.awt.event.ItemListener
 import java.io.IOException
@@ -23,7 +22,7 @@ class MenuHandler private constructor() : DefaultHandler() {
     private var isPopup = false
 
     @Throws(SAXException::class, ParserConfigurationException::class, IOException::class)
-    private fun loadMenu(xml: String?) {
+    internal fun loadMenu(xml: String) {
         val saxParserFactory = SAXParserFactory.newInstance()
         saxParserFactory.isValidating = true
         val saxParser = saxParserFactory.newSAXParser()
@@ -408,7 +407,6 @@ class MenuHandler private constructor() : DefaultHandler() {
         private val logger = Logger.getLogger("sted.ui.MenuHandler")
 
 
-        @JvmStatic
         fun getToolTips(): Map<String, String> {
             return toolTips
         }
@@ -441,7 +439,6 @@ class MenuHandler private constructor() : DefaultHandler() {
             } else null
         }
 
-        @JvmStatic
         fun clearReOpenItems(menuHandler: MenuHandler) {
             val menu = menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
             val sz = menu!!.menuComponentCount
@@ -455,7 +452,6 @@ class MenuHandler private constructor() : DefaultHandler() {
             menu.isEnabled = false
         }
 
-        @JvmStatic
         fun addSampleFontMapMenuItem(
             menu: JMenu,
             fileName: String?
@@ -463,8 +459,6 @@ class MenuHandler private constructor() : DefaultHandler() {
             addReOpenItem(menu, fileName, OpenSampleFontMapAction(), false)
         }
 
-        @JvmOverloads
-        @JvmStatic
         fun addReOpenItem(
             menu: JMenu,
             fileName: String?, action: Action = ReOpenFontMapAction(), checkInCache: Boolean = true
@@ -490,7 +484,6 @@ class MenuHandler private constructor() : DefaultHandler() {
             }
         }
 
-        @JvmStatic
         fun disableMenuItem(menuHandler: MenuHandler, fileName: String) {
             disableMenuItem(
                 menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND),
@@ -509,14 +502,12 @@ class MenuHandler private constructor() : DefaultHandler() {
             menu.isEnabled = menu.itemCount > Resources.DEFAULT_MENU_COUNT
         }
 
-        @JvmStatic
         fun enableReOpenItems(menuHandler: MenuHandler) {
             enableReOpenItems(
                 menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
             )
         }
 
-        @JvmStatic
         fun enableReOpenItems(menu: JMenu?) {
             var count = menu!!.itemCount
             var i = 0
@@ -528,7 +519,6 @@ class MenuHandler private constructor() : DefaultHandler() {
             menu.isEnabled = menu.itemCount > Resources.DEFAULT_MENU_COUNT
         }
 
-        @JvmStatic
         fun enableItemsInReOpenMenu(
             menuHandler: MenuHandler,
             fontMap: FontMap
@@ -541,7 +531,6 @@ class MenuHandler private constructor() : DefaultHandler() {
             }
         }
 
-        @JvmStatic
         val userOptions: String
             get() {
                 val menuItems = menuHandler.menuItems
@@ -566,9 +555,7 @@ class MenuHandler private constructor() : DefaultHandler() {
                 return userOptions.toString()
             }
 
-        @JvmStatic
         fun loadLookAndFeelMenu() {
-            val menuHandler = menuHandler
             val lookAndFeelInfos = UIManager.getInstalledLookAndFeels()
             val buttonGroup = ButtonGroup()
             val curLookAndFeel = UIManager.getLookAndFeel()
@@ -592,18 +579,8 @@ class MenuHandler private constructor() : DefaultHandler() {
             }
         }
 
-        //        private var lookAndFeelInfos: Array<LookAndFeelInfo>
-        @JvmStatic
         val menuHandler: MenuHandler by lazy {
             MenuHandler()
-        }
-    }
-
-    init {
-        try {
-            loadMenu(getResource("config.menu"))
-        } catch (e: Exception) {
-            logger.throwing("sted.ui.MenuHandler", "loadMenu", e)
         }
     }
 }

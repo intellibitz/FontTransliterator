@@ -17,10 +17,10 @@
                         type CDATA "javax.swing.JMenuItem"
                         mnemonic CDATA #IMPLIED
                         accelerator CDATA #IMPLIED
-                        tooltip CDATA #REQUIRED
+                        tooltip CDATA "Menu item"
                         icon CDATA #IMPLIED
-                        action CDATA #REQUIRED
-                        actionCommand CDATA #REQUIRED
+                        action CDATA #IMPLIED
+                        actionCommand CDATA #IMPLIED
                         actionEnabled (true|false) "true"
                         actionMode (on|off) "on"
                         listener CDATA #IMPLIED
@@ -69,7 +69,7 @@
                 action="sted.actions.OpenFontMapAction"
                 actionCommand="Open..."
         />
-        <menuitemref
+        <menuitem
                 name="::separator"/>
         <menu
                 name="ReOpen"
@@ -77,7 +77,7 @@
                 action="sted.actions.ReOpenAction"
                 actionEnabled="false"
         >
-            <menuitemref
+            <menuitem
                     name="::separator"/>
             <menuitem
                     name="Clear List"
@@ -88,7 +88,7 @@
                     toolButtonVisible="false"
             />
         </menu>
-        <menuitemref
+        <menuitem
                 name="::separator"/>
         <menuitem
                 name="Save"
@@ -110,7 +110,7 @@
                 actionEnabled="false"
                 toolButtonVisible="false"
         />
-        <menuitemref
+        <menuitem
                 name="::separator"/>
         <menuitem
                 name="ReLoad from Disk"
@@ -123,7 +123,7 @@
                 actionEnabled="false"
                 toolButtonVisible="false"
         />
-        <menuitemref
+        <menuitem
                 name="::separator"/>
         <menuitem
                 name="Close"
@@ -136,7 +136,7 @@
                 actionEnabled="false"
                 toolButtonVisible="false"
         />
-        <menuitemref
+        <menuitem
                 name="::separator"/>
         <menuitem
                 name="Exit"
@@ -171,7 +171,7 @@
                 actionEnabled="false"
                 actionCommand="Redo"
         />
-        <menuitemref
+        <menuitem
                 name="::separator"/>
         <menuitem
                 name="Cut"
@@ -203,7 +203,7 @@
                 actionCommand="Paste"
                 actionEnabled="false"
         />
-        <menuitemref
+        <menuitem
                 name="::separator"/>
         <menuitem
                 name="Select All"
@@ -215,7 +215,7 @@
                 actionEnabled="false"
                 toolButtonVisible="false"
         />
-        <menuitemref
+        <menuitem
                 name="::separator"/>
         <menuitem
                 name="Delete"
@@ -253,7 +253,7 @@
                 actionEnabled="false"
                 actionCommand="Output"
         />
-        <menuitemref
+        <menuitem
                 name="::separator"/>
         <menuitem
                 name="Convert"
@@ -304,7 +304,7 @@
                 toolButton="javax.swing.JCheckBox"
                 toolButtonTextVisible="true"
         />
-        <menuitemref
+        <menuitem
                 name="::separator"/>
         <menu
                 name="Look &amp; Feel"
@@ -335,7 +335,7 @@
                 actionCommand="ViewStatus"
                 toolButtonVisible="false"
         />
-        <menuitemref
+        <menuitem
                 name="::separator"/>
         <menuitem
                 name="Mapping Rules"
@@ -378,7 +378,7 @@
                 action="sted.actions.HelpAction"
                 actionCommand="Help"
         />
-        <menuitemref
+        <menuitem
                 name="::separator"/>
         <menuitem
                 name="About"

@@ -1,6 +1,5 @@
 package sted
 
-import sted.Main.addLogger
 import sted.ui.AboutText
 import sted.ui.STEDWindow
 import sted.widgets.SplashWindow
@@ -9,6 +8,7 @@ import java.awt.Cursor
 import java.awt.Point
 import java.awt.Toolkit
 import java.io.File
+import java.util.logging.LogManager
 import java.util.logging.Logger
 import javax.swing.SwingUtilities
 import javax.swing.UIManager
@@ -21,6 +21,7 @@ class STEDGUI {
         splashWindow.isVisible = true
         splashWindow.setProgress(10)
         sTEDWindow.addStatusListener(splashWindow)
+        sTEDWindow.logManager = logManager
         sTEDWindow.init()
         sTEDWindow.load()
         splashWindow.setProgress(90)
@@ -41,6 +42,7 @@ class STEDGUI {
     companion object {
         val logger: Logger = Logger.getLogger(STEDGUI::class.java.name)
         val sTEDWindow: STEDWindow = STEDWindow()
+        lateinit var logManager: LogManager
 
         @JvmStatic
         fun busy() {
@@ -93,6 +95,7 @@ class STEDGUI {
     }
 
     init {
-        addLogger(logger)
+        logManager = Main.logManager
+        logManager.addLogger(logger)
     }
 }
