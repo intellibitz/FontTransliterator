@@ -11,7 +11,6 @@ import sted.fontmap.FontMap
 import sted.fontmap.FontMapEntry
 import sted.io.Resources
 import sted.io.Resources.getResource
-import sted.ui.MenuHandler.Companion.menuHandler
 import sted.widgets.DocumentListenerButton
 import sted.widgets.FontChangeTextField
 import java.awt.GridBagConstraints
@@ -114,8 +113,7 @@ class MappingEntryPanel : JPanel(), FontMapChangeListener, ItemListener, ListSel
     }
 
     private fun addTableModelListeners() {
-        val actions = menuHandler.actions
-        for (action in actions.values) {
+        for (action in MenuHandler.actions.values) {
             if (TableModelListenerAction::class.java.isInstance(action)) {
                 addTableModelListener(action as TableModelListener)
             }

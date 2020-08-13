@@ -3,7 +3,7 @@ package sted.io
 import org.xml.sax.InputSource
 import sted.io.Resources.getResource
 import sted.io.Resources.version
-import sted.ui.MenuHandler.Companion.userOptions
+import sted.ui.MenuHandler
 import java.io.BufferedReader
 import java.io.File
 import java.io.StringReader
@@ -22,7 +22,7 @@ object SettingsXMLWriter {
             val stringBuffer = """
             ${file.name}
             $version
-            $userOptions
+            ${MenuHandler.userOptions}
             """.trimIndent()
             write(file, stringBuffer)
         }

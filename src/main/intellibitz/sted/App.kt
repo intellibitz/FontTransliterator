@@ -5,7 +5,6 @@ import java.util.logging.LogManager
 import java.util.logging.Logger
 
 object Main {
-    @JvmStatic
     var logManager: LogManager = LogManager.getLogManager()
 
     @JvmStatic
@@ -26,7 +25,6 @@ object Main {
         }
     }
 
-    @JvmStatic
     fun addLogger(logger: Logger) {
         logManager.addLogger(logger)
     }

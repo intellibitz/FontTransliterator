@@ -1,7 +1,6 @@
 package sted.ui
 
-import sted.STEDGUI.Companion.busy
-import sted.STEDGUI.Companion.relax
+import sted.STEDGUI
 import sted.actions.RedoAction
 import sted.actions.UndoAction
 import sted.event.*
@@ -14,8 +13,6 @@ import sted.io.Resources.cleanIcon
 import sted.io.Resources.dirtyIcon
 import sted.io.Resources.getResource
 import sted.io.Resources.sTEDIcon
-import sted.ui.MenuHandler.Companion.addReOpenItem
-import sted.ui.MenuHandler.Companion.menuHandler
 import sted.widgets.ButtonTabComponent
 import java.awt.HeadlessException
 import java.awt.event.ActionEvent
@@ -228,7 +225,7 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
     }
 
     private fun enableCloseAction(flag: Boolean) {
-        menuHandler.getMenuItem("Close")?.isEnabled = flag
+        MenuHandler.menuItems["Close"]?.isEnabled = flag
     }
 
     private fun enableCloseAction() {
@@ -300,27 +297,25 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         )
         fontMap.removeFontMapChangeListener(desktopFrame)
         fontMap.addFontMapChangeListener(desktopFrame)
-        val menuHandler = menuHandler
-        val actions: Map<*, *> = menuHandler.actions
-        val newAction = menuHandler.getAction(Resources.ACTION_FILE_NEW_COMMAND) as FontMapChangeListener?
+        val newAction = MenuHandler.actions["New"] as FontMapChangeListener?
         fontMap.removeFontMapChangeListener(newAction)
         fontMap.addFontMapChangeListener(newAction)
-        val reload = actions[Resources.ACTION_FILE_RELOAD] as FontMapChangeListener?
+        val reload = MenuHandler.actions["ReLoad from Disk"] as FontMapChangeListener?
         fontMap.removeFontMapChangeListener(reload)
         fontMap.addFontMapChangeListener(reload)
-        val save = actions[Resources.ACTION_FILE_SAVE_COMMAND] as FontMapChangeListener?
+        val save = MenuHandler.actions["Save"] as FontMapChangeListener?
         fontMap.removeFontMapChangeListener(save)
         fontMap.addFontMapChangeListener(save)
-        val paste = actions[Resources.ACTION_PASTE_COMMAND] as FontMapChangeListener?
+        val paste = MenuHandler.actions["Paste"] as FontMapChangeListener?
         fontMap.removeFontMapChangeListener(paste)
         fontMap.addFontMapChangeListener(paste)
-        val undo = actions[Resources.ACTION_UNDO_COMMAND] as UndoAction?
+        val undo = MenuHandler.actions["Undo"] as UndoAction?
         fontMap.removeUndoListener(undo)
         undo!!.isEnabled = false
         fontMap.addUndoListener(undo)
         removeChangeListener(undo)
         addChangeListener(undo)
-        val redo = actions[Resources.ACTION_REDO_COMMAND] as RedoAction?
+        val redo = MenuHandler.actions["Redo"] as RedoAction?
         fontMap.removeRedoListener(redo)
         redo!!.isEnabled = false
         fontMap.addRedoListener(redo)
@@ -335,23 +330,23 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         fontMap.addFontListChangeListener(keypad2)
         desktopModel.addFontMapChangeListener(keypad2)
         desktopFrame.addInternalFrameListener(
-            menuHandler.actions[Resources.ACTION_FILE_NEW_COMMAND] as InternalFrameListener?
+            MenuHandler.actions["New"] as InternalFrameListener?
         )
         desktopFrame.addInternalFrameListener(
-            menuHandler.actions[Resources.ACTION_FILE_RELOAD_COMMAND] as InternalFrameListener?
+            MenuHandler.actions["ReLoad"] as InternalFrameListener?
         )
         desktopFrame.addInternalFrameListener(
-            menuHandler.actions[Resources.ACTION_FILE_REOPEN_COMMAND] as InternalFrameListener?
+            MenuHandler.actions["ReOpen"] as InternalFrameListener?
         )
         desktopFrame.addInternalFrameListener(
-            menuHandler.actions[Resources.ACTION_FILE_SAVEAS_COMMAND] as InternalFrameListener?
+            MenuHandler.actions["Save As..."] as InternalFrameListener?
         )
         desktopFrame.addInternalFrameListener(
-            menuHandler.actions[Resources.ACTION_FILE_CLOSE_COMMAND] as InternalFrameListener?
+            MenuHandler.actions["Close"] as InternalFrameListener?
         )
         desktopModel.removeFontMapChangeListener(newAction)
         desktopModel.addFontMapChangeListener(newAction)
-        val reopen = menuHandler.actions[Resources.ACTION_FILE_REOPEN_COMMAND] as FontMapChangeListener?
+        val reopen = MenuHandler.actions["ReOpen"] as FontMapChangeListener?
         desktopModel.removeFontMapChangeListener(reopen)
         desktopModel.addFontMapChangeListener(reopen)
         desktopFrame
@@ -686,9 +681,8 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
             .fontMap
 
     fun addItemToReOpenMenu(item: String?) {
-        val menuHandler = menuHandler
-        val menu = menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
-        addReOpenItem(menu!!, item)
+        val menu = MenuHandler.menus["ReOpen"]
+        MenuHandler.addReOpenItem(menu!!, item)
         menu.isEnabled = menu.itemCount != Resources.DEFAULT_MENU_COUNT + 1
     }
 
@@ -785,12 +779,12 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
     }
 
     override fun threadRunStarted(threadEvent: ThreadEvent) {
-        busy()
+        STEDGUI.busy()
     }
 
     override fun threadRunning(threadEvent: ThreadEvent) {}
     override fun threadRunFailed(threadEvent: ThreadEvent) {
-        busy()
+        STEDGUI.busy()
         val message = threadEvent.eventSource.message.toString()
         JOptionPane.showMessageDialog(
             this, message, "Error",
@@ -803,13 +797,13 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         // if Transliterator..
         if (TransliterateEvent::class.java.isInstance(threadEvent)) {
             // enable the convert action
-            menuHandler
-                .getAction(Resources.ACTION_CONVERT_NAME)?.isEnabled = true
+            MenuHandler
+                .actions["Convert"]?.isEnabled = true
             // disable the stop button
-            menuHandler.getAction(Resources.ACTION_STOP_NAME)?.isEnabled = false
+            MenuHandler.actions["Stop"]?.isEnabled = false
         }
         fireStatusPosted(message)
-        relax()
+        STEDGUI.relax()
     }
 
     override fun threadRunFinished(threadEvent: ThreadEvent) {
@@ -824,13 +818,13 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
             // readFontMap the converted file
             selectedFrame.readOutputFile()
             // enable the convert action
-            menuHandler
-                .getAction(Resources.ACTION_CONVERT_NAME)?.isEnabled = true
+            MenuHandler
+                .actions["Convert"]?.isEnabled = true
             // disable the stop button
-            menuHandler.getAction(Resources.ACTION_STOP_NAME)?.isEnabled = false
+            MenuHandler.actions["Stop"]?.isEnabled = false
             fireStatusPosted("Transliterate Done")
         }
-        relax()
+        STEDGUI.relax()
     }
 
     override fun internalFrameClosing(e: InternalFrameEvent) {
@@ -849,8 +843,8 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
 
     override fun internalFrameActivated(e: InternalFrameEvent) {
         // enable the view mapping and sample when the internal frame is shown
-        menuHandler.getMenuItem(Resources.ACTION_VIEW_MAPPING)?.isEnabled = true
-        menuHandler.getMenuItem(Resources.ACTION_VIEW_SAMPLE)?.isEnabled = true
+        MenuHandler.menuItems["Mapping Rules"]?.isEnabled = true
+        MenuHandler.menuItems["Mapping Preview"]?.isEnabled = true
         val desktopFrame = e.internalFrame as DesktopFrame
         desktopFrame.setEnabledFontMapTab(true)
         enableCloseAction()

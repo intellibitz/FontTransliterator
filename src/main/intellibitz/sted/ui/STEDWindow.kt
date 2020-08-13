@@ -11,9 +11,6 @@ import sted.io.Resources.getResource
 import sted.io.Resources.getSetting
 import sted.io.Resources.getSettingBeginsWith
 import sted.io.Resources.getSystemResourceIcon
-import sted.ui.MenuHandler.Companion.addReOpenItem
-import sted.ui.MenuHandler.Companion.addSampleFontMapMenuItem
-import sted.ui.MenuHandler.Companion.loadLookAndFeelMenu
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.util.logging.LogManager
@@ -42,14 +39,8 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         if (imageIcon != null) iconImage = imageIcon.image
         statusEvent = StatusEvent(this)
         logManager.addLogger(logger)
-        val xml = getResource("config.menu")
-        if (xml == null) {
-            logger.severe("Load menu file not found: please check config.menu property to set menu file")
-        } else {
-            MenuHandler.menuHandler.loadMenu(xml)
-        }
-        val menuBar = MenuHandler.menuHandler.getMenuBar("STED-MenuBar")
-        loadLookAndFeelMenu()
+        val menuBar = MenuHandler.menuBars["STED-MenuBar"]
+        MenuHandler.loadLookAndFeelMenu()
 
         // load the menubar for the application
         jMenuBar = menuBar
@@ -66,7 +57,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         gridBagConstraints.gridy = 0
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL
         fireStatusPosted("30")
-        val toolBar = MenuHandler.menuHandler.getToolBar(Resources.MENUBAR_STED)
+        val toolBar = MenuHandler.toolBars["STED-MenuBar"]
         gridBagLayout.setConstraints(toolBar, gridBagConstraints)
 
         // adds the toolbar for the app
@@ -104,8 +95,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
     fun load() {
         // status panel added as status listener to recieve status messages
         desktop.addStatusListener(statusPanel)
-        val actions = MenuHandler.menuHandler.actions
-        for (action in actions.values) {
+        for (action in MenuHandler.actions.values) {
             if (action is STEDWindowAction) {
                 action.addStatusListener(statusPanel)
                 action.addMessageListener(this)
@@ -130,20 +120,21 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         this.statusListener = statusListener
     }
 
+/*
     fun setVisible() {
         super.setVisible(true)
         statusPanel.runMemoryBar()
     }
+*/
 
     private fun setUserOptions() {
-        val menuItems = MenuHandler.menuHandler.menuItems
-        for (key in menuItems.keys) {
-            val menuItem = menuItems[key]
+        for (key in MenuHandler.menuItems.keys) {
+            val menuItem = MenuHandler.menuItems[key]
             val action = menuItem!!.action
             if (action is ItemListenerAction) {
-                val `val` = getSetting(key)
-                if (`val` != null) {
-                    val curr = `val`.toBoolean()
+                val s = getSetting(key)
+                if (s != null) {
+                    val curr = s.toBoolean()
                     // first check for state for disabled menu items
                     if (!action.isEnabled()) {
                         menuItem.isSelected = curr
@@ -158,9 +149,9 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         }
         val reopenItems = getSettingBeginsWith(Resources.ACTION_FILE_REOPEN_COMMAND)
         if (reopenItems.isNotEmpty()) {
-            val menu = MenuHandler.menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
+            val menu = MenuHandler.menus["ReOpen"]
             for (reopenItem in reopenItems) {
-                addReOpenItem(menu!!, reopenItem)
+                MenuHandler.addReOpenItem(menu!!, reopenItem)
             }
             menu!!.isEnabled = menu.itemCount > Resources.DEFAULT_MENU_COUNT
         }
@@ -168,9 +159,9 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         // set the sample fontmap action
         val sampleFontMapPaths = getSampleFontMapPaths("resource")
         if (sampleFontMapPaths?.size ?: 0 > 0) {
-            val menu = MenuHandler.menuHandler.getMenu(Resources.MENU_SAMPLES_NAME)
+            val menu = MenuHandler.menus["Samples"]
             for (reopenItem in sampleFontMapPaths!!) {
-                addSampleFontMapMenuItem(menu!!, reopenItem)
+                MenuHandler.addSampleFontMapMenuItem(menu!!, reopenItem)
             }
         }
     }

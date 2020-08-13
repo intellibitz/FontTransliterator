@@ -1,6 +1,6 @@
 package sted.actions
 
-import sted.STEDGUI.Companion.updateUIWithLAF
+import sted.STEDGUI
 import sted.io.Resources
 import sted.ui.AboutSTED
 import sted.ui.HelpWindow
@@ -19,12 +19,11 @@ class LAFAction : STEDWindowAction() {
             collection.add(help)
             val aboutDialog = AboutSTED.instance
             collection.add(aboutDialog)
-            val component: Component? = MenuHandler.menuHandler
-                .getPopupMenu(Resources.MENU_POPUP_MAPPING)
+            val component: Component? = MenuHandler.popupMenus[Resources.MENU_POPUP_MAPPING]
             if (null != component) {
                 collection.add(component)
             }
-            updateUIWithLAF(
+            STEDGUI.updateUIWithLAF(
                 e.actionCommand,
                 collection.iterator()
             )

@@ -1,6 +1,6 @@
 package sted.actions
 
-import sted.ui.MenuHandler.Companion.menuHandler
+import sted.ui.MenuHandler
 import java.awt.event.ActionEvent
 import java.awt.event.ItemEvent
 import java.awt.event.ItemListener
@@ -17,9 +17,9 @@ open class ItemListenerAction : STEDWindowAction(), ItemListener {
     override fun itemStateChanged(e: ItemEvent) {
         if (e.source is AbstractButton) {
             val name = (e.source as AbstractButton).action?.getValue(NAME) as String
-            val state = !(ItemEvent.DESELECTED == e.stateChange)
-            menuHandler.getMenuItem(name)?.isSelected = state
-            menuHandler.getToolButton(name)?.isSelected = state
+            val state = ItemEvent.DESELECTED != e.stateChange
+            MenuHandler.menuItems[name]?.isSelected = state
+            MenuHandler.toolButtons[name]?.isSelected = state
 //            val stedWindow = sTEDWindow!!
             //            getSTEDWindow().convertSampleText();
         }

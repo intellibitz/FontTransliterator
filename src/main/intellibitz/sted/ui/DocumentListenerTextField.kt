@@ -2,8 +2,6 @@ package sted.ui
 
 import sted.fontmap.FontMap
 import sted.fontmap.SampleTextConverter
-import sted.io.Resources
-import sted.ui.MenuHandler.Companion.menuHandler
 import sted.widgets.FontChangeTextField
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.SwingUtilities
@@ -43,9 +41,9 @@ class DocumentListenerTextField : FontChangeTextField(), DocumentListener {
         if (e.document.length > 0) {
             converter.mapperPanel = mapperPanel
             converter.fontMap = fontMap
-            val preserve = menuHandler.getMenuItem(Resources.ACTION_PRESERVE_TAGS) as JCheckBoxMenuItem?
+            val preserve = MenuHandler.menuItems["Preserve <Tags>"] as JCheckBoxMenuItem?
             converter.setHTMLAware(preserve!!.isSelected)
-            val reverse = menuHandler.getMenuItem(Resources.ACTION_TRANSLITERATE_REVERSE) as JCheckBoxMenuItem?
+            val reverse = MenuHandler.menuItems["Reverse Transliterate"] as JCheckBoxMenuItem?
             converter.setReverseTransliterate(reverse!!.isSelected)
             SwingUtilities.invokeLater(converter)
         }

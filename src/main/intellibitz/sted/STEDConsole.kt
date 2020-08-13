@@ -11,14 +11,14 @@ import java.io.File
 import java.util.logging.Logger
 import kotlin.system.exitProcess
 
-class STEDConsole : IThreadListener {
-    lateinit var fontMapName: String
-    lateinit var inputFileName: String
-    lateinit var outputFileName: String
+object STEDConsole : IThreadListener {
+    private lateinit var fontMapName: String
+    private lateinit var inputFileName: String
+    private lateinit var outputFileName: String
     var reverse = false
-    var html = false
+    private var html = false
 
-    fun run() {
+    private fun run() {
         try {
             val input = File(inputFileName)
             val output = File(outputFileName)
@@ -58,7 +58,7 @@ class STEDConsole : IThreadListener {
         exitProcess(0)
     }
 
-    fun loadArgs(args: Array<String>) {
+    private fun loadArgs(args: Array<String>) {
         fontMapName = System.getProperty(Resources.FONTMAP_FILE)
         inputFileName = System.getProperty(Resources.INPUT_FILE)
         outputFileName = System.getProperty(Resources.OUTPUT_FILE)
@@ -94,12 +94,14 @@ class STEDConsole : IThreadListener {
         }
     }
 
-    fun run(args: Array<String>) {
+    private fun run(args: Array<String>) {
+        addLogger(logger)
+        logger.info("Launching STED Console: ")
         loadArgs(args)
         run()
     }
 
-    fun printUsage() {
+    private fun printUsage() {
         logger.info("STED Console Usage: ")
         logger.info(
             "   java -Dfontmap.file='<file>' -Dinput.file='<input>' -Doutput.file='<output>' sted.STEDConsole"
@@ -110,18 +112,10 @@ class STEDConsole : IThreadListener {
         )
     }
 
-    companion object {
-        val logger: Logger = Logger.getLogger(STEDConsole::class.java.name)
+    val logger: Logger = Logger.getLogger(STEDConsole::class.java.name)
 
-        @JvmStatic
-        fun main(args: Array<String>) {
-            logger.info("Launching STED Console: ")
-            STEDConsole().run(args)
-        }
-
-    }
-
-    init {
-        addLogger(logger)
+    @JvmStatic
+    fun main(args: Array<String>) {
+        run(args)
     }
 }

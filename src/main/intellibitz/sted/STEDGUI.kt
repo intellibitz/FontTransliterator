@@ -1,6 +1,8 @@
 package sted
 
+import sted.io.Resources
 import sted.ui.AboutText
+import sted.ui.MenuHandler
 import sted.ui.STEDWindow
 import sted.widgets.SplashWindow
 import java.awt.Component
@@ -14,12 +16,23 @@ import javax.swing.SwingUtilities
 import javax.swing.UIManager
 import javax.swing.UnsupportedLookAndFeelException
 
-class STEDGUI {
+object STEDGUI {
     fun run() {
+        logManager = Main.logManager
+        logManager.addLogger(logger)
+        logger.info("Launching STED GUI: ")
         val splashWindow = SplashWindow(AboutText.instance)
         centerComponent(splashWindow)
         splashWindow.isVisible = true
         splashWindow.setProgress(10)
+
+        val xml = Resources.getResource("config.menu")
+        if (xml == null) {
+            logger.severe("Load menu file not found: please check config.menu property to set menu file")
+        } else {
+            MenuHandler.loadMenu(xml)
+        }
+
         sTEDWindow.addStatusListener(splashWindow)
         sTEDWindow.logManager = logManager
         sTEDWindow.init()
@@ -39,63 +52,51 @@ class STEDGUI {
         splashWindow.dispose()
     }
 
-    companion object {
-        val logger: Logger = Logger.getLogger(STEDGUI::class.java.name)
-        val sTEDWindow: STEDWindow = STEDWindow()
-        lateinit var logManager: LogManager
+    val logger: Logger = Logger.getLogger(STEDGUI::class.java.name)
+    val sTEDWindow: STEDWindow = STEDWindow()
+    private lateinit var logManager: LogManager
 
-        @JvmStatic
-        fun busy() {
-            sTEDWindow.cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)
-        }
-
-        @JvmStatic
-        fun relax() {
-            sTEDWindow.cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)
-        }
-
-        @JvmStatic
-        @Throws(
-            ClassNotFoundException::class,
-            InstantiationException::class,
-            IllegalAccessException::class,
-            UnsupportedLookAndFeelException::class
-        )
-        fun updateUIWithLAF(
-            lookAndFeel: String?,
-            iterator: Iterator<Component?>
-        ) {
-            UIManager.setLookAndFeel(lookAndFeel)
-            while (iterator.hasNext()) {
-                val component = iterator.next()
-                SwingUtilities.updateComponentTreeUI(component)
-            }
-        }
-
-        /**
-         * A very nice trick is to center windows on screen
-         *
-         * @param component The `Component` to center
-         */
-        fun centerComponent(component: Component) {
-            val dimension = Toolkit.getDefaultToolkit().screenSize
-            val size = component.size
-            component.location = Point(
-                (dimension.width - size.width) / 2,
-                (dimension.height - size.height) / 2
-            )
-        }
-
-        @JvmStatic
-        fun main(args: Array<String>) {
-            logger.info("Launching STED GUI: ")
-            STEDGUI().run()
-        }
-
+    fun busy() {
+        sTEDWindow.cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)
     }
 
-    init {
-        logManager = Main.logManager
-        logManager.addLogger(logger)
+    fun relax() {
+        sTEDWindow.cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)
+    }
+
+    @Throws(
+        ClassNotFoundException::class,
+        InstantiationException::class,
+        IllegalAccessException::class,
+        UnsupportedLookAndFeelException::class
+    )
+    fun updateUIWithLAF(
+        lookAndFeel: String?,
+        iterator: Iterator<Component?>
+    ) {
+        UIManager.setLookAndFeel(lookAndFeel)
+        while (iterator.hasNext()) {
+            val component = iterator.next()
+            SwingUtilities.updateComponentTreeUI(component)
+        }
+    }
+
+    /**
+     * A very nice trick is to center windows on screen
+     *
+     * @param component The `Component` to center
+     */
+    fun centerComponent(component: Component) {
+        val dimension = Toolkit.getDefaultToolkit().screenSize
+        val size = component.size
+        component.location = Point(
+            (dimension.width - size.width) / 2,
+            (dimension.height - size.height) / 2
+        )
+    }
+
+    @JvmStatic
+    fun main(args: Array<String>) {
+        run()
     }
 }

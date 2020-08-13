@@ -1,7 +1,7 @@
 package sted.event
 
 import sted.actions.TableRowsSelectAction
-import sted.ui.MenuHandler.Companion.menuHandler
+import sted.ui.MenuHandler
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JPopupMenu
@@ -10,7 +10,7 @@ import javax.swing.JTable
 class MappingPopupListener : MouseAdapter() {
     private var popupMenu: JPopupMenu? = null
     fun load() {
-        popupMenu = menuHandler.getPopupMenu("Mapping")
+        popupMenu = MenuHandler.popupMenus["Mapping"]
     }
 
     override fun mousePressed(e: MouseEvent) {
@@ -29,8 +29,7 @@ class MappingPopupListener : MouseAdapter() {
     }
 
     private fun setTableOnAction(table: JTable) {
-        val actions = menuHandler.actions
-        for (action in actions.values) {
+        for (action in MenuHandler.actions.values) {
             if (action is TableRowsSelectAction) {
                 action.table = table
             }

@@ -1,7 +1,6 @@
 package sted.actions
 
-import sted.io.Resources
-import sted.ui.MenuHandler.Companion.menuHandler
+import sted.ui.MenuHandler
 import java.awt.event.ItemEvent
 import javax.swing.JPanel
 import javax.swing.JSplitPane
@@ -20,17 +19,13 @@ open class ViewAction : ItemListenerAction() {
 
     class ViewToolBar : ViewAction() {
         override fun itemStateChanged(e: ItemEvent) {
-            menuHandler.getToolBar(Resources.MENUBAR_STED)
-                ?.setVisible(
-                    ItemEvent.SELECTED == e.stateChange
-                )
+            MenuHandler.toolBars["STED-MenuBar"]?.isVisible = ItemEvent.SELECTED == e.stateChange
         }
     }
 
     class ViewStatus : ViewAction() {
         override fun itemStateChanged(e: ItemEvent) {
-            stedWindow.statusPanel
-                .setVisible(ItemEvent.SELECTED == e.stateChange)
+            stedWindow.statusPanel.isVisible = ItemEvent.SELECTED == e.stateChange
         }
     }
 

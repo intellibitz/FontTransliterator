@@ -44,31 +44,19 @@ object Resources {
     const val TITLE_TABLE_COLUMN_LAST_LETTER = "title.table.column.letter2"
     const val SAMPLE_INPUT_TEXT = "sample.input.text"
     const val ACTION_CONVERT_NAME = "Convert"
-    const val ACTION_STOP_NAME = "Stop"
-    const val ACTION_PRESERVE_TAGS = "Preserve <Tags>"
-    const val ACTION_TRANSLITERATE_REVERSE = "Reverse Transliterate"
-    const val ACTION_FILE_RELOAD = "ReLoad from Disk"
     const val ACTION_VIEW_LAF = "Look & Feel"
     const val ACTION_FILE_NEW_COMMAND = "New"
-    const val ACTION_FILE_RELOAD_COMMAND = "ReLoad"
     const val ACTION_FILE_REOPEN_COMMAND = "ReOpen"
-    const val ACTION_FILE_SAVE_COMMAND = "Save"
-    const val ACTION_FILE_SAVEAS_COMMAND = "Save As..."
-    const val ACTION_FILE_CLOSE_COMMAND = "Close"
     const val ACTION_SELECT_INPUT_FILE_COMMAND = "Input"
     const val ACTION_SELECT_OUTPUT_FILE_COMMAND = "Output"
     const val ACTION_DELETE_COMMAND = "Delete"
     const val ACTION_CUT_COMMAND = "Cut"
     const val ACTION_COPY_COMMAND = "Copy"
-    const val ACTION_UNDO_COMMAND = "Undo"
-    const val ACTION_REDO_COMMAND = "Redo"
     const val ACTION_PASTE_COMMAND = "Paste"
     const val ACTION_SELECT_ALL_COMMAND = "Select All"
     const val ACTION_VIEW_SAMPLE = "Mapping Preview"
     const val ACTION_VIEW_MAPPING = "Mapping Rules"
     const val MENU_POPUP_MAPPING = "Mapping"
-    const val FOLLOWED_BY = "Followed By: "
-    const val PRECEDED_BY = "Preceded By: "
     const val XML = "xml"
     const val ENTRIES = "entries"
     const val ENTRY_CONDITIONAL_AND = "AND"
@@ -84,15 +72,11 @@ object Resources {
     const val ENTRY_STATUS_EDIT = 2
     const val ENTRY_STATUS_DELETE = 3
 
-    // @since version 0.61
-    const val MENUBAR_STED = "STED-MenuBar"
-
     // @since version 0.62
     const val INPUT_FILE = "input.file"
     const val OUTPUT_FILE = "output.file"
     const val ICON_GC2 = "icon.gc.rollover"
     const val DEFAULT_MENU_COUNT = 2
-    const val MENU_SAMPLES_NAME = "Samples"
 
     @JvmField
     val imageIcons: MutableMap<String, ImageIcon?> = HashMap()

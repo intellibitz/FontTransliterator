@@ -1,7 +1,6 @@
 package sted.actions
 
-import sted.STEDGUI.Companion.busy
-import sted.STEDGUI.Companion.relax
+import sted.STEDGUI
 import sted.event.FontMapChangeEvent
 import sted.event.FontMapChangeListener
 import java.awt.event.ActionEvent
@@ -28,10 +27,10 @@ class LoadFontMapAction : TableModelListenerAction(), FontMapChangeListener, Int
     }
 
     override fun actionPerformed(e: ActionEvent) {
-        busy()
+        STEDGUI.busy()
         stedWindow.desktop.reloadFontMap()
         fireStatusPosted("FontMap Re-Loaded")
-        relax()
+        STEDGUI.relax()
     }
 
     override fun internalFrameActivated(e: InternalFrameEvent) {}

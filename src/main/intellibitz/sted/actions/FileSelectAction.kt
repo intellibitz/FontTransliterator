@@ -1,7 +1,6 @@
 package sted.actions
 
-import sted.STEDGUI.Companion.busy
-import sted.STEDGUI.Companion.relax
+import sted.STEDGUI
 import sted.io.Resources
 import java.awt.event.ActionEvent
 import java.io.File
@@ -38,7 +37,7 @@ class FileSelectAction : TableModelListenerAction() {
         if (result == JFileChooser.APPROVE_OPTION) {
             file = jFileChooser.selectedFile
             if (file != null) {
-                busy()
+                STEDGUI.busy()
                 if (isInput) {
                     stedWindow.desktop
                         .fontMapperDesktopFrame.setInputFile(file)
@@ -49,7 +48,7 @@ class FileSelectAction : TableModelListenerAction() {
                 stedWindow.desktop
                     .fontMapperDesktopFrame
                     .enableConverterIfFilesLoaded()
-                relax()
+                STEDGUI.relax()
             }
         }
     }

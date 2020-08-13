@@ -2,12 +2,7 @@ package sted.actions
 
 import sted.event.FontMapChangeEvent
 import sted.event.FontMapChangeListener
-import sted.io.Resources
-import sted.ui.MenuHandler.Companion.addReOpenItem
-import sted.ui.MenuHandler.Companion.disableMenuItem
-import sted.ui.MenuHandler.Companion.enableItemsInReOpenMenu
-import sted.ui.MenuHandler.Companion.enableReOpenItems
-import sted.ui.MenuHandler.Companion.menuHandler
+import sted.ui.MenuHandler
 import java.awt.event.ActionEvent
 import javax.swing.event.InternalFrameEvent
 import javax.swing.event.InternalFrameListener
@@ -21,13 +16,13 @@ class ReOpenAction : ReOpenFontMapAction(), FontMapChangeListener, InternalFrame
     override fun stateChanged(fontMapChangeEvent: FontMapChangeEvent) {
         val fontMap = fontMapChangeEvent.fontMap
         if (fontMap.isNew) {
-            enableReOpenItems(menuHandler)
+            MenuHandler.enableReOpenItems()
         } else {
             val fileName = fontMap.fileName
             stedWindow.desktop
                 .addItemToReOpenMenu(fileName)
             // needed when opening a new fontmap
-            disableMenuItem(menuHandler, fileName)
+            MenuHandler.disableMenuItem(fileName)
         }
     }
 
@@ -37,8 +32,7 @@ class ReOpenAction : ReOpenFontMapAction(), FontMapChangeListener, InternalFrame
      * @see javax.swing.JInternalFrame.setSelected
      */
     override fun internalFrameActivated(e: InternalFrameEvent) {
-        enableItemsInReOpenMenu(
-            menuHandler,
+        MenuHandler.enableItemsInReOpenMenu(
             stedWindow.desktop
                 .fontMap
         )
@@ -50,8 +44,7 @@ class ReOpenAction : ReOpenFontMapAction(), FontMapChangeListener, InternalFrame
      * @see javax.swing.JInternalFrame.show
      */
     override fun internalFrameOpened(e: InternalFrameEvent) {
-        enableItemsInReOpenMenu(
-            menuHandler,
+        MenuHandler.enableItemsInReOpenMenu(
             stedWindow
                 .desktop
                 .fontMap
@@ -98,13 +91,12 @@ class ReOpenAction : ReOpenFontMapAction(), FontMapChangeListener, InternalFrame
      */
     override fun internalFrameIconified(e: InternalFrameEvent) {}
     fun addItemToReOpenMenu() {
-        val menuHandler = menuHandler
         val fontMap = stedWindow.desktop
             .fontMap
-        val menu = menuHandler.getMenu(Resources.ACTION_FILE_REOPEN_COMMAND)
+        val menu = MenuHandler.menus["ReOpen"]
         if (!fontMap.isNew) {
-            addReOpenItem(menu!!, fontMap.fileName)
+            MenuHandler.addReOpenItem(menu!!, fontMap.fileName)
         }
-        enableReOpenItems(menu)
+        MenuHandler.enableReOpenItems(menu)
     }
 }

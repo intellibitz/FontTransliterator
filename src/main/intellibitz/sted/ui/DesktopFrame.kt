@@ -11,8 +11,6 @@ import sted.io.Resources.dirtyIcon
 import sted.io.Resources.getResource
 import sted.io.Resources.getSystemResourceIcon
 import sted.io.Resources.sTEDIcon
-import sted.ui.MenuHandler.Companion.getToolTips
-import sted.ui.MenuHandler.Companion.menuHandler
 import java.beans.PropertyVetoException
 import java.io.File
 import java.util.logging.Logger
@@ -107,8 +105,8 @@ class DesktopFrame : JInternalFrame(), TableModelListener, FontMapChangeListener
         mapperPanel.setSampleInput(
             getResource(Resources.SAMPLE_INPUT_TEXT)
         )
-        tabbedPane.setToolTipTextAt(1, getToolTips()[Resources.ACTION_SELECT_INPUT_FILE_COMMAND])
-        tabbedPane.setToolTipTextAt(2, getToolTips()[Resources.ACTION_SELECT_OUTPUT_FILE_COMMAND])
+        tabbedPane.setToolTipTextAt(1, MenuHandler.toolTips["Input"])
+        tabbedPane.setToolTipTextAt(2, MenuHandler.toolTips["Output"])
     }
 
     private fun setNormalIcon() {
@@ -172,13 +170,13 @@ class DesktopFrame : JInternalFrame(), TableModelListener, FontMapChangeListener
     fun close() {
         hideFrame()
         enableTabs(false)
-        menuHandler.getMenuItem(Resources.ACTION_VIEW_MAPPING)?.isEnabled = false
-        menuHandler.getMenuItem(Resources.ACTION_VIEW_SAMPLE)?.isEnabled = false
-        menuHandler.getMenuItem(Resources.ACTION_PASTE_COMMAND)?.isEnabled = false
-        menuHandler.getMenuItem(Resources.ACTION_DELETE_COMMAND)?.isEnabled = false
-        menuHandler.getMenuItem(Resources.ACTION_SELECT_ALL_COMMAND)?.isEnabled = false
-        menuHandler.getMenuItem(Resources.ACTION_CUT_COMMAND)?.isEnabled = false
-        menuHandler.getMenuItem(Resources.ACTION_COPY_COMMAND)?.isEnabled = false
+        MenuHandler.menus[Resources.ACTION_VIEW_MAPPING]?.isEnabled = false
+        MenuHandler.menus[Resources.ACTION_VIEW_SAMPLE]?.isEnabled = false
+        MenuHandler.menus[Resources.ACTION_PASTE_COMMAND]?.isEnabled = false
+        MenuHandler.menus[Resources.ACTION_DELETE_COMMAND]?.isEnabled = false
+        MenuHandler.menus[Resources.ACTION_SELECT_ALL_COMMAND]?.isEnabled = false
+        MenuHandler.menus[Resources.ACTION_CUT_COMMAND]?.isEnabled = false
+        MenuHandler.menus[Resources.ACTION_COPY_COMMAND]?.isEnabled = false
     }
 
     fun setEnabledFontMapTab(flag: Boolean) {
@@ -226,7 +224,7 @@ class DesktopFrame : JInternalFrame(), TableModelListener, FontMapChangeListener
 
     fun enableConverterIfFilesLoaded(): Boolean {
         val flag = desktopModel.isReadyForTransliteration
-        menuHandler.actions[Resources.ACTION_CONVERT_NAME]!!.isEnabled = flag
+        MenuHandler.actions[Resources.ACTION_CONVERT_NAME]!!.isEnabled = flag
         return flag
     }
 
