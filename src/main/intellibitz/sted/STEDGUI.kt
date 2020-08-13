@@ -47,7 +47,7 @@ object STEDGUI {
         sTEDWindow.load()
         splashWindow.setProgress(90)
         sTEDWindow.isVisible = true
-        val fileName = System.getProperty("fontmap.file")
+        val fileName = Resources.getResource("fontmap.file")
         if (fileName.isNullOrBlank()) {
 //            File file = new File(Resources.getSampleFontMap());
 //            stedWindow.getDesktop().openFontMap(file);
