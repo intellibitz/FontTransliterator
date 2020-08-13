@@ -23,7 +23,6 @@ object STEDGUI {
 
     fun run() {
         Resources.init()
-        Resources.init()
         val resource = Resources.getResource("config.log")
         if (!resource.isNullOrEmpty()) {
             logManager.readConfiguration(ClassLoader.getSystemResourceAsStream(resource))
