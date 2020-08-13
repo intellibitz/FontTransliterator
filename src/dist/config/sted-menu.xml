@@ -16,7 +16,7 @@
                         name CDATA #REQUIRED
                         type CDATA "javax.swing.JMenuItem"
                         mnemonic CDATA #IMPLIED
-                        accelerator CDATA #IMPLIED
+                        accelerator CDATA "#IMPLIED"
                         tooltip CDATA "Menu item"
                         icon CDATA #IMPLIED
                         action CDATA #IMPLIED

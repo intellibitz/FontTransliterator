@@ -679,9 +679,9 @@ class TabDesktop : JTabbedPane(), InternalFrameListener, IThreadListener, FontMa
         get() = selectedFrame.desktopModel
             .fontMap
 
-    fun addItemToReOpenMenu(item: String?) {
-        val menu = MenuHandler.menus["ReOpen"]
-        MenuHandler.addReOpenItem(menu!!, item)
+    fun addItemToReOpenMenu(item: String) {
+        val menu = MenuHandler.menus["ReOpen"]!!
+        MenuHandler.addReOpenItem(menu, item)
         menu.isEnabled = menu.itemCount != 2 + 1
     }
 

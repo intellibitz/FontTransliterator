@@ -29,7 +29,6 @@ object MenuHandler : DefaultHandler() {
     val menuBars: MutableMap<String, JMenuBar> = HashMap()
     val toolBars: MutableMap<String, JToolBar> = HashMap()
     private val stack = Stack<JMenu>()
-    private val logger = Logger.getLogger("sted.ui.MenuHandler")
 
 
     @Throws(SAXException::class, ParserConfigurationException::class, IOException::class)
@@ -54,12 +53,7 @@ object MenuHandler : DefaultHandler() {
             popupMenu.name = attributes.getValue("name")
         } else if ("menu" == qName) {
             isPopup = false
-            try {
-                createMenu(attributes)
-            } catch (e: Exception) {
-                logger.severe("Unable to create Menu Item: " + e.message)
-                e.printStackTrace() //To change body of catch statement use Options | File Templates.
-            }
+            createMenu(attributes)
         } else if ("menuitem" == qName) {
             if (isPopup) {
                 createMenuItem(attributes, popupMenu)
@@ -182,81 +176,75 @@ object MenuHandler : DefaultHandler() {
         }
     }
 
-    private fun createMenuItem(attributes: Attributes): JMenuItem? {
-        var menuItem: JMenuItem? = null
-        try {
-            val name = attributes.getValue("name")
-            val type = attributes.getValue("type")
-            val ic = attributes.getValue("icon")
-            val tooltip = attributes.getValue("tooltip")
-            val shortcut = attributes.getValue("mnemonic")
-            toolTips[name] = tooltip
+    private fun createMenuItem(attributes: Attributes): JMenuItem {
+        val name = attributes.getValue("name")
+        val type = attributes.getValue("type")
+        val ic = attributes.getValue("icon")
+        val tooltip = attributes.getValue("tooltip")
+        val shortcut = attributes.getValue("mnemonic")
+        toolTips[name] = tooltip
 //            val value = attributes.getValue("action")
-            val action = newActionInstance(name)
-            action?.putValue(Action.NAME, name)
-            if (ic != null) {
-                val icon: Icon? = getResourceIcon(ic)
-                //                imageIcons.put(name, icon);
-                action?.putValue(Action.SMALL_ICON, icon)
-            }
-            action?.putValue(Action.SHORT_DESCRIPTION, tooltip)
-            if (null != shortcut && shortcut.isNotEmpty()) {
-                action?.putValue(Action.MNEMONIC_KEY, shortcut[0].toInt())
-            }
-            action?.putValue(
-                Action.ACCELERATOR_KEY,
-                getAccelerator(attributes.getValue("accelerator"))
-            )
-            val cmd = attributes.getValue("actionCommand")
-            action?.putValue(Action.ACTION_COMMAND_KEY, cmd)
+        val action = newActionInstance(name)
+        action?.putValue(Action.NAME, name)
+        if (ic != null) {
+            val icon: Icon? = getResourceIcon(ic)
+            //                imageIcons.put(name, icon);
+            action?.putValue(Action.SMALL_ICON, icon)
+        }
+        action?.putValue(Action.SHORT_DESCRIPTION, tooltip)
+        if (null != shortcut && shortcut.isNotEmpty()) {
+            action?.putValue(Action.MNEMONIC_KEY, shortcut[0].toInt())
+        }
+        action?.putValue(
+            Action.ACCELERATOR_KEY,
+            getAccelerator(attributes.getValue("accelerator"))
+        )
+        val cmd = attributes.getValue("actionCommand")
+        action?.putValue(Action.ACTION_COMMAND_KEY, cmd)
 //            val listener = attributes.getValue("listener")
-            /*
-            if (listener != null) {
-                action.addPropertyChangeListener((PropertyChangeListener) Class.forName(listener).newInstance());
-            }
+        /*
+        if (listener != null) {
+            action.addPropertyChangeListener((PropertyChangeListener) Class.forName(listener).newInstance());
+        }
 */
-            val enabled = attributes.getValue("actionEnabled")
-            if (enabled != null) {
-                action?.isEnabled = java.lang.Boolean.parseBoolean(enabled)
-            }
-            menuItem = Class.forName(type).getDeclaredConstructor().newInstance() as JMenuItem
-            menuItem.horizontalTextPosition = JMenuItem.RIGHT
-            menuItem.action = action
-            menuItem.isSelected = "on".equals(attributes.getValue("actionMode"), ignoreCase = true)
-            actions[name] = action!!
+        val enabled = attributes.getValue("actionEnabled")
+        if (enabled != null) {
+            action?.isEnabled = java.lang.Boolean.parseBoolean(enabled)
+        }
+        val menuItem: JMenuItem = Class.forName(type).getDeclaredConstructor().newInstance() as JMenuItem
+        menuItem.horizontalTextPosition = JMenuItem.RIGHT
+        menuItem.action = action
+        menuItem.isSelected = "on".equals(attributes.getValue("actionMode"), ignoreCase = true)
+        actions[name] = action!!
 // sub menu can be coming in as menuitem from xml, or json
-            if (menuItem is JMenu) {
-                menus[name] = menuItem
+        if (menuItem is JMenu) {
+            menus[name] = menuItem
 //                stack.push(menuItem)
-            } else {
-                menuItems[name] = menuItem
-            }
-            val button = attributes.getValue("toolButton")
-            val buttonVisible = attributes.getValue("toolButtonVisible")
-            val buttonTextVisible = attributes.getValue("toolButtonTextVisible")
-            if ("true".equals(buttonVisible, ignoreCase = true)) {
-                val component = Class.forName(button).getDeclaredConstructor().newInstance() as JComponent
-                component.toolTipText = tooltip
-                if (component is AbstractButton) {
-                    component.action = action
-                    if (action is ItemListener) {
-                        component.addItemListener(action as ItemListener)
-                    }
-                    if ("false".equals(buttonTextVisible, ignoreCase = true)) {
-                        component.text = ""
-                    }
+        } else {
+            menuItems[name] = menuItem
+        }
+        val button = attributes.getValue("toolButton")
+        val buttonVisible = attributes.getValue("toolButtonVisible")
+        val buttonTextVisible = attributes.getValue("toolButtonTextVisible")
+        if ("true".equals(buttonVisible, ignoreCase = true)) {
+            val component = Class.forName(button).getDeclaredConstructor().newInstance() as JComponent
+            component.toolTipText = tooltip
+            if (component is AbstractButton) {
+                component.action = action
+                if (action is ItemListener) {
+                    component.addItemListener(action as ItemListener)
                 }
-                toolBar.add(component)
-                if (component is AbstractButton) {
-                    toolButtons[name] = component
+                if ("false".equals(buttonTextVisible, ignoreCase = true)) {
+                    component.text = ""
                 }
             }
-            if (action is ItemListener) {
-                menuItem.addItemListener(action as ItemListener)
+            toolBar.add(component)
+            if (component is AbstractButton) {
+                toolButtons[name] = component
             }
-        } catch (e: Exception) {
-            logger.severe("Unable to create Menu Item: " + e.message)
-            e.printStackTrace() //To change body of catch statement use Options | File Templates.
+        }
+        if (action is ItemListener) {
+            menuItem.addItemListener(action as ItemListener)
         }
         return menuItem
     }
@@ -346,8 +334,8 @@ object MenuHandler : DefaultHandler() {
         return action
     }
 
-    private fun getAccelerator(key: String?): KeyStroke? {
-        return if (key != null && key.isNotEmpty()) {
+    private fun getAccelerator(key: String): KeyStroke? {
+        return if (key.isNotEmpty()) {
             KeyStroke.getKeyStroke(key)
         } else null
     }
@@ -367,16 +355,18 @@ object MenuHandler : DefaultHandler() {
 
     fun addSampleFontMapMenuItem(
         menu: JMenu,
-        fileName: String?
+        fileName: String
     ) {
         addReOpenItem(menu, fileName, OpenSampleFontMapAction(), false)
     }
 
     fun addReOpenItem(
         menu: JMenu,
-        fileName: String?, action: Action = ReOpenFontMapAction(), checkInCache: Boolean = true
+        fileName: String,
+        action: Action = ReOpenFontMapAction(),
+        checkInCache: Boolean = true
     ) {
-        require(!fileName.isNullOrBlank()) { "Invalid File name: $fileName" }
+        require(!fileName.isBlank()) { "Invalid File name: $fileName" }
         var menuItem = menuItems[fileName]
         // check if the menu item already exists.. if not add new
         // this check is done only if cachecheck is enabled.. opensamplefontmap does not require this
@@ -397,14 +387,11 @@ object MenuHandler : DefaultHandler() {
     }
 
     fun disableMenuItem(fileName: String) {
-        disableMenuItem(
-            menus["ReOpen"],
-            fileName
-        )
+        disableMenuItem(menus["ReOpen"]!!, fileName)
     }
 
-    private fun disableMenuItem(menu: JMenu?, name: String) {
-        var count = menu!!.itemCount
+    private fun disableMenuItem(menu: JMenu, name: String) {
+        var count = menu.itemCount
         var i = 0
         while (count > 2) {
             val menuItem = menu.getItem(i++)
@@ -415,13 +402,11 @@ object MenuHandler : DefaultHandler() {
     }
 
     fun enableReOpenItems() {
-        enableReOpenItems(
-            menus["ReOpen"]
-        )
+        enableReOpenItems(menus["ReOpen"]!!)
     }
 
-    fun enableReOpenItems(menu: JMenu?) {
-        var count = menu!!.itemCount
+    fun enableReOpenItems(menu: JMenu) {
+        var count = menu.itemCount
         var i = 0
         while (count > 2) {
             val menuItem = menu.getItem(i++)
@@ -431,10 +416,8 @@ object MenuHandler : DefaultHandler() {
         menu.isEnabled = menu.itemCount > 2
     }
 
-    fun enableItemsInReOpenMenu(
-        fontMap: FontMap
-    ) {
-        val menu = menus["ReOpen"]
+    fun enableItemsInReOpenMenu(fontMap: FontMap) {
+        val menu = menus["ReOpen"]!!
         if (fontMap.isNew) {
             enableReOpenItems(menu)
         } else {

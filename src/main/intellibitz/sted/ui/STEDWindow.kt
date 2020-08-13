@@ -148,11 +148,11 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         }
         val reopenItems = getSettingBeginsWith("ReOpen")
         if (reopenItems.isNotEmpty()) {
-            val menu = MenuHandler.menus["ReOpen"]
+            val menu = MenuHandler.menus["ReOpen"]!!
             for (reopenItem in reopenItems) {
-                MenuHandler.addReOpenItem(menu!!, reopenItem)
+                MenuHandler.addReOpenItem(menu, reopenItem!!)
             }
-            menu!!.isEnabled = menu.itemCount > 2
+            menu.isEnabled = menu.itemCount > 2
         }
 
         // set the sample fontmap action

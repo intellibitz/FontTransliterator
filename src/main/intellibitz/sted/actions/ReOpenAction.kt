@@ -93,9 +93,9 @@ class ReOpenAction : ReOpenFontMapAction(), FontMapChangeListener, InternalFrame
     fun addItemToReOpenMenu() {
         val fontMap = stedWindow.desktop
             .fontMap
-        val menu = MenuHandler.menus["ReOpen"]
+        val menu = MenuHandler.menus["ReOpen"]!!
         if (!fontMap.isNew) {
-            MenuHandler.addReOpenItem(menu!!, fontMap.fileName)
+            MenuHandler.addReOpenItem(menu, fontMap.fileName)
         }
         MenuHandler.enableReOpenItems(menu)
     }
