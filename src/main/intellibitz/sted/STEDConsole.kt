@@ -1,12 +1,13 @@
 package sted
 
-import sted.Main.addLogger
 import sted.event.IThreadListener
 import sted.event.ThreadEvent
 import sted.fontmap.Converter
 import sted.fontmap.FontMap
 import sted.io.FontMapReader
+import sted.io.Resources
 import java.io.File
+import java.util.logging.LogManager
 import java.util.logging.Logger
 import kotlin.system.exitProcess
 
@@ -16,6 +17,8 @@ object STEDConsole : IThreadListener {
     private lateinit var outputFileName: String
     var reverse = false
     private var html = false
+    val logger: Logger = Logger.getLogger(STEDConsole::class.java.name)
+    private val logManager: LogManager = LogManager.getLogManager()
 
     private fun run() {
         try {
@@ -94,7 +97,12 @@ object STEDConsole : IThreadListener {
     }
 
     private fun run(args: Array<String>) {
-        addLogger(logger)
+        Resources.init()
+        val resource = Resources.getResource("config.log")
+        if (!resource.isNullOrEmpty()) {
+            logManager.readConfiguration(ClassLoader.getSystemResourceAsStream(resource))
+        }
+        logManager.addLogger(logger)
         logger.info("Launching STED Console: ")
         loadArgs(args)
         run()
@@ -111,7 +119,6 @@ object STEDConsole : IThreadListener {
         )
     }
 
-    val logger: Logger = Logger.getLogger(STEDConsole::class.java.name)
 
     @JvmStatic
     fun main(args: Array<String>) {

@@ -7,8 +7,7 @@ import sted.event.StatusEvent
 import sted.fontmap.FontMap
 import sted.io.Resources.cleanIcon
 import sted.io.Resources.dirtyIcon
-import sted.io.Resources.getSetting
-import sted.io.Resources.getSystemResourceIcon
+import sted.io.Resources.getResourceIcon
 import sted.io.Resources.lockIcon
 import sted.io.Resources.unLockIcon
 import sted.widgets.GCButton
@@ -68,11 +67,11 @@ class StatusPanel : JPanel(), TableModelListener, ListSelectionListener, FontMap
         add(panel3)
         gridBagLayout.setConstraints(memoryBar, gridBagConstraints)
         add(memoryBar)
-        val imageIcon: Icon? = getSystemResourceIcon(getSetting("icon.gc"))
+        val imageIcon: Icon? = getResourceIcon("icon.gc")
         val gcButton = GCButton()
         gcButton.load(
-            imageIcon, getSystemResourceIcon(
-                getSetting("icon.gc.rollover")
+            imageIcon, getResourceIcon(
+                "icon.gc.rollover"
             )
         )
         gridBagLayout.setConstraints(gcButton, gridBagConstraints)

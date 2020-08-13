@@ -17,8 +17,17 @@ import javax.swing.UIManager
 import javax.swing.UnsupportedLookAndFeelException
 
 object STEDGUI {
+    val logger: Logger = Logger.getLogger(STEDGUI::class.java.name)
+    val sTEDWindow: STEDWindow = STEDWindow()
+    private val logManager: LogManager = LogManager.getLogManager()
+
     fun run() {
-        logManager = Main.logManager
+        Resources.init()
+        Resources.init()
+        val resource = Resources.getResource("config.log")
+        if (!resource.isNullOrEmpty()) {
+            logManager.readConfiguration(ClassLoader.getSystemResourceAsStream(resource))
+        }
         logManager.addLogger(logger)
         logger.info("Launching STED GUI: ")
         val splashWindow = SplashWindow(AboutText.instance)
@@ -51,10 +60,6 @@ object STEDGUI {
         splashWindow.setProgress(100)
         splashWindow.dispose()
     }
-
-    val logger: Logger = Logger.getLogger(STEDGUI::class.java.name)
-    val sTEDWindow: STEDWindow = STEDWindow()
-    private lateinit var logManager: LogManager
 
     fun busy() {
         sTEDWindow.cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)

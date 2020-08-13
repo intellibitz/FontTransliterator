@@ -5,7 +5,7 @@ import org.xml.sax.SAXException
 import org.xml.sax.helpers.DefaultHandler
 import sted.actions.*
 import sted.fontmap.FontMap
-import sted.io.Resources.getSystemResourceIcon
+import sted.io.Resources.getResourceIcon
 import java.awt.event.ItemListener
 import java.io.IOException
 import java.util.*
@@ -208,7 +208,7 @@ object MenuHandler : DefaultHandler() {
             val action = newActionInstance(name)
             action?.putValue(Action.NAME, name)
             if (ic != null) {
-                val icon: Icon? = getSystemResourceIcon(ic)
+                val icon: Icon? = getResourceIcon(ic)
                 //                imageIcons.put(name, icon);
                 action?.putValue(Action.SMALL_ICON, icon)
             }

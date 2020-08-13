@@ -6,10 +6,10 @@ import sted.actions.STEDWindowAction
 import sted.event.*
 import sted.io.FileHelper.getSampleFontMapPaths
 import sted.io.FileReaderThread
+import sted.io.Resources
 import sted.io.Resources.getResource
 import sted.io.Resources.getSetting
 import sted.io.Resources.getSettingBeginsWith
-import sted.io.Resources.getSystemResourceIcon
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.util.logging.LogManager
@@ -34,7 +34,7 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         extendedState = MAXIMIZED_BOTH
         defaultCloseOperation = DO_NOTHING_ON_CLOSE
         title = getResource("title")
-        val imageIcon = getSystemResourceIcon(getSetting("icon.sted"))
+        val imageIcon = Resources.sTEDIcon
         if (imageIcon != null) iconImage = imageIcon.image
         statusEvent = StatusEvent(this)
         logManager.addLogger(logger)

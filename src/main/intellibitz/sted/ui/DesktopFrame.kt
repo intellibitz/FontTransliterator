@@ -8,7 +8,7 @@ import sted.fontmap.FontMap
 import sted.io.Resources.cleanIcon
 import sted.io.Resources.dirtyIcon
 import sted.io.Resources.getResource
-import sted.io.Resources.getSystemResourceIcon
+import sted.io.Resources.getResourceIcon
 import sted.io.Resources.sTEDIcon
 import java.beans.PropertyVetoException
 import java.io.File
@@ -53,28 +53,24 @@ class DesktopFrame : JInternalFrame(), TableModelListener, FontMapChangeListener
             mapperPanel,
             getResource("tip.tab.fontmap")
         )
-        inputFileViewer.frameIcon = getSystemResourceIcon(getResource("icon.file.input"))
+        inputFileViewer.frameIcon = getResourceIcon("icon.file.input")
 
         // adds the input file viewer as one of the tab
         tabbedPane.addTab(
             getResource("title.tab.input"),
-            getSystemResourceIcon(
-                getResource(
-                    "icon.file.input"
-                )
+            getResourceIcon(
+                "icon.file.input"
             ),
             inputFileViewer
         )
         outputFileViewer.frameIcon =
-            getSystemResourceIcon(getResource("icon.file.output"))
+            getResourceIcon("icon.file.output")
 
         // adds the output file viewer as one of the tab
         tabbedPane.addTab(
             getResource("title.tab.output"),
-            getSystemResourceIcon(
-                getResource(
-                    "icon.file.output"
-                )
+            getResourceIcon(
+                "icon.file.output"
             ),
             outputFileViewer
         )

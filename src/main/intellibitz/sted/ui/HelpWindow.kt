@@ -4,7 +4,7 @@ import sted.event.IMessageEventSource
 import sted.event.IMessageListener
 import sted.event.MessageEvent
 import sted.io.Resources.getResource
-import sted.io.Resources.getSystemResourceIcon
+import sted.io.Resources.getResourceIcon
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.io.File
@@ -30,28 +30,28 @@ class HelpWindow private constructor() : JFrame(), HyperlinkListener, IMessageEv
     private var messageListener: IMessageListener? = null
     private fun load() {
         title = getResource("title.help")
-        val imageIcon = getSystemResourceIcon(
-            getResource("icon.help")
+        val imageIcon = getResourceIcon(
+            "icon.help"
         )
         if (imageIcon != null) iconImage = imageIcon.image
         val jToolBar = JToolBar(JToolBar.HORIZONTAL)
         jToolBar.isFloatable = false
-        homeButton.icon = getSystemResourceIcon(
-            getResource("icon.help.home")
+        homeButton.icon = getResourceIcon(
+            "icon.help.home"
         )
         homeButton.addActionListener { goHome() }
         homeButton.toolTipText = "Table Of Contents"
         //
         jToolBar.add(homeButton)
-        backButton.icon = getSystemResourceIcon(
-            getResource("icon.help.back")
+        backButton.icon = getResourceIcon(
+            "icon.help.back"
         )
         backButton.addActionListener { goBack() }
         backButton.toolTipText = "Back"
         //
         jToolBar.add(backButton)
-        forwardButton.icon = getSystemResourceIcon(
-            getResource("icon.help.forward")
+        forwardButton.icon = getResourceIcon(
+            "icon.help.forward"
         )
         forwardButton.addActionListener { goForward() }
         forwardButton.toolTipText = "Forward"
