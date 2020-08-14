@@ -17,7 +17,6 @@ object MenuHandler : DefaultHandler() {
     private val menuBar: JMenuBar = JMenuBar()
     private val toolBar: JToolBar = JToolBar()
     private val popupMenu: JPopupMenu = JPopupMenu()
-    private var isPopup = false
 
     val actions: MutableMap<String, Action> = HashMap()
     val toolTips: MutableMap<String, String> = HashMap()
@@ -41,29 +40,20 @@ object MenuHandler : DefaultHandler() {
 
     @Throws(SAXException::class)
     override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
-        if ("menubar" == qName) {
-            menuBar.name = attributes.getValue("name")
-            popupMenu.name = attributes.getValue("menuPopupName")
-            toolBar.name = attributes.getValue("toolBarName")
-            toolBar.orientation = JToolBar.HORIZONTAL
-            toolBar.isFloatable = false
-            toolBar.isRollover = true
-        } else if ("menupopup" == qName) {
-            isPopup = true
-        } else if ("menu" == qName) {
-            isPopup = false
-            stack.push(createMenu(attributes))
-        } else if ("menuitem" == qName) {
-            if (isPopup) {
-                createPopupMenuItem(attributes)
-            } else {
-                createMenuItem(attributes, stack.peek())
+        when (qName) {
+            "menubar" -> {
+                menuBar.name = attributes.getValue("name")
+                popupMenu.name = attributes.getValue("menuPopupName")
+                toolBar.name = attributes.getValue("toolBarName")
+                toolBar.orientation = JToolBar.HORIZONTAL
+                toolBar.isFloatable = false
+                toolBar.isRollover = true
             }
-        } else if ("menuitemref" == qName) {
-            if (isPopup) {
-                createPopupMenuItemRef(attributes)
-            } else {
-                createMenuItemRef(attributes, stack.peek())
+            "menu" -> {
+                stack.push(createMenu(attributes))
+            }
+            "menuitem" -> {
+                createMenuItem(attributes, stack.peek())
             }
         }
     }
@@ -91,6 +81,18 @@ object MenuHandler : DefaultHandler() {
         }
     }
 
+    private fun createMenuItem(attributes: Attributes, menu: JMenu) {
+        val menuItem = createMenuItem(attributes)
+        menu.add(menuItem)
+        if (attributes.getValue("separator").toBoolean()) menu.addSeparator()
+        if (attributes.getValue("popup").toBoolean())
+            popupMenu.add(menuItem)
+        if (attributes.getValue("popupSep").toBoolean()) {
+            popupMenu.add(menuItem)
+            popupMenu.addSeparator()
+        }
+    }
+
     @Throws(ClassNotFoundException::class, IllegalAccessException::class, InstantiationException::class)
     private fun createMenu(attributes: Attributes): JMenu {
         val menu = JMenu()
@@ -107,69 +109,8 @@ object MenuHandler : DefaultHandler() {
             menu.action = action
             actions[name] = action!!
         }
-        menu.isEnabled = java.lang.Boolean.parseBoolean(attributes.getValue("actionEnabled"))
+        menu.isEnabled = attributes.getValue("actionEnabled").toBoolean()
         return menu
-    }
-
-    private fun createMenuItemRef(attributes: Attributes): JMenuItem {
-        val menuItem = menuItems[attributes.getValue("name")]
-        val cloned = JMenuItem(menuItem!!.action)
-        cloned.name = menuItem.name
-        cloned.text = menuItem.text
-        cloned.isSelected = menuItem.isSelected
-        cloned.horizontalTextPosition = menuItem.horizontalTextPosition
-        val itemListeners = menuItem.itemListeners
-        if (itemListeners != null) {
-            for (itemListener in itemListeners) {
-                cloned.addItemListener(itemListener)
-            }
-        }
-        return cloned
-    }
-
-    private fun createMenuItemRef(attributes: Attributes, menu: JMenu) {
-        val name = attributes.getValue("name")
-        if ("::separator" == name) {
-            menu.addSeparator()
-        } else {
-            menu.add(createMenuItemRef(attributes))
-        }
-    }
-
-    private fun createMenuItem(attributes: Attributes, menu: JMenu) {
-        val name = attributes.getValue("name")
-        if ("::separator" == name) {
-            menu.addSeparator()
-        } else {
-            val menuItem = createMenuItem(attributes)
-            menu.add(menuItem)
-            val popupSep = attributes.getValue("popupWithSep").toBoolean()
-            if (popupSep) {
-                popupMenu.add(menuItem)
-                popupMenu.addSeparator()
-            }
-            val popup = attributes.getValue("popup").toBoolean()
-            if (popup)
-                popupMenu.add(menuItem)
-        }
-    }
-
-    private fun createPopupMenuItemRef(attributes: Attributes) {
-        val name = attributes.getValue("name")
-        if ("::separator" == name) {
-            popupMenu.addSeparator()
-        } else {
-            popupMenu.add(createMenuItemRef(attributes))
-        }
-    }
-
-    private fun createPopupMenuItem(attributes: Attributes) {
-        val name = attributes.getValue("name")
-        if ("::separator" == name) {
-            popupMenu.addSeparator()
-        } else {
-            popupMenu.add(createMenuItem(attributes))
-        }
     }
 
     private fun createMenuItem(attributes: Attributes): JMenuItem {
@@ -330,6 +271,24 @@ object MenuHandler : DefaultHandler() {
         return action
     }
 
+/*
+    private fun createMenuItemRef(attributes: Attributes): JMenuItem {
+        val menuItem = menuItems[attributes.getValue("name")]
+        val cloned = JMenuItem(menuItem!!.action)
+        cloned.name = menuItem.name
+        cloned.text = menuItem.text
+        cloned.isSelected = menuItem.isSelected
+        cloned.horizontalTextPosition = menuItem.horizontalTextPosition
+        val itemListeners = menuItem.itemListeners
+        if (itemListeners != null) {
+            for (itemListener in itemListeners) {
+                cloned.addItemListener(itemListener)
+            }
+        }
+        return cloned
+    }
+*/
+
     private fun getAccelerator(key: String): KeyStroke? {
         return if (key.isNotEmpty()) {
             KeyStroke.getKeyStroke(key)
@@ -391,7 +350,7 @@ object MenuHandler : DefaultHandler() {
         var i = 0
         while (count > 2) {
             val menuItem = menu.getItem(i++)
-            menuItem.isEnabled = name != menuItem.name
+            menuItem?.isEnabled = name != menuItem?.name
             count--
         }
         menu.isEnabled = menu.itemCount > 2
@@ -406,7 +365,7 @@ object MenuHandler : DefaultHandler() {
         var i = 0
         while (count > 2) {
             val menuItem = menu.getItem(i++)
-            menuItem.isEnabled = true
+            menuItem?.isEnabled = true
             count--
         }
         menu.isEnabled = menu.itemCount > 2

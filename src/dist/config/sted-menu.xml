@@ -2,11 +2,9 @@
 <!DOCTYPE
         menubar
         [
-                <!ELEMENT menubar (menu+, menupopup*)    >
+                <!ELEMENT menubar (menu+)    >
                 <!ELEMENT menuitem (menuitem*)*>
-                <!ELEMENT menuitemref EMPTY>
-                <!ELEMENT menu (menuitem*, menuitemref*, menu*)*>
-                <!ELEMENT menupopup (menuitem*, menuitemref*, menu*)*    >
+                <!ELEMENT menu (menuitem*, menu*)*>
                 <!ATTLIST menubar
                         name ID #REQUIRED
                         toolBarName CDATA #IMPLIED
@@ -28,14 +26,9 @@
                         toolButton CDATA "javax.swing.JButton"
                         toolButtonVisible (true|false) "true"
                         toolButtonTextVisible (true|false) "false"
+                        separator (true|false) "false"
                         popup (true|false) "false"
-                        popupWithSep (true|false) "false"
-                        >
-                <!ATTLIST menuitemref
-                        name CDATA #REQUIRED
-                        >
-                <!ATTLIST menupopup
-                        name ID #REQUIRED
+                        popupSep (true|false) "false"
                         >
                 <!ATTLIST menu
                         name ID #REQUIRED
@@ -44,6 +37,7 @@
                         action CDATA #IMPLIED
                         toolButtonVisible (true|false) "false"
                         actionEnabled (true|false) "true"
+                        separator (true|false) "false"
                         >
                 ]>
 
@@ -74,9 +68,8 @@
                 icon="images/load.png"
                 action="sted.actions.OpenFontMapAction"
                 actionCommand="Open..."
+                separator="true"
         />
-        <menuitem
-                name="::separator"/>
         <menu
                 name="ReOpen"
                 type="javax.swing.JMenu"
@@ -84,9 +77,8 @@
                 action="sted.actions.ReOpenAction"
                 actionEnabled="false"
                 toolButtonVisible="false"
+                separator="true"
         >
-            <menuitem
-                    name="::separator"/>
             <menuitem
                     name="Clear List"
                     tooltip="Clear the list of ReOpen FontMap"
@@ -94,10 +86,9 @@
                     actionCommand="ClearList"
                     actionEnabled="true"
                     toolButtonVisible="false"
+                    separator="true"
             />
         </menu>
-        <menuitem
-                name="::separator"/>
         <menuitem
                 name="Save"
                 mnemonic="S"
@@ -117,9 +108,8 @@
                 actionCommand="Save As..."
                 actionEnabled="false"
                 toolButtonVisible="false"
+                separator="true"
         />
-        <menuitem
-                name="::separator"/>
         <menuitem
                 name="ReLoad from Disk"
                 mnemonic="k"
@@ -130,9 +120,8 @@
                 actionCommand="ReLoad"
                 actionEnabled="false"
                 toolButtonVisible="false"
+                separator="true"
         />
-        <menuitem
-                name="::separator"/>
         <menuitem
                 name="Close"
                 mnemonic="C"
@@ -143,9 +132,8 @@
                 actionCommand="Close"
                 actionEnabled="false"
                 toolButtonVisible="false"
+                separator="true"
         />
-        <menuitem
-                name="::separator"/>
         <menuitem
                 name="Exit"
                 mnemonic="X"
@@ -179,10 +167,9 @@
                 action="sted.actions.RedoAction"
                 actionEnabled="false"
                 actionCommand="Redo"
-                popupWithSep="true"
+                popupSep="true"
+                separator="true"
         />
-        <menuitem
-                name="::separator"/>
         <menuitem
                 name="Cut"
                 mnemonic="t"
@@ -214,10 +201,9 @@
                 action="sted.actions.PasteAction"
                 actionCommand="Paste"
                 actionEnabled="false"
-                popupWithSep="true"
+                popupSep="true"
+                separator="true"
         />
-        <menuitem
-                name="::separator"/>
         <menuitem
                 name="Select All"
                 mnemonic="A"
@@ -227,10 +213,9 @@
                 actionCommand="Select All"
                 actionEnabled="false"
                 toolButtonVisible="false"
-                popupWithSep="true"
+                popupSep="true"
+                separator="true"
         />
-        <menuitem
-                name="::separator"/>
         <menuitem
                 name="Delete"
                 mnemonic="D"
@@ -267,9 +252,8 @@
                 action="sted.actions.FileSelectAction"
                 actionEnabled="false"
                 actionCommand="Output"
+                separator="true"
         />
-        <menuitem
-                name="::separator"/>
         <menuitem
                 name="Convert"
                 mnemonic="C"
@@ -318,9 +302,8 @@
                 actionMode="off"
                 toolButton="javax.swing.JCheckBox"
                 toolButtonTextVisible="true"
+                separator="true"
         />
-        <menuitem
-                name="::separator"/>
         <menu
                 name="Look &amp; Feel"
                 mnemonic="L"
@@ -349,9 +332,8 @@
                 action="sted.actions.ViewAction$ViewStatus"
                 actionCommand="ViewStatus"
                 toolButtonVisible="false"
+                separator="true"
         />
-        <menuitem
-                name="::separator"/>
         <menuitem
                 name="Mapping Rules"
                 type="javax.swing.JCheckBoxMenuItem"
@@ -392,9 +374,8 @@
                 icon="images/help.png"
                 action="sted.actions.HelpAction"
                 actionCommand="Help"
+                separator="true"
         />
-        <menuitem
-                name="::separator"/>
         <menuitem
                 name="About"
                 mnemonic="A"
