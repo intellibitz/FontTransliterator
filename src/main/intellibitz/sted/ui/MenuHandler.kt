@@ -43,13 +43,13 @@ object MenuHandler : DefaultHandler() {
     override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
         if ("menubar" == qName) {
             menuBar.name = attributes.getValue("name")
+            popupMenu.name = attributes.getValue("menuPopupName")
             toolBar.name = attributes.getValue("toolBarName")
             toolBar.orientation = JToolBar.HORIZONTAL
             toolBar.isFloatable = false
             toolBar.isRollover = true
         } else if ("menupopup" == qName) {
             isPopup = true
-            popupMenu.name = attributes.getValue("name")
         } else if ("menu" == qName) {
             isPopup = false
             stack.push(createMenu(attributes))
@@ -75,6 +75,7 @@ object MenuHandler : DefaultHandler() {
                 menuBars[menuBar.name] = menuBar
                 toolBar.add(Box.createVerticalGlue())
                 toolBars[toolBar.name] = toolBar
+                popupMenus[popupMenu.name] = popupMenu
             }
             "menu" -> {
                 val menu = stack.pop()
@@ -86,11 +87,6 @@ object MenuHandler : DefaultHandler() {
                     parent.add(menu)
                 }
                 menus[menu.name] = menu
-            }
-            "menuitem" -> {
-            }
-            "menupopup" -> {
-                popupMenus[popupMenu.name] = popupMenu
             }
         }
     }
@@ -145,7 +141,16 @@ object MenuHandler : DefaultHandler() {
         if ("::separator" == name) {
             menu.addSeparator()
         } else {
-            menu.add(createMenuItem(attributes))
+            val menuItem = createMenuItem(attributes)
+            menu.add(menuItem)
+            val popupSep = attributes.getValue("popupWithSep").toBoolean()
+            if (popupSep) {
+                popupMenu.add(menuItem)
+                popupMenu.addSeparator()
+            }
+            val popup = attributes.getValue("popup").toBoolean()
+            if (popup)
+                popupMenu.add(menuItem)
         }
     }
 

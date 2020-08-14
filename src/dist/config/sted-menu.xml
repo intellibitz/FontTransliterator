@@ -10,7 +10,8 @@
                 <!ATTLIST menubar
                         name ID #REQUIRED
                         toolBarName CDATA #IMPLIED
-                        description CDATA "enter menubar description here"
+                        menuPopupName CDATA #IMPLIED
+                        description CDATA #IMPLIED
                         >
                 <!ATTLIST menuitem
                         name CDATA #REQUIRED
@@ -27,6 +28,8 @@
                         toolButton CDATA "javax.swing.JButton"
                         toolButtonVisible (true|false) "true"
                         toolButtonTextVisible (true|false) "false"
+                        popup (true|false) "false"
+                        popupWithSep (true|false) "false"
                         >
                 <!ATTLIST menuitemref
                         name CDATA #REQUIRED
@@ -47,6 +50,7 @@
 <menubar
         name="STED-MenuBar"
         toolBarName="STED-MenuBar"
+        menuPopupName="Mapping"
         description="The STED Application MenuBar">
 
     <menu
@@ -164,6 +168,7 @@
                 action="sted.actions.UndoAction"
                 actionEnabled="false"
                 actionCommand="Undo"
+                popup="true"
         />
         <menuitem
                 name="Redo"
@@ -174,6 +179,7 @@
                 action="sted.actions.RedoAction"
                 actionEnabled="false"
                 actionCommand="Redo"
+                popupWithSep="true"
         />
         <menuitem
                 name="::separator"/>
@@ -186,6 +192,7 @@
                 action="sted.actions.CutAction"
                 actionCommand="Cut"
                 actionEnabled="false"
+                popup="true"
         />
         <menuitem
                 name="Copy"
@@ -196,6 +203,7 @@
                 action="sted.actions.CopyAction"
                 actionCommand="Copy"
                 actionEnabled="false"
+                popup="true"
         />
         <menuitem
                 name="Paste"
@@ -206,6 +214,7 @@
                 action="sted.actions.PasteAction"
                 actionCommand="Paste"
                 actionEnabled="false"
+                popupWithSep="true"
         />
         <menuitem
                 name="::separator"/>
@@ -218,6 +227,7 @@
                 actionCommand="Select All"
                 actionEnabled="false"
                 toolButtonVisible="false"
+                popupWithSep="true"
         />
         <menuitem
                 name="::separator"/>
@@ -231,6 +241,7 @@
                 actionCommand="Delete"
                 actionEnabled="false"
                 toolButtonVisible="false"
+                popup="true"
         />
     </menu>
     <menu
@@ -394,35 +405,6 @@
         />
     </menu>
 
-    <menupopup name="Mapping">
-        <menuitemref
-                name="Undo"
-        />
-        <menuitemref
-                name="Redo"
-        />
-        <menuitemref
-                name="::separator"/>
-        <menuitemref
-                name="Cut"
-        />
-        <menuitemref
-                name="Copy"
-        />
-        <menuitemref
-                name="Paste"
-        />
-        <menuitemref
-                name="::separator"/>
-        <menuitemref
-                name="Select All"
-        />
-        <menuitemref
-                name="::separator"/>
-        <menuitemref
-                name="Delete"
-        />
-    </menupopup>
 </menubar>
 
 
