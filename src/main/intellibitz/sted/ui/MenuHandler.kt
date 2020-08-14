@@ -7,11 +7,13 @@ import sted.actions.*
 import sted.fontmap.FontMap
 import sted.io.Resources.getResourceIcon
 import java.awt.event.ItemListener
+import java.io.BufferedReader
 import java.io.IOException
 import java.util.*
 import javax.swing.*
 import javax.xml.parsers.ParserConfigurationException
 import javax.xml.parsers.SAXParserFactory
+import kotlin.js.ExperimentalJsExport
 
 object MenuHandler : DefaultHandler() {
     val menuBar: JMenuBar = JMenuBar()
@@ -30,7 +32,7 @@ object MenuHandler : DefaultHandler() {
 
 
     @Throws(SAXException::class, ParserConfigurationException::class, IOException::class)
-    internal fun loadMenu(xml: String) {
+    internal fun loadMenu(resource: String) {
         menuBar.name = "STED-Menubar"
         popupMenu.name = "Mapping"
         toolBar.name = menuBar.name
@@ -39,12 +41,25 @@ object MenuHandler : DefaultHandler() {
         toolBar.isRollover = true
         toolBar.add(Box.createVerticalGlue())
 
+        val files = resource.split(",")
         val saxParserFactory = SAXParserFactory.newDefaultNSInstance()
         saxParserFactory.isValidating = true
         saxParserFactory.isNamespaceAware = true
         val saxParser = saxParserFactory.newSAXParser()
-        saxParser.parse(ClassLoader.getSystemResourceAsStream(xml), this)
+        saxParser.parse(ClassLoader.getSystemResourceAsStream(files[0]), this)
 
+        parseJson(files[1])
+
+    }
+
+    private fun parseJson(s: String) {
+        val stream = ClassLoader.getSystemResourceAsStream(s)
+        if (stream != null){
+            val reader: BufferedReader = stream.bufferedReader()
+            reader.forEachLine {
+
+            }
+        }
     }
 
     @Throws(SAXException::class)
