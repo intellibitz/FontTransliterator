@@ -51,6 +51,7 @@ object MenuHandler : DefaultHandler() {
     override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
         when (qName) {
             "menuitem" -> {
+                if ("::ROOT" == attributes.getValue("name")) return
                 val menuItem = createMenuItem(attributes)
                 if (menuItem is JMenu) {
                     stack.push(menuItem)
@@ -92,6 +93,7 @@ object MenuHandler : DefaultHandler() {
     }
 
     private fun endMenu() {
+        if (stack.isEmpty()) return
         val menu = stack.pop()
 //        println("pop ${menu.name}")
         if (stack.isEmpty()) {

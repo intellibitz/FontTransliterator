@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
 <!DOCTYPE
-        menuitems
+        menuitem
         [
-                <!ELEMENT menuitems (menuitem+)*>
                 <!ELEMENT menuitem (menuitem*)*>
                 <!ATTLIST menuitem
                         type CDATA "javax.swing.JMenuItem"
@@ -23,7 +22,9 @@
                         lastMenu (true|false) "false"
                         >
                 ]>
-<menuitems>
+<menuitem
+        name="::ROOT"
+>
     <menuitem
             type="javax.swing.JMenu"
             name="FontMap"
@@ -351,6 +352,4 @@
                 toolButton="javax.swing.JButton"
         />
     </menuitem>
-</menuitems>
-
-
+</menuitem>
