@@ -4,14 +4,15 @@ plugins {
     // Apply the java application plugin to add support for building a CLI application.
     application
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-//    kotlin("jvm") version "1.4.0-rc"
-    kotlin("multiplatform") version "1.4.0-rc"
+    kotlin("jvm") version "1.4.0-rc"
+//    kotlin("multiplatform") version "1.4.0-rc"
 //    kotlin("js") version "1.4.0-rc"
 //    kotlin("kapt") version "1.4.0-rc"
 //    kotlin("plugin.serialization") version "1.4.0-rc"
 //    id("org.jetbrains.dokka") version "1.4.0-rc"
 }
 
+/*
 kotlin{
     jvm{
         withJava()
@@ -20,6 +21,7 @@ kotlin{
         browser()
     }
 }
+*/
 
 repositories {
     mavenCentral()
@@ -63,11 +65,11 @@ sourceSets {
 }
 
 dependencies {
-    implementation(kotlin("script-runtime"))
     // Use the Kotlin JDK 8 standard library.
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("stdlib-common"))
     implementation(kotlin("stdlib-js"))
+    implementation(kotlin("script-runtime"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
     // Align versions of all Kotlin components
 //    implementation(kotlin("bom"))
