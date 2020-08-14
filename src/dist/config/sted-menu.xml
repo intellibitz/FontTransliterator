@@ -10,7 +10,7 @@
                         mnemonic CDATA #IMPLIED
                         actionEnabled (true|false) "true"
                         separator (true|false) "false"
-                        accelerator CDATA "#IMPLIED"
+                        accelerator CDATA ""
                         tooltip CDATA "Menu item"
                         icon CDATA #IMPLIED
                         actionCommand CDATA #IMPLIED
