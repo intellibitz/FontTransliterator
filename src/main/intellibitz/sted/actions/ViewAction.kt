@@ -19,7 +19,7 @@ open class ViewAction : ItemListenerAction() {
 
     class ViewToolBar : ViewAction() {
         override fun itemStateChanged(e: ItemEvent) {
-            MenuHandler.toolBars["STED-MenuBar"]?.isVisible = ItemEvent.SELECTED == e.stateChange
+            MenuHandler.toolBar.isVisible = ItemEvent.SELECTED == e.stateChange
         }
     }
 

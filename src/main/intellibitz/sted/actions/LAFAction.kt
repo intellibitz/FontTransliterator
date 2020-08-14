@@ -18,7 +18,7 @@ class LAFAction : STEDWindowAction() {
             collection.add(help)
             val aboutDialog = AboutSTED.instance
             collection.add(aboutDialog)
-            val component: Component? = MenuHandler.popupMenus["Mapping"]
+            val component: Component? = MenuHandler.popupMenu
             if (null != component) {
                 collection.add(component)
             }

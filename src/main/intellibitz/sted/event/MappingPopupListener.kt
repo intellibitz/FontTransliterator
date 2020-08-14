@@ -8,9 +8,9 @@ import javax.swing.JPopupMenu
 import javax.swing.JTable
 
 class MappingPopupListener : MouseAdapter() {
-    private var popupMenu: JPopupMenu? = null
+    private var popupMenu: JPopupMenu = MenuHandler.popupMenu
     fun load() {
-        popupMenu = MenuHandler.popupMenus["Mapping"]
+        popupMenu = MenuHandler.popupMenu
     }
 
     override fun mousePressed(e: MouseEvent) {
@@ -24,7 +24,7 @@ class MappingPopupListener : MouseAdapter() {
     private fun maybeShowPopup(e: MouseEvent) {
         if (e.isPopupTrigger) {
             setTableOnAction(e.source as JTable)
-            popupMenu!!.show(e.component, e.x, e.y)
+            popupMenu.show(e.component, e.x, e.y)
         }
     }
 

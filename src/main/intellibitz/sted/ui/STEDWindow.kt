@@ -38,11 +38,10 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         if (imageIcon != null) iconImage = imageIcon.image
         statusEvent = StatusEvent(this)
         logManager.addLogger(logger)
-        val menuBar = MenuHandler.menuBars["STED-MenuBar"]
         MenuHandler.loadLookAndFeelMenu()
 
         // load the menubar for the application
-        jMenuBar = menuBar
+        jMenuBar = MenuHandler.menuBar
         fireStatusPosted("20")
         val container = contentPane
         val gridBagLayout = GridBagLayout()
@@ -56,11 +55,10 @@ class STEDWindow : JFrame(), IThreadListener, ChangeListener, IMessageListener, 
         gridBagConstraints.gridy = 0
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL
         fireStatusPosted("30")
-        val toolBar = MenuHandler.toolBars["STED-MenuBar"]
-        gridBagLayout.setConstraints(toolBar, gridBagConstraints)
+        gridBagLayout.setConstraints(MenuHandler.toolBar, gridBagConstraints)
 
         // adds the toolbar for the app
-        container.add(toolBar)
+        container.add(MenuHandler.toolBar)
         fireStatusPosted("40")
 
         desktop.init()

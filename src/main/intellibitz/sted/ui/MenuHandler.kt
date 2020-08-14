@@ -14,46 +14,62 @@ import javax.xml.parsers.ParserConfigurationException
 import javax.xml.parsers.SAXParserFactory
 
 object MenuHandler : DefaultHandler() {
-    private val menuBar: JMenuBar = JMenuBar()
-    private val toolBar: JToolBar = JToolBar()
-    private val popupMenu: JPopupMenu = JPopupMenu()
+    val menuBar: JMenuBar = JMenuBar()
+    val menuItems: MutableMap<String, JMenuItem> = HashMap()
+    val menus: MutableMap<String, JMenu> = HashMap()
+    val toolBar: JToolBar = JToolBar()
+    val popupMenu: JPopupMenu = JPopupMenu()
 
     val actions: MutableMap<String, Action> = HashMap()
     val toolTips: MutableMap<String, String> = HashMap()
     val toolButtons: MutableMap<String, AbstractButton> = HashMap()
-    val menuItems: MutableMap<String, JMenuItem> = HashMap()
-    val menus: MutableMap<String, JMenu> = HashMap()
-    val popupMenus: MutableMap<String, JPopupMenu> = HashMap()
-    val menuBars: MutableMap<String, JMenuBar> = HashMap()
-    val toolBars: MutableMap<String, JToolBar> = HashMap()
+
     private val stack = Stack<JMenu>()
+    private var menuItemLast: Boolean = false
+    private var menuItemMenuLast: Boolean = false
 
 
     @Throws(SAXException::class, ParserConfigurationException::class, IOException::class)
     internal fun loadMenu(xml: String) {
+        menuBar.name = "STED-Menubar"
+        popupMenu.name = "Mapping"
+        toolBar.name = menuBar.name
+        toolBar.orientation = JToolBar.HORIZONTAL
+        toolBar.isFloatable = false
+        toolBar.isRollover = true
+        toolBar.add(Box.createVerticalGlue())
+
         val saxParserFactory = SAXParserFactory.newDefaultNSInstance()
         saxParserFactory.isValidating = true
         saxParserFactory.isNamespaceAware = true
         val saxParser = saxParserFactory.newSAXParser()
         saxParser.parse(ClassLoader.getSystemResourceAsStream(xml), this)
+
     }
 
     @Throws(SAXException::class)
     override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
         when (qName) {
-            "menubar" -> {
-                menuBar.name = attributes.getValue("name")
-                popupMenu.name = attributes.getValue("menuPopupName")
-                toolBar.name = attributes.getValue("toolBarName")
-                toolBar.orientation = JToolBar.HORIZONTAL
-                toolBar.isFloatable = false
-                toolBar.isRollover = true
-            }
-            "menu" -> {
-                stack.push(createMenu(attributes))
-            }
             "menuitem" -> {
-                createMenuItem(attributes, stack.peek())
+                val menuItem = createMenuItem(attributes)
+                if (menuItem is JMenu) {
+                    stack.push(menuItem)
+//                    println("pushed ${menuItem.name}")
+                } else {
+                    val menu = stack.peek()
+                    menu.add(menuItem)
+                    menuItems[menuItem.name] = menuItem
+//                    println("added to menu ${menu.name} : ${menuItem.name}")
+                    if (attributes.getValue("separator").toBoolean()) menu.addSeparator()
+                    if (attributes.getValue("popup").toBoolean())
+                        popupMenu.add(menuItem)
+                    if (attributes.getValue("popupSep").toBoolean()) {
+                        popupMenu.add(menuItem)
+                        popupMenu.addSeparator()
+                    }
+                }
+                menuItemLast = attributes.getValue("last").toBoolean()
+                menuItemMenuLast = attributes.getValue("lastMenu").toBoolean()
             }
         }
     }
@@ -61,127 +77,98 @@ object MenuHandler : DefaultHandler() {
     @Throws(SAXException::class)
     override fun endElement(uri: String, localName: String, qName: String) {
         when (qName) {
-            "menubar" -> {
-                menuBars[menuBar.name] = menuBar
-                toolBar.add(Box.createVerticalGlue())
-                toolBars[toolBar.name] = toolBar
-                popupMenus[popupMenu.name] = popupMenu
-            }
-            "menu" -> {
-                val menu = stack.pop()
-                if (stack.isEmpty()) {
-                    toolBar.add(Box.createHorizontalStrut(5))
-                    menuBar.add(menu)
+            "menuitem" -> {
+                if (menuItemMenuLast) {
+                    endMenu()
+                    menuItemMenuLast = false
                 } else {
-                    val parent = stack.peek()
-                    parent.add(menu)
+                    if (menuItemLast) {
+                        endMenu()
+                        menuItemLast = false
+                    }
                 }
-                menus[menu.name] = menu
             }
         }
     }
 
-    private fun createMenuItem(attributes: Attributes, menu: JMenu) {
-        val menuItem = createMenuItem(attributes)
-        menu.add(menuItem)
-        if (attributes.getValue("separator").toBoolean()) menu.addSeparator()
-        if (attributes.getValue("popup").toBoolean())
-            popupMenu.add(menuItem)
-        if (attributes.getValue("popupSep").toBoolean()) {
-            popupMenu.add(menuItem)
-            popupMenu.addSeparator()
+    private fun endMenu() {
+        val menu = stack.pop()
+//        println("pop ${menu.name}")
+        if (stack.isEmpty()) {
+            toolBar.add(Box.createHorizontalStrut(5))
+            menuBar.add(menu)
+//            println("added to menubar ${menu.name}")
+        } else {
+            val parent = stack.peek()
+            parent.add(menu)
+//            println("added to parent ${parent.name}: ${menu.name}")
         }
-    }
-
-    @Throws(ClassNotFoundException::class, IllegalAccessException::class, InstantiationException::class)
-    private fun createMenu(attributes: Attributes): JMenu {
-        val menu = JMenu()
-        val name = attributes.getValue("name")
-        menu.name = name
-        menu.text = name
-        val mnemonic = attributes.getValue("mnemonic")
-        menu.setMnemonic(mnemonic[0])
-        val actionName = attributes.getValue("action")
-        if (null != actionName) {
-            val action = newActionInstance(name)
-            action?.putValue(Action.NAME, name)
-            action?.putValue(Action.MNEMONIC_KEY, mnemonic[0].toInt())
-            menu.action = action
-            actions[name] = action!!
-        }
-        menu.isEnabled = attributes.getValue("actionEnabled").toBoolean()
-        return menu
+        menus[menu.name] = menu
     }
 
     private fun createMenuItem(attributes: Attributes): JMenuItem {
-        val name = attributes.getValue("name")
         val type = attributes.getValue("type")
-        val ic = attributes.getValue("icon")
+        val menuItem: JMenuItem = Class.forName(type).getDeclaredConstructor().newInstance() as JMenuItem
+        val name = attributes.getValue("name")
+        menuItem.name = name
+        menuItem.text = name
+        menuItem.horizontalTextPosition = JMenuItem.RIGHT
+        val enabled = attributes.getValue("actionEnabled").toBoolean()
+        menuItem.isEnabled = enabled
+        menuItem.isSelected = attributes.getValue("actionMode").toBoolean()
+
         val tooltip = attributes.getValue("tooltip")
-        val shortcut = attributes.getValue("mnemonic")
         toolTips[name] = tooltip
-//            val value = attributes.getValue("action")
+
         val action = newActionInstance(name)
-        action?.putValue(Action.NAME, name)
-        if (ic != null) {
-            val icon: Icon? = getResourceIcon(ic)
-            //                imageIcons.put(name, icon);
-            action?.putValue(Action.SMALL_ICON, icon)
+        if (action != null) {
+            menuItem.action = action
+            if (action is ItemListener) {
+                menuItem.addItemListener(action as ItemListener)
+            }
+            actions[name] = action
+            action.putValue(Action.NAME, name)
+            action.putValue(Action.ACTION_COMMAND_KEY, attributes.getValue("actionCommand"))
+            action.putValue(Action.SHORT_DESCRIPTION, tooltip)
+            action.isEnabled = enabled
+            val ic = attributes.getValue("icon")
+            if (ic != null) {
+                action.putValue(Action.SMALL_ICON, getResourceIcon(ic))
+                //                imageIcons.put(name, icon);
+            }
+            action.putValue(
+                Action.ACCELERATOR_KEY,
+                getAccelerator(attributes.getValue("accelerator"))
+            )
+            val shortcut = attributes.getValue("mnemonic")
+            if (!shortcut.isNullOrEmpty()) {
+                val mnemonic = shortcut[0].toInt()
+                menuItem.mnemonic = mnemonic
+                action.putValue(Action.MNEMONIC_KEY, mnemonic)
+            }
         }
-        action?.putValue(Action.SHORT_DESCRIPTION, tooltip)
-        if (null != shortcut && shortcut.isNotEmpty()) {
-            action?.putValue(Action.MNEMONIC_KEY, shortcut[0].toInt())
-        }
-        action?.putValue(
-            Action.ACCELERATOR_KEY,
-            getAccelerator(attributes.getValue("accelerator"))
-        )
-        val cmd = attributes.getValue("actionCommand")
-        action?.putValue(Action.ACTION_COMMAND_KEY, cmd)
 //            val listener = attributes.getValue("listener")
         /*
         if (listener != null) {
             action.addPropertyChangeListener((PropertyChangeListener) Class.forName(listener).newInstance());
         }
 */
-        val enabled = attributes.getValue("actionEnabled")
-        if (enabled != null) {
-            action?.isEnabled = java.lang.Boolean.parseBoolean(enabled)
-        }
-        val menuItem: JMenuItem = Class.forName(type).getDeclaredConstructor().newInstance() as JMenuItem
-        menuItem.horizontalTextPosition = JMenuItem.RIGHT
-        menuItem.action = action
-        menuItem.isSelected = "on".equals(attributes.getValue("actionMode"), ignoreCase = true)
-        actions[name] = action!!
-// sub menu can be coming in as menuitem from xml, or json
-        if (menuItem is JMenu) {
-            menus[name] = menuItem
-//                stack.push(menuItem)
-        } else {
-            menuItems[name] = menuItem
-        }
+//        val buttonVisible = attributes.getValue("toolButtonVisible").toBoolean()
         val button = attributes.getValue("toolButton")
-        val buttonVisible = attributes.getValue("toolButtonVisible")
-        val buttonTextVisible = attributes.getValue("toolButtonTextVisible")
-        if ("true".equals(buttonVisible, ignoreCase = true)) {
+        if (!button.isNullOrEmpty()) {
             val component = Class.forName(button).getDeclaredConstructor().newInstance() as JComponent
-            component.toolTipText = tooltip
             if (component is AbstractButton) {
+                component.toolTipText = tooltip
+                toolButtons[name] = component
+                toolBar.add(component)
                 component.action = action
                 if (action is ItemListener) {
                     component.addItemListener(action as ItemListener)
                 }
-                if ("false".equals(buttonTextVisible, ignoreCase = true)) {
+                if (!attributes.getValue("toolButtonTextVisible").toBoolean()) {
                     component.text = ""
                 }
             }
-            toolBar.add(component)
-            if (component is AbstractButton) {
-                toolButtons[name] = component
-            }
-        }
-        if (action is ItemListener) {
-            menuItem.addItemListener(action as ItemListener)
         }
         return menuItem
     }
@@ -270,6 +257,25 @@ object MenuHandler : DefaultHandler() {
         }
         return action
     }
+
+/*
+    @Throws(ClassNotFoundException::class, IllegalAccessException::class, InstantiationException::class)
+    private fun createMenu(attributes: Attributes): JMenu {
+        val menu = JMenu()
+        val name = attributes.getValue("name")
+        menu.name = name
+        menu.text = name
+        val mnemonic = attributes.getValue("mnemonic")
+        menu.setMnemonic(mnemonic[0])
+        val action = newActionInstance(name)
+        action?.putValue(Action.NAME, name)
+        action?.putValue(Action.MNEMONIC_KEY, mnemonic[0].toInt())
+        menu.action = action
+        actions[name] = action!!
+        menu.isEnabled = attributes.getValue("actionEnabled").toBoolean()
+        return menu
+    }
+*/
 
 /*
     private fun createMenuItemRef(attributes: Attributes): JMenuItem {
