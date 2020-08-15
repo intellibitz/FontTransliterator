@@ -13,7 +13,6 @@ import java.util.*
 import javax.swing.*
 import javax.xml.parsers.ParserConfigurationException
 import javax.xml.parsers.SAXParserFactory
-import kotlin.js.ExperimentalJsExport
 
 object MenuHandler : DefaultHandler() {
     val menuBar: JMenuBar = JMenuBar()
