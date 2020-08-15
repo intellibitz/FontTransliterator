@@ -4,12 +4,12 @@ plugins {
     // Apply the java application plugin to add support for building a CLI application.
     application
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    kotlin("jvm") version "1.4.0-rc"
-//    kotlin("multiplatform") version "1.4.0-rc"
-//    kotlin("js") version "1.4.0-rc"
-//    kotlin("kapt") version "1.4.0-rc"
-//    kotlin("plugin.serialization") version "1.4.0-rc"
-//    id("org.jetbrains.dokka") version "1.4.0-rc"
+    kotlin("jvm") version "1.4.0"
+//    kotlin("multiplatform") version "1.4.0"
+//    kotlin("js") version "1.4.0"
+//    kotlin("kapt") version "1.4.0"
+//    kotlin("plugin.serialization") version "1.4.0"
+//    id("org.jetbrains.dokka") version "1.4.0"
 }
 
 /*
